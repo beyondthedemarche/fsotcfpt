@@ -6,7 +6,10 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body { width: 100%; }
+  html, body {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -15,7 +18,9 @@
     font-size: 14px;
     line-height: 1.6;
     padding: 16px;
-    /* fluid -- fills embed container at any width */
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
   }
 
   h1 { font-size: 20px; font-weight: 700; color: #37352f; margin-bottom: 2px; }
@@ -219,7 +224,7 @@
     margin-bottom: 6px;
     font-size: 13px;
   }
-  .diag-row-label { min-width: 160px; color: #37352f; flex-shrink: 0; font-size: 12px; }
+  .diag-row-label { min-width: 120px; max-width: 200px; width: 25%; color: #37352f; flex-shrink: 0; font-size: 12px; }
   .diag-bar-track {
     flex: 1;
     height: 8px;
@@ -266,8 +271,16 @@
 
   /* -- MOBILE ------------------------------------------ */
   @media (max-width: 480px) {
-    body { padding: 12px; }
-    .diag-row-label { min-width: 120px; }
+    body { padding: 10px; }
+    .diag-row-label { min-width: 90px; font-size: 11px; }
+    .score-bar { gap: 6px; }
+    .score-item { font-size: 11px; }
+    h1 { font-size: 17px; }
+  }
+
+  @media (min-width: 900px) {
+    body { padding: 20px 24px; }
+    .score-bar { gap: 20px; }
   }
 </style>
 </head>
