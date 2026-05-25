@@ -2,7 +2,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Foreign Service Officer Test Practice Quiz (2026 Update)</title>
+<title>FSOT Practice Questions</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -13,29 +13,34 @@
     font-size: 14px;
     line-height: 1.6;
     padding: 16px;
+    max-width: 680px;
+    margin: 0 auto;
   }
 
-  h1 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #37352f;
-    margin-bottom: 4px;
-  }
+  h1 { font-size: 20px; font-weight: 700; color: #37352f; margin-bottom: 2px; }
+  .subtitle { font-size: 13px; color: #9b9a97; margin-bottom: 16px; }
 
-  .subtitle {
-    font-size: 13px;
-    color: #9b9a97;
-    margin-bottom: 20px;
-  }
-
-  /* Section toggle row */
-  .section-tabs {
+  /* -- SCORE BAR --------------------------------------- */
+  .score-bar {
     display: flex;
-    gap: 6px;
+    gap: 10px;
     margin-bottom: 16px;
+    padding: 10px 14px;
+    background: #f7f6f3;
+    border-radius: 6px;
+    border: 1px solid #e3e2e0;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
   }
+  .score-item { font-size: 12px; color: #6b6b6b; }
+  .score-item span { font-weight: 700; color: #37352f; }
+  .score-item .correct-num { color: #237804; }
+  .score-item .wrong-num  { color: #820014; }
+  .score-item .skip-num   { color: #7B3F00; }
 
+  /* -- SECTION TABS ------------------------------------ */
+  .section-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
   .tab-btn {
     font-family: inherit;
     font-size: 13px;
@@ -46,16 +51,59 @@
     background: #f7f6f3;
     color: #37352f;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s;
+    position: relative;
   }
   .tab-btn:hover { background: #ece9e4; }
-  .tab-btn.active {
-    background: #2eaadc;
+  .tab-btn.active { background: #2eaadc; color: #fff; border-color: #2eaadc; }
+  .tab-btn .tab-badge {
+    position: absolute;
+    top: -6px; right: -6px;
+    background: #e03e3e;
     color: #fff;
-    border-color: #2eaadc;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 1px 5px;
+    line-height: 1.4;
   }
 
-  /* Question card */
+  /* -- PROGRESS ---------------------------------------- */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: #e3e2e0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #2eaadc;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .progress-label { font-size: 12px; color: #9b9a97; white-space: nowrap; }
+
+  /* -- QUEUE INDICATOR --------------------------------- */
+  .queue-note {
+    font-size: 12px;
+    color: #7B3F00;
+    background: #fff8f0;
+    border: 1px solid #ffe0b2;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    display: none;
+  }
+  .queue-note.show { display: block; }
+
+  /* -- CARD -------------------------------------------- */
   .card {
     border: 1px solid #e3e2e0;
     border-radius: 6px;
@@ -63,16 +111,19 @@
     background: #fff;
     margin-bottom: 12px;
   }
-
   .section-label {
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: #9b9a97;
+    margin-bottom: 6px;
+  }
+  .subsection-label {
+    font-size: 11px;
+    color: #b0aea9;
     margin-bottom: 8px;
   }
-
   .question {
     font-size: 14px;
     font-weight: 600;
@@ -81,9 +132,8 @@
     line-height: 1.55;
   }
 
-  /* Options */
-  .options { display: flex; flex-direction: column; gap: 7px; }
-
+  /* -- OPTIONS ----------------------------------------- */
+  .options { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
   .option {
     display: flex;
     align-items: flex-start;
@@ -104,39 +154,13 @@
   .option.correct  { background: #edf9ee; border-color: #52c41a; color: #237804; }
   .option.wrong    { background: #fff2f0; border-color: #f5222d; color: #820014; }
   .option.disabled { cursor: default; pointer-events: none; }
-
-  .opt-letter {
-    font-weight: 700;
-    font-size: 12px;
-    min-width: 18px;
-    color: #9b9a97;
-    flex-shrink: 0;
-    padding-top: 1px;
-  }
+  .opt-letter { font-weight: 700; font-size: 12px; min-width: 18px; color: #9b9a97; flex-shrink: 0; padding-top: 1px; }
   .option.correct .opt-letter { color: #237804; }
   .option.wrong   .opt-letter { color: #820014; }
 
-  /* Submit button */
-  .submit-btn {
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    margin-top: 12px;
-    padding: 6px 14px;
-    border-radius: 4px;
-    border: 1px solid #2eaadc;
-    background: #2eaadc;
-    color: #fff;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .submit-btn:hover:not(:disabled) { background: #229ac7; }
-  .submit-btn:disabled { background: #e3e2e0; border-color: #e3e2e0; color: #9b9a97; cursor: default; }
-
-  /* Explanation */
+  /* -- EXPLANATION ------------------------------------- */
   .explanation {
     display: none;
-    margin-top: 12px;
     padding: 10px 12px;
     border-radius: 4px;
     font-size: 13px;
@@ -144,137 +168,608 @@
     border-left: 3px solid #ccc;
     background: #f7f6f3;
     color: #37352f;
+    margin-bottom: 12px;
   }
   .explanation.correct { border-left-color: #52c41a; background: #edf9ee; color: #237804; }
   .explanation.wrong   { border-left-color: #f5222d; background: #fff2f0; color: #820014; }
   .explanation.show    { display: block; }
   .explanation .verdict { font-weight: 700; margin-bottom: 4px; }
+
+  /* -- BUTTONS ----------------------------------------- */
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid #e3e2e0;
+    background: #f7f6f3;
+    color: #37352f;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn:hover:not(:disabled) { background: #ece9e4; }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .btn.primary { background: #2eaadc; color: #fff; border-color: #2eaadc; }
+  .btn.primary:hover:not(:disabled) { background: #229ac7; }
+  .btn.danger  { background: #fff2f0; color: #820014; border-color: #f5222d; }
+  .btn.danger:hover:not(:disabled) { background: #ffe7e5; }
+
+  /* -- DIAGNOSTICS ------------------------------------- */
+  .diagnostics { display: none; }
+  .diagnostics.show { display: block; }
+  .diag-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .diag-subtitle { font-size: 13px; color: #9b9a97; margin-bottom: 16px; }
+
+  .diag-section { margin-bottom: 20px; }
+  .diag-section-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #37352f;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #e3e2e0;
+  }
+  .diag-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .diag-row-label { min-width: 160px; color: #37352f; flex-shrink: 0; font-size: 12px; }
+  .diag-bar-track {
+    flex: 1;
+    height: 8px;
+    background: #e3e2e0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .diag-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+  .diag-pct { font-size: 12px; font-weight: 700; min-width: 36px; text-align: right; }
+  .diag-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .tag-strong  { background: #edf9ee; color: #237804; }
+  .tag-ok      { background: #fff8e1; color: #7B3F00; }
+  .tag-weak    { background: #fff2f0; color: #820014; }
+  .tag-unanswered { background: #f7f6f3; color: #9b9a97; }
+
+  .diag-summary {
+    padding: 12px 14px;
+    background: #f7f6f3;
+    border-radius: 6px;
+    border: 1px solid #e3e2e0;
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .diag-summary .big-score { font-size: 28px; font-weight: 700; }
+  .diag-summary .big-score.good    { color: #237804; }
+  .diag-summary .big-score.ok      { color: #7B3F00; }
+  .diag-summary .big-score.needs   { color: #820014; }
+
+  /* -- EMPTY STATE ------------------------------------- */
+  .empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: #9b9a97;
+    font-size: 13px;
+  }
+  .empty-state .emoji { font-size: 28px; margin-bottom: 8px; }
+
+  /* -- MOBILE ------------------------------------------ */
+  @media (max-width: 480px) {
+    body { padding: 12px; }
+    .diag-row-label { min-width: 120px; }
+  }
 </style>
 </head>
 <body>
 
-<h1>CFPT Practice Quiz</h1>
-<p class="subtitle">Select a section below to practice</p>
+<h1>FSOT Practice Questions</h1>
+<p class="subtitle">Select a section to begin. Wrong answers repeat until correct.</p>
 
+<!-- SCORE BAR -->
+<div class="score-bar">
+  <div class="score-item">Questions: <span id="sc-total">0</span></div>
+  <div class="score-item">Correct: <span class="correct-num" id="sc-correct">0</span></div>
+  <div class="score-item">Wrong: <span class="wrong-num" id="sc-wrong">0</span></div>
+  <div class="score-item">Skipped: <span class="skip-num" id="sc-skip">0</span></div>
+  <div class="score-item">Score: <span id="sc-pct">-</span></div>
+</div>
+
+<!-- SECTION TABS -->
 <div class="section-tabs">
-  <button class="tab-btn active" onclick="showSection('jk')">Job Knowledge</button>
-  <button class="tab-btn" onclick="showSection('ee')">English Expression</button>
-  <button class="tab-btn" onclick="showSection('lr')">Logical Reasoning</button>
+  <button class="tab-btn active" onclick="showSection('jk')" id="tab-jk">Job Knowledge</button>
+  <button class="tab-btn" onclick="showSection('ee')" id="tab-ee">English Expression</button>
+  <button class="tab-btn" onclick="showSection('lr')" id="tab-lr">Logical Reasoning</button>
 </div>
 
-<!-- JOB KNOWLEDGE -->
-<div class="card" id="section-jk">
-  <div class="section-label">Job Knowledge</div>
-  <div class="question">Which U.S. government agency is primarily responsible for managing foreign affairs and diplomatic relations?</div>
-  <div class="options">
-    <div class="option" onclick="select('jk','A')" id="jk-A"><span class="opt-letter">A.</span><span>Department of Homeland Security</span></div>
-    <div class="option" onclick="select('jk','B')" id="jk-B"><span class="opt-letter">B.</span><span>Department of Defense</span></div>
-    <div class="option" onclick="select('jk','C')" id="jk-C"><span class="opt-letter">C.</span><span>Department of State</span></div>
-    <div class="option" onclick="select('jk','D')" id="jk-D"><span class="opt-letter">D.</span><span>Department of Justice</span></div>
-  </div>
-  <button class="submit-btn" id="jk-submit" onclick="submit('jk','C')" disabled>Check Answer</button>
-  <div class="explanation" id="jk-exp">
-    <div class="verdict" id="jk-verdict"></div>
-    The Department of State manages U.S. foreign affairs and diplomacy, including maintaining embassies and consulates, issuing passports and visas, and representing the U.S. in international negotiations. DHS handles immigration enforcement and border security; the Department of Defense oversees the military.
-  </div>
+<!-- FINISH BUTTON -->
+<div style="margin-bottom:12px">
+  <button class="btn danger" onclick="showDiagnostics()">Finish Quiz &amp; See Diagnostics</button>
 </div>
 
-<!-- ENGLISH EXPRESSION -->
-<div class="card" id="section-ee" style="display:none">
-  <div class="section-label">English Expression</div>
-  <div class="question">The officer noted that the applicant had [went] to the embassy twice without success.<br><br>For the underlined word, which is correct?</div>
-  <div class="options">
-    <div class="option" onclick="select('ee','A')" id="ee-A"><span class="opt-letter">A.</span><span>went</span></div>
-    <div class="option" onclick="select('ee','B')" id="ee-B"><span class="opt-letter">B.</span><span>gone</span></div>
-    <div class="option" onclick="select('ee','C')" id="ee-C"><span class="opt-letter">C.</span><span>go</span></div>
-    <div class="option" onclick="select('ee','D')" id="ee-D"><span class="opt-letter">D.</span><span>goes</span></div>
+<!-- QUIZ AREA -->
+<div id="quiz-area">
+
+  <!-- PROGRESS -->
+  <div class="progress-row">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 / 0</div>
   </div>
-  <button class="submit-btn" id="ee-submit" onclick="submit('ee','B')" disabled>Check Answer</button>
-  <div class="explanation" id="ee-exp">
-    <div class="verdict" id="ee-verdict"></div>
-    The past perfect construction "had gone" requires the past participle "gone," not the simple past "went." The verb "had" signals that a past participle must follow. "Had went" is always incorrect in standard English.
+
+  <!-- REPEAT NOTICE -->
+  <div class="queue-note" id="queue-note">This question was answered incorrectly and is repeating.</div>
+
+  <!-- QUESTION CARD -->
+  <div class="card" id="q-card">
+    <div class="section-label" id="q-section-label"></div>
+    <div class="subsection-label" id="q-subsection-label"></div>
+    <div class="question" id="q-text"></div>
+    <div class="options" id="q-options"></div>
+    <div class="explanation" id="q-explanation">
+      <div class="verdict" id="q-verdict"></div>
+      <div id="q-exp-text"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn primary" id="submit-btn" onclick="submitAnswer()" disabled>Check Answer</button>
+      <button class="btn" id="next-btn" onclick="nextQuestion()" disabled>Next</button>
+      <button class="btn" id="skip-btn" onclick="skipQuestion()">Skip</button>
+    </div>
   </div>
+
 </div>
 
-<!-- LOGICAL REASONING -->
-<div class="card" id="section-lr" style="display:none">
-  <div class="section-label">Logical Reasoning</div>
-  <div class="question">All consular officers must complete training before being posted abroad. Maria has been posted abroad.<br><br>Which conclusion follows logically?</div>
-  <div class="options">
-    <div class="option" onclick="select('lr','A')" id="lr-A"><span class="opt-letter">A.</span><span>Maria has not completed training.</span></div>
-    <div class="option" onclick="select('lr','B')" id="lr-B"><span class="opt-letter">B.</span><span>Maria completed training before being posted.</span></div>
-    <div class="option" onclick="select('lr','C')" id="lr-C"><span class="opt-letter">C.</span><span>Maria was exempt from training requirements.</span></div>
-    <div class="option" onclick="select('lr','D')" id="lr-D"><span class="opt-letter">D.</span><span>Maria chose to complete training voluntarily.</span></div>
-  </div>
-  <button class="submit-btn" id="lr-submit" onclick="submit('lr','B')" disabled>Check Answer</button>
-  <div class="explanation" id="lr-exp">
-    <div class="verdict" id="lr-verdict"></div>
-    This is a straightforward deductive syllogism. The first premise states that ALL officers must complete training before posting. Maria has been posted. Therefore Maria must have completed training - this follows necessarily from the premises. Options A, C, and D either contradict the premise or introduce unsupported assumptions.
+<!-- DIAGNOSTICS PANEL -->
+<div class="diagnostics" id="diagnostics-panel">
+  <div class="diag-title">Quiz Diagnostics</div>
+  <div class="diag-subtitle">Based on your answers across all sections</div>
+  <div class="diag-summary" id="diag-summary"></div>
+  <div id="diag-breakdown"></div>
+  <div style="margin-top:16px">
+    <button class="btn primary" onclick="restartQuiz()">Start Over</button>
   </div>
 </div>
 
 <script>
-  var state = { jk: null, ee: null, lr: null };
-
-  function showSection(id) {
-    var sections = ['jk', 'ee', 'lr'];
-    var labels  = ['Job Knowledge', 'English Expression', 'Logical Reasoning'];
-    for (var i = 0; i < sections.length; i++) {
-      var card = document.getElementById('section-' + sections[i]);
-      var btn  = document.querySelectorAll('.tab-btn')[i];
-      if (sections[i] === id) {
-        card.style.display = 'block';
-        btn.classList.add('active');
-      } else {
-        card.style.display = 'none';
-        btn.classList.remove('active');
+// -- DATA ----------------------------------------------------------------------
+var SECTIONS = {
+  jk: {
+    label: "Job Knowledge",
+    questions: [
+      {
+        sub: "U.S. Government & Foreign Policy",
+        q: "Which U.S. government agency is primarily responsible for managing foreign affairs and diplomatic relations?",
+        opts: { A: "Department of Homeland Security", B: "Department of Defense", C: "Department of State", D: "Department of Justice" },
+        correct: "C",
+        exp: "The Department of State manages U.S. foreign affairs and diplomacy, including maintaining embassies and consulates, issuing passports and visas, and representing the U.S. in international negotiations."
+      },
+      {
+        sub: "U.S. History",
+        q: "The Marshall Plan (1948) was a U.S. program designed to do which of the following?",
+        opts: { A: "Build military alliances against the Soviet Union", B: "Provide economic aid to rebuild Western European economies after WWII", C: "Establish the United Nations", D: "Expand U.S. military bases in Europe" },
+        correct: "B",
+        exp: "The Marshall Plan provided over $12 billion in economic aid to rebuild Western European economies after WWII. It was named after Secretary of State George Marshall and is considered one of the most successful foreign policy initiatives in U.S. history."
+      },
+      {
+        sub: "International Relations",
+        q: "What does the term 'detente' refer to in Cold War foreign policy?",
+        opts: { A: "A military buildup to deter Soviet aggression", B: "A policy of massive retaliation", C: "A period of easing tensions and improved relations between the U.S. and Soviet Union", D: "The strategy of supporting anti-communist movements worldwide" },
+        correct: "C",
+        exp: "Detente (from French for 'relaxation') describes the easing of Cold War tensions, particularly under Nixon and Kissinger in the early 1970s. It included strategic arms agreements (SALT I) and Nixon's opening to China in 1972."
       }
+    ]
+  },
+  ee: {
+    label: "English Expression",
+    questions: [
+      {
+        sub: "Verb Form",
+        q: "The officer noted that the applicant had [went] to the embassy twice without success.\n\nFor the underlined word, which is correct?",
+        opts: { A: "went", B: "gone", C: "go", D: "goes" },
+        correct: "B",
+        exp: "The past perfect construction 'had gone' requires the past participle 'gone,' not the simple past 'went.' The verb 'had' signals that a past participle must follow. 'Had went' is always incorrect in standard English."
+      },
+      {
+        sub: "Word Confusion",
+        q: "The committee was asked to [insure] a smooth transition between administrations.\n\nFor the underlined word, which is correct?",
+        opts: { A: "insure", B: "assure", C: "ensure", D: "secure" },
+        correct: "C",
+        exp: "'Ensure' means to make certain something happens or is the case. 'Insure' relates to financial insurance coverage. 'Assure' is used to put a person's mind at ease. 'Ensure' is correct when the subject is taking steps to guarantee a result."
+      },
+      {
+        sub: "Subject-Verb Agreement",
+        q: "Read the following sentence and identify the error:\n\n\"The list of requirements are available on the agency website.\"\n\nIndicate the error type:",
+        opts: { A: "Misspelled word", B: "Improper word choice", C: "Verb tense or agreement", D: "Punctuation error" },
+        correct: "C",
+        exp: "The subject is 'the list,' which is singular. The prepositional phrase 'of requirements' is a decoy - it does not change the subject. The verb should be 'is,' not 'are.' This is a subject-verb agreement error caused by attraction to the nearest plural noun."
+      }
+    ]
+  },
+  lr: {
+    label: "Logical Reasoning",
+    questions: [
+      {
+        sub: "Deductive Reasoning",
+        q: "All consular officers must complete training before being posted abroad. Maria has been posted abroad.\n\nWhich conclusion follows logically?",
+        opts: { A: "Maria has not completed training.", B: "Maria completed training before being posted.", C: "Maria was exempt from the training requirement.", D: "Maria chose to complete training voluntarily." },
+        correct: "B",
+        exp: "This is a straightforward deductive syllogism. The first premise states ALL officers must complete training before posting. Maria has been posted. Therefore she must have completed training - this follows necessarily from the premises. Options A and C contradict the premise; D introduces an unsupported assumption."
+      },
+      {
+        sub: "Logical Inference",
+        q: "A report states: 'Visa processing times increased in every month where staffing fell below 80% capacity. In March, processing times did not increase.'\n\nWhat can be logically concluded?",
+        opts: { A: "Staffing was above 80% capacity in March.", B: "Staffing was exactly 80% capacity in March.", C: "Staffing increased significantly in March.", D: "Processing times will not increase next month." },
+        correct: "A",
+        exp: "The statement is: if staffing below 80%, then processing times increase. The contrapositive is: if processing times did NOT increase, then staffing was NOT below 80% - meaning staffing was at or above 80%. Option A correctly captures this. Options B and C are too specific; D makes an unsupported prediction."
+      },
+      {
+        sub: "Argument Analysis",
+        q: "A manager argues: 'Our team processed 20% more applications this quarter than last quarter. Therefore our team's efficiency has improved.'\n\nWhich of the following most weakens this argument?",
+        opts: { A: "Other teams also processed more applications this quarter.", B: "The team worked 30% more hours this quarter than last quarter.", C: "Application quality remained the same across both quarters.", D: "The manager has led the team for two years." },
+        correct: "B",
+        exp: "The manager claims volume increase = efficiency improvement. But if the team worked 30% more hours to process only 20% more applications, they are actually LESS efficient per hour. Option B directly undermines the conclusion by providing an alternative explanation for the volume increase. Options A, C, and D do not weaken the efficiency claim."
+      }
+    ]
+  }
+};
+
+// -- STATE ---------------------------------------------------------------------
+var state = {
+  section: 'jk',
+  // queue: array of {sectionId, qIdx, isRepeat}
+  queues: { jk: [], ee: [], lr: [] },
+  // results: { sectionId: { qIdx: {correct: bool, skipped: bool, attempts: n} } }
+  results: { jk: {}, ee: {}, lr: {} },
+  current: null,   // {sectionId, qIdx, isRepeat}
+  selected: null,
+  submitted: false,
+  totalAttempted: 0,
+  totalCorrect: 0,
+  totalWrong: 0,
+  totalSkipped: 0
+};
+
+// Build initial queues
+function buildQueue(sid) {
+  var q = [];
+  for (var i = 0; i < SECTIONS[sid].questions.length; i++) {
+    q.push({ sectionId: sid, qIdx: i, isRepeat: false });
+  }
+  state.queues[sid] = q;
+}
+buildQueue('jk');
+buildQueue('ee');
+buildQueue('lr');
+
+// -- SECTION SWITCHING ---------------------------------------------------------
+function showSection(sid) {
+  state.section = sid;
+  ['jk','ee','lr'].forEach(function(s) {
+    document.getElementById('tab-' + s).classList.toggle('active', s === sid);
+  });
+  loadNext();
+}
+
+// -- QUEUE MANAGEMENT ---------------------------------------------------------
+function getNext(sid) {
+  var q = state.queues[sid];
+  return q.length > 0 ? q.shift() : null;
+}
+
+function requeueWrong(item) {
+  // Insert wrong question 2 positions ahead (or at end if queue is short)
+  var q = state.queues[item.sectionId];
+  var insertAt = Math.min(2, q.length);
+  var newItem = { sectionId: item.sectionId, qIdx: item.qIdx, isRepeat: true };
+  q.splice(insertAt, 0, newItem);
+  updateTabBadges();
+}
+
+function updateTabBadges() {
+  ['jk','ee','lr'].forEach(function(sid) {
+    var btn = document.getElementById('tab-' + sid);
+    var existing = btn.querySelector('.tab-badge');
+    var count = state.queues[sid].length;
+    if (count > 0) {
+      if (!existing) {
+        var badge = document.createElement('span');
+        badge.className = 'tab-badge';
+        btn.appendChild(badge);
+        existing = badge;
+      }
+      existing.textContent = count;
+    } else {
+      if (existing) existing.remove();
     }
+  });
+}
+
+// -- LOAD NEXT QUESTION --------------------------------------------------------
+function loadNext() {
+  var item = getNext(state.section);
+  updateTabBadges();
+
+  if (!item) {
+    // No more questions in this section
+    document.getElementById('q-card').innerHTML =
+      '<div class="empty-state">' +
+      '<div>All questions in this section are complete.</div>' +
+      '<div style="margin-top:8px;font-size:12px;color:#9b9a97">Switch to another section or press Finish Quiz to see your diagnostics.</div>' +
+      '</div>';
+    document.getElementById('queue-note').classList.remove('show');
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('progress-label').textContent = 'Complete';
+    return;
   }
 
-  function select(section, letter) {
-    if (state[section] !== null) return; // already answered
-    var letters = ['A','B','C','D'];
-    for (var i = 0; i < letters.length; i++) {
-      var el = document.getElementById(section + '-' + letters[i]);
-      el.classList.remove('selected');
-    }
-    document.getElementById(section + '-' + letter).classList.add('selected');
-    document.getElementById(section + '-submit').disabled = false;
-    document.getElementById(section + '-submit').setAttribute('data-choice', letter);
+  state.current = item;
+  state.selected = null;
+  state.submitted = false;
+
+  var sec = SECTIONS[item.sectionId];
+  var q = sec.questions[item.qIdx];
+
+  // Queue note
+  document.getElementById('queue-note').classList.toggle('show', item.isRepeat);
+
+  // Section labels
+  document.getElementById('q-section-label').textContent = sec.label;
+  document.getElementById('q-subsection-label').textContent = q.sub || '';
+
+  // Question text (handle newlines)
+  var qEl = document.getElementById('q-text');
+  qEl.innerHTML = '';
+  q.q.split('\n').forEach(function(line, i) {
+    if (i > 0) qEl.appendChild(document.createElement('br'));
+    qEl.appendChild(document.createTextNode(line));
+  });
+
+  // Options
+  var container = document.getElementById('q-options');
+  container.innerHTML = '';
+  ['A','B','C','D'].forEach(function(letter) {
+    if (!q.opts[letter]) return;
+    var div = document.createElement('div');
+    div.className = 'option';
+    div.id = 'opt-' + letter;
+    div.onclick = function() { selectOpt(letter); };
+    var l = document.createElement('span');
+    l.className = 'opt-letter';
+    l.textContent = letter + '.';
+    var t = document.createElement('span');
+    t.textContent = q.opts[letter];
+    div.appendChild(l);
+    div.appendChild(t);
+    container.appendChild(div);
+  });
+
+  // Reset explanation
+  var exp = document.getElementById('q-explanation');
+  exp.className = 'explanation';
+  document.getElementById('q-exp-text').textContent = '';
+  document.getElementById('q-verdict').textContent = '';
+
+  // Reset buttons
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('next-btn').disabled = true;
+  document.getElementById('skip-btn').disabled = false;
+  document.getElementById('submit-btn').textContent = 'Check Answer';
+  document.getElementById('next-btn').textContent = 'Next';
+
+  // Progress for current section
+  var total = SECTIONS[state.section].questions.length;
+  var done = Object.keys(state.results[state.section]).length;
+  var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = done + ' / ' + total;
+}
+
+// -- SELECT OPTION -------------------------------------------------------------
+function selectOpt(letter) {
+  if (state.submitted) return;
+  state.selected = letter;
+  ['A','B','C','D'].forEach(function(l) {
+    var el = document.getElementById('opt-' + l);
+    if (el) el.classList.toggle('selected', l === letter);
+  });
+  document.getElementById('submit-btn').disabled = false;
+}
+
+// -- SUBMIT --------------------------------------------------------------------
+function submitAnswer() {
+  if (!state.selected || state.submitted) return;
+  state.submitted = true;
+
+  var item = state.current;
+  var q = SECTIONS[item.sectionId].questions[item.qIdx];
+  var correct = q.correct;
+  var isCorrect = state.selected === correct;
+
+  // Lock options
+  ['A','B','C','D'].forEach(function(l) {
+    var el = document.getElementById('opt-' + l);
+    if (!el) return;
+    el.classList.add('disabled');
+    el.classList.remove('selected');
+    if (l === correct) el.classList.add('correct');
+    if (l === state.selected && !isCorrect) el.classList.add('wrong');
+  });
+
+  // Explanation
+  var exp = document.getElementById('q-explanation');
+  exp.className = 'explanation show ' + (isCorrect ? 'correct' : 'wrong');
+  document.getElementById('q-verdict').textContent = isCorrect
+    ? 'Correct!'
+    : 'Incorrect - the correct answer is ' + correct + '.';
+  document.getElementById('q-exp-text').textContent = q.exp;
+
+  // Track result (only count first attempt per question)
+  var prevResult = state.results[item.sectionId][item.qIdx];
+  if (!prevResult) {
+    state.results[item.sectionId][item.qIdx] = {
+      correct: isCorrect,
+      skipped: false,
+      sub: q.sub
+    };
+    state.totalAttempted++;
+    if (isCorrect) state.totalCorrect++;
+    else state.totalWrong++;
   }
 
-  function submit(section, correct) {
-    var btn    = document.getElementById(section + '-submit');
-    var choice = btn.getAttribute('data-choice');
-    if (!choice) return;
-
-    state[section] = choice;
-    var letters = ['A','B','C','D'];
-
-    // Lock all options
-    for (var i = 0; i < letters.length; i++) {
-      var el = document.getElementById(section + '-' + letters[i]);
-      el.classList.add('disabled');
-      el.classList.remove('selected');
-    }
-
-    // Highlight correct and wrong
-    document.getElementById(section + '-' + correct).classList.add('correct');
-    var isCorrect = (choice === correct);
-    if (!isCorrect) {
-      document.getElementById(section + '-' + choice).classList.add('wrong');
-    }
-
-    // Show explanation
-    var exp = document.getElementById(section + '-exp');
-    var verdict = document.getElementById(section + '-verdict');
-    exp.className = 'explanation show ' + (isCorrect ? 'correct' : 'wrong');
-    verdict.textContent = isCorrect ? 'Correct!' : 'Incorrect - the correct answer is ' + correct + '.';
-
-    btn.disabled = true;
-    btn.textContent = isCorrect ? 'Correct!' : 'See explanation above';
+  // Requeue if wrong
+  if (!isCorrect) {
+    requeueWrong(item);
   }
+
+  updateScore();
+
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('skip-btn').disabled = true;
+  document.getElementById('next-btn').disabled = false;
+  document.getElementById('next-btn').textContent = 'Next';
+}
+
+// -- SKIP ----------------------------------------------------------------------
+function skipQuestion() {
+  if (state.submitted) return;
+  var item = state.current;
+  var q = SECTIONS[item.sectionId].questions[item.qIdx];
+
+  // Record as skipped if not already answered
+  if (!state.results[item.sectionId][item.qIdx]) {
+    state.results[item.sectionId][item.qIdx] = {
+      correct: false,
+      skipped: true,
+      sub: q.sub
+    };
+    state.totalSkipped++;
+    state.totalAttempted++;
+    updateScore();
+  }
+
+  // Requeue at end
+  state.queues[item.sectionId].push({ sectionId: item.sectionId, qIdx: item.qIdx, isRepeat: true });
+  updateTabBadges();
+  loadNext();
+}
+
+// -- NEXT ----------------------------------------------------------------------
+function nextQuestion() {
+  loadNext();
+}
+
+// -- SCORE UPDATE --------------------------------------------------------------
+function updateScore() {
+  document.getElementById('sc-total').textContent = state.totalAttempted;
+  document.getElementById('sc-correct').textContent = state.totalCorrect;
+  document.getElementById('sc-wrong').textContent = state.totalWrong;
+  document.getElementById('sc-skip').textContent = state.totalSkipped;
+  var answered = state.totalCorrect + state.totalWrong;
+  var pct = answered > 0 ? Math.round((state.totalCorrect / answered) * 100) + '%' : '-';
+  document.getElementById('sc-pct').textContent = pct;
+}
+
+// -- DIAGNOSTICS ---------------------------------------------------------------
+function showDiagnostics() {
+  document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('diagnostics-panel').className = 'diagnostics show';
+
+  // Overall summary
+  var answered = state.totalCorrect + state.totalWrong;
+  var pct = answered > 0 ? Math.round((state.totalCorrect / answered) * 100) : 0;
+  var scoreClass = pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'needs';
+  var scoreMsg = pct >= 70 ? 'Strong performance' : pct >= 50 ? 'Room to improve' : 'Needs more practice';
+  document.getElementById('diag-summary').innerHTML =
+    '<div class="big-score ' + scoreClass + '">' + (answered > 0 ? pct + '%' : '-') + '</div>' +
+    '<div style="font-size:13px;color:#6b6b6b;margin-top:4px">' + scoreMsg + ' &mdash; ' +
+    state.totalCorrect + ' correct, ' + state.totalWrong + ' wrong, ' + state.totalSkipped + ' skipped out of ' +
+    state.totalAttempted + ' attempted</div>';
+
+  // Per-section breakdown
+  var breakdown = document.getElementById('diag-breakdown');
+  breakdown.innerHTML = '';
+
+  ['jk','ee','lr'].forEach(function(sid) {
+    var sec = SECTIONS[sid];
+    var res = state.results[sid];
+
+    // Group by subsection
+    var subs = {};
+    sec.questions.forEach(function(q, i) {
+      if (!subs[q.sub]) subs[q.sub] = { correct: 0, wrong: 0, skipped: 0, total: 0 };
+      subs[q.sub].total++;
+      if (res[i]) {
+        if (res[i].skipped) subs[q.sub].skipped++;
+        else if (res[i].correct) subs[q.sub].correct++;
+        else subs[q.sub].wrong++;
+      }
+    });
+
+    var secDiv = document.createElement('div');
+    secDiv.className = 'diag-section';
+
+    var secName = document.createElement('div');
+    secName.className = 'diag-section-name';
+    secName.textContent = sec.label;
+    secDiv.appendChild(secName);
+
+    Object.keys(subs).forEach(function(subName) {
+      var s = subs[subName];
+      var attempted = s.correct + s.wrong;
+      var subPct = attempted > 0 ? Math.round((s.correct / attempted) * 100) : null;
+      var barColor = subPct === null ? '#e3e2e0' : subPct >= 70 ? '#52c41a' : subPct >= 50 ? '#faad14' : '#f5222d';
+      var tagClass = subPct === null ? 'tag-unanswered' : subPct >= 70 ? 'tag-strong' : subPct >= 50 ? 'tag-ok' : 'tag-weak';
+      var tagText = subPct === null ? 'Not attempted' : subPct >= 70 ? 'Strong' : subPct >= 50 ? 'Review' : 'Weak';
+
+      var row = document.createElement('div');
+      row.className = 'diag-row';
+      row.innerHTML =
+        '<div class="diag-row-label">' + subName + '</div>' +
+        '<div class="diag-bar-track"><div class="diag-bar-fill" style="width:' + (subPct || 0) + '%;background:' + barColor + '"></div></div>' +
+        '<div class="diag-pct" style="color:' + barColor + '">' + (subPct !== null ? subPct + '%' : '-') + '</div>' +
+        '<div class="diag-tag ' + tagClass + '">' + tagText + '</div>';
+      secDiv.appendChild(row);
+    });
+
+    breakdown.appendChild(secDiv);
+  });
+}
+
+// -- RESTART -------------------------------------------------------------------
+function restartQuiz() {
+  state.results = { jk: {}, ee: {}, lr: {} };
+  state.totalAttempted = 0;
+  state.totalCorrect = 0;
+  state.totalWrong = 0;
+  state.totalSkipped = 0;
+  state.current = null;
+  state.selected = null;
+  state.submitted = false;
+
+  buildQueue('jk');
+  buildQueue('ee');
+  buildQueue('lr');
+
+  updateScore();
+  updateTabBadges();
+
+  document.getElementById('diagnostics-panel').className = 'diagnostics';
+  document.getElementById('quiz-area').style.display = 'block';
+
+  showSection('jk');
+}
+
+// -- INIT ----------------------------------------------------------------------
+updateTabBadges();
+loadNext();
 </script>
 </body>
 </html>
