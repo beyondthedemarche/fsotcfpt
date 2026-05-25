@@ -1,0 +1,280 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CFPT Practice Quiz</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    color: #37352f;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #37352f;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #9b9a97;
+    margin-bottom: 20px;
+  }
+
+  /* Section toggle row */
+  .section-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid #e3e2e0;
+    background: #f7f6f3;
+    color: #37352f;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .tab-btn:hover { background: #ece9e4; }
+  .tab-btn.active {
+    background: #2eaadc;
+    color: #fff;
+    border-color: #2eaadc;
+  }
+
+  /* Question card */
+  .card {
+    border: 1px solid #e3e2e0;
+    border-radius: 6px;
+    padding: 16px;
+    background: #fff;
+    margin-bottom: 12px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9b9a97;
+    margin-bottom: 8px;
+  }
+
+  .question {
+    font-size: 14px;
+    font-weight: 600;
+    color: #37352f;
+    margin-bottom: 14px;
+    line-height: 1.55;
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 7px; }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 9px 11px;
+    border-radius: 4px;
+    border: 1px solid #e3e2e0;
+    background: #f7f6f3;
+    cursor: pointer;
+    font-size: 13px;
+    color: #37352f;
+    line-height: 1.5;
+    transition: background 0.1s, border-color 0.1s;
+    user-select: none;
+  }
+  .option:hover { background: #ece9e4; border-color: #ccc; }
+  .option.selected { background: #edf6fd; border-color: #2eaadc; }
+  .option.correct  { background: #edf9ee; border-color: #52c41a; color: #237804; }
+  .option.wrong    { background: #fff2f0; border-color: #f5222d; color: #820014; }
+  .option.disabled { cursor: default; pointer-events: none; }
+
+  .opt-letter {
+    font-weight: 700;
+    font-size: 12px;
+    min-width: 18px;
+    color: #9b9a97;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+  .option.correct .opt-letter { color: #237804; }
+  .option.wrong   .opt-letter { color: #820014; }
+
+  /* Submit button */
+  .submit-btn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 12px;
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid #2eaadc;
+    background: #2eaadc;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .submit-btn:hover:not(:disabled) { background: #229ac7; }
+  .submit-btn:disabled { background: #e3e2e0; border-color: #e3e2e0; color: #9b9a97; cursor: default; }
+
+  /* Explanation */
+  .explanation {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.6;
+    border-left: 3px solid #ccc;
+    background: #f7f6f3;
+    color: #37352f;
+  }
+  .explanation.correct { border-left-color: #52c41a; background: #edf9ee; color: #237804; }
+  .explanation.wrong   { border-left-color: #f5222d; background: #fff2f0; color: #820014; }
+  .explanation.show    { display: block; }
+  .explanation .verdict { font-weight: 700; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<h1>CFPT Practice Quiz</h1>
+<p class="subtitle">Select a section below to practice</p>
+
+<div class="section-tabs">
+  <button class="tab-btn active" onclick="showSection('jk')">Job Knowledge</button>
+  <button class="tab-btn" onclick="showSection('ee')">English Expression</button>
+  <button class="tab-btn" onclick="showSection('lr')">Logical Reasoning</button>
+</div>
+
+<!-- JOB KNOWLEDGE -->
+<div class="card" id="section-jk">
+  <div class="section-label">Job Knowledge</div>
+  <div class="question">Which U.S. government agency is primarily responsible for managing foreign affairs and diplomatic relations?</div>
+  <div class="options">
+    <div class="option" onclick="select('jk','A')" id="jk-A"><span class="opt-letter">A.</span><span>Department of Homeland Security</span></div>
+    <div class="option" onclick="select('jk','B')" id="jk-B"><span class="opt-letter">B.</span><span>Department of Defense</span></div>
+    <div class="option" onclick="select('jk','C')" id="jk-C"><span class="opt-letter">C.</span><span>Department of State</span></div>
+    <div class="option" onclick="select('jk','D')" id="jk-D"><span class="opt-letter">D.</span><span>Department of Justice</span></div>
+  </div>
+  <button class="submit-btn" id="jk-submit" onclick="submit('jk','C')" disabled>Check Answer</button>
+  <div class="explanation" id="jk-exp">
+    <div class="verdict" id="jk-verdict"></div>
+    The Department of State manages U.S. foreign affairs and diplomacy, including maintaining embassies and consulates, issuing passports and visas, and representing the U.S. in international negotiations. DHS handles immigration enforcement and border security; the Department of Defense oversees the military.
+  </div>
+</div>
+
+<!-- ENGLISH EXPRESSION -->
+<div class="card" id="section-ee" style="display:none">
+  <div class="section-label">English Expression</div>
+  <div class="question">The officer noted that the applicant had [went] to the embassy twice without success.<br><br>For the underlined word, which is correct?</div>
+  <div class="options">
+    <div class="option" onclick="select('ee','A')" id="ee-A"><span class="opt-letter">A.</span><span>went</span></div>
+    <div class="option" onclick="select('ee','B')" id="ee-B"><span class="opt-letter">B.</span><span>gone</span></div>
+    <div class="option" onclick="select('ee','C')" id="ee-C"><span class="opt-letter">C.</span><span>go</span></div>
+    <div class="option" onclick="select('ee','D')" id="ee-D"><span class="opt-letter">D.</span><span>goes</span></div>
+  </div>
+  <button class="submit-btn" id="ee-submit" onclick="submit('ee','B')" disabled>Check Answer</button>
+  <div class="explanation" id="ee-exp">
+    <div class="verdict" id="ee-verdict"></div>
+    The past perfect construction "had gone" requires the past participle "gone," not the simple past "went." The verb "had" signals that a past participle must follow. "Had went" is always incorrect in standard English.
+  </div>
+</div>
+
+<!-- LOGICAL REASONING -->
+<div class="card" id="section-lr" style="display:none">
+  <div class="section-label">Logical Reasoning</div>
+  <div class="question">All consular officers must complete training before being posted abroad. Maria has been posted abroad.<br><br>Which conclusion follows logically?</div>
+  <div class="options">
+    <div class="option" onclick="select('lr','A')" id="lr-A"><span class="opt-letter">A.</span><span>Maria has not completed training.</span></div>
+    <div class="option" onclick="select('lr','B')" id="lr-B"><span class="opt-letter">B.</span><span>Maria completed training before being posted.</span></div>
+    <div class="option" onclick="select('lr','C')" id="lr-C"><span class="opt-letter">C.</span><span>Maria was exempt from training requirements.</span></div>
+    <div class="option" onclick="select('lr','D')" id="lr-D"><span class="opt-letter">D.</span><span>Maria chose to complete training voluntarily.</span></div>
+  </div>
+  <button class="submit-btn" id="lr-submit" onclick="submit('lr','B')" disabled>Check Answer</button>
+  <div class="explanation" id="lr-exp">
+    <div class="verdict" id="lr-verdict"></div>
+    This is a straightforward deductive syllogism. The first premise states that ALL officers must complete training before posting. Maria has been posted. Therefore Maria must have completed training - this follows necessarily from the premises. Options A, C, and D either contradict the premise or introduce unsupported assumptions.
+  </div>
+</div>
+
+<script>
+  var state = { jk: null, ee: null, lr: null };
+
+  function showSection(id) {
+    var sections = ['jk', 'ee', 'lr'];
+    var labels  = ['Job Knowledge', 'English Expression', 'Logical Reasoning'];
+    for (var i = 0; i < sections.length; i++) {
+      var card = document.getElementById('section-' + sections[i]);
+      var btn  = document.querySelectorAll('.tab-btn')[i];
+      if (sections[i] === id) {
+        card.style.display = 'block';
+        btn.classList.add('active');
+      } else {
+        card.style.display = 'none';
+        btn.classList.remove('active');
+      }
+    }
+  }
+
+  function select(section, letter) {
+    if (state[section] !== null) return; // already answered
+    var letters = ['A','B','C','D'];
+    for (var i = 0; i < letters.length; i++) {
+      var el = document.getElementById(section + '-' + letters[i]);
+      el.classList.remove('selected');
+    }
+    document.getElementById(section + '-' + letter).classList.add('selected');
+    document.getElementById(section + '-submit').disabled = false;
+    document.getElementById(section + '-submit').setAttribute('data-choice', letter);
+  }
+
+  function submit(section, correct) {
+    var btn    = document.getElementById(section + '-submit');
+    var choice = btn.getAttribute('data-choice');
+    if (!choice) return;
+
+    state[section] = choice;
+    var letters = ['A','B','C','D'];
+
+    // Lock all options
+    for (var i = 0; i < letters.length; i++) {
+      var el = document.getElementById(section + '-' + letters[i]);
+      el.classList.add('disabled');
+      el.classList.remove('selected');
+    }
+
+    // Highlight correct and wrong
+    document.getElementById(section + '-' + correct).classList.add('correct');
+    var isCorrect = (choice === correct);
+    if (!isCorrect) {
+      document.getElementById(section + '-' + choice).classList.add('wrong');
+    }
+
+    // Show explanation
+    var exp = document.getElementById(section + '-exp');
+    var verdict = document.getElementById(section + '-verdict');
+    exp.className = 'explanation show ' + (isCorrect ? 'correct' : 'wrong');
+    verdict.textContent = isCorrect ? 'Correct!' : 'Incorrect - the correct answer is ' + correct + '.';
+
+    btn.disabled = true;
+    btn.textContent = isCorrect ? 'Correct!' : 'See explanation above';
+  }
+</script>
+</body>
+</html>
