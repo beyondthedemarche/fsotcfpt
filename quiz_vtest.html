@@ -353,7 +353,8 @@
 </div>
 
 <script>
-// -- DATA ----------------------------------------------------------------------
+
+// -- DATA ---------------------------------------------------------------------
 var SECTIONS = {
   jk: {
     label: "Job Knowledge",
@@ -429,66 +430,121 @@ var SECTIONS = {
         q: "A manager argues: 'Our team processed 20% more applications this quarter than last quarter. Therefore our team's efficiency has improved.'\n\nWhich of the following most weakens this argument?",
         opts: { A: "Other teams also processed more applications this quarter.", B: "The team worked 30% more hours this quarter than last quarter.", C: "Application quality remained the same across both quarters.", D: "The manager has led the team for two years." },
         correct: "B",
-        exp: "The manager claims volume increase = efficiency improvement. But if the team worked 30% more hours to process only 20% more applications, they are actually LESS efficient per hour. Option B directly undermines the conclusion by providing an alternative explanation for the volume increase. Options A, C, and D do not weaken the efficiency claim."
+        exp: "The manager claims volume increase equals efficiency improvement. But if the team worked 30% more hours to process only 20% more applications, they are actually less efficient per hour. Option B directly undermines the conclusion by providing an alternative explanation for the volume increase."
       }
     ]
   }
 };
 
+var SECTION_IDS = ['jk', 'ee', 'lr'];
+
 // -- STATE ---------------------------------------------------------------------
+// queues[sid]   = remaining question indices to show (in order)
+// results[sid]  = { qIdx: {correct, skipped, sub} }  -- first-attempt only
+// suspended[sid]= the question index paused when user switched away mid-question
+//                 (null if none)
 var state = {
-  section: 'jk',
-  // queue: array of {sectionId, qIdx, isRepeat}
-  queues: { jk: [], ee: [], lr: [] },
-  // results: { sectionId: { qIdx: {correct: bool, skipped: bool, attempts: n} } }
-  results: { jk: {}, ee: {}, lr: {} },
-  current: null,   // {sectionId, qIdx, isRepeat}
+  section:  'jk',
+  queues:   { jk: [], ee: [], lr: [] },
+  results:  { jk: {}, ee: {}, lr: {} },
+  suspended:{ jk: null, ee: null, lr: null },
+  current:  null,
   selected: null,
-  submitted: false,
+  submitted:false,
+  shuffled: false,
   totalAttempted: 0,
-  totalCorrect: 0,
-  totalWrong: 0,
-  totalSkipped: 0
+  totalCorrect:   0,
+  totalWrong:     0,
+  totalSkipped:   0
 };
 
-// Build initial queues
-function buildQueue(sid) {
-  var q = [];
-  for (var i = 0; i < SECTIONS[sid].questions.length; i++) {
-    q.push({ sectionId: sid, qIdx: i, isRepeat: false });
+// -- QUEUE INIT ----------------------------------------------------------------
+function buildQueue(sid, shuffle) {
+  var indices = [];
+  for (var i = 0; i < SECTIONS[sid].questions.length; i++) indices.push(i);
+  if (shuffle) {
+    for (var j = indices.length - 1; j > 0; j--) {
+      var k = Math.floor(Math.random() * (j + 1));
+      var tmp = indices[j]; indices[j] = indices[k]; indices[k] = tmp;
+    }
   }
-  state.queues[sid] = q;
+  state.queues[sid] = indices.map(function(i) { return { qIdx: i, isRepeat: false }; });
 }
-buildQueue('jk');
-buildQueue('ee');
-buildQueue('lr');
+
+function fullReset() {
+  state.results   = { jk: {}, ee: {}, lr: {} };
+  state.suspended = { jk: null, ee: null, lr: null };
+  state.current   = null;
+  state.selected  = null;
+  state.submitted = false;
+  state.shuffled  = false;
+  state.totalAttempted = 0;
+  state.totalCorrect   = 0;
+  state.totalWrong     = 0;
+  state.totalSkipped   = 0;
+  SECTION_IDS.forEach(function(sid) { buildQueue(sid, false); });
+  updateScore();
+  updateTabBadges();
+}
 
 // -- SECTION SWITCHING ---------------------------------------------------------
 function showSection(sid) {
+  if (sid === state.section && state.current) return; // already here
+
+  // Suspend current mid-question so user can come back
+  if (state.current && !state.submitted) {
+    // Put the question back at the FRONT of its queue so it's next when they return
+    state.queues[state.current.sectionId].unshift({
+      qIdx: state.current.qIdx,
+      isRepeat: state.current.isRepeat
+    });
+    state.suspended[state.current.sectionId] = state.current.qIdx;
+    state.current  = null;
+    state.selected = null;
+    state.submitted = false;
+  }
+
   state.section = sid;
-  ['jk','ee','lr'].forEach(function(s) {
+  SECTION_IDS.forEach(function(s) {
     document.getElementById('tab-' + s).classList.toggle('active', s === sid);
   });
+  updateTabBadges();
+  restoreCardDOM();
   loadNext();
 }
 
-// -- QUEUE MANAGEMENT ---------------------------------------------------------
-function getNext(sid) {
-  var q = state.queues[sid];
-  return q.length > 0 ? q.shift() : null;
+// -- RESTORE CARD DOM (in case empty-state replaced it) ------------------------
+function restoreCardDOM() {
+  var card = document.getElementById('q-card');
+  // Check if the card still has the question structure
+  if (!document.getElementById('q-text')) {
+    card.innerHTML =
+      '<div class="section-label" id="q-section-label"></div>' +
+      '<div class="subsection-label" id="q-subsection-label"></div>' +
+      '<div class="question" id="q-text"></div>' +
+      '<div class="options" id="q-options"></div>' +
+      '<div class="explanation" id="q-explanation">' +
+        '<div class="verdict" id="q-verdict"></div>' +
+        '<div id="q-exp-text"></div>' +
+      '</div>' +
+      '<div class="btn-row">' +
+        '<button class="btn primary" id="submit-btn" onclick="submitAnswer()" disabled>Check Answer</button>' +
+        '<button class="btn" id="next-btn" onclick="nextQuestion()" disabled>Next</button>' +
+        '<button class="btn" id="skip-btn" onclick="skipQuestion()">Skip</button>' +
+      '</div>';
+  }
 }
 
-function requeueWrong(item) {
-  // Insert wrong question 2 positions ahead (or at end if queue is short)
-  var q = state.queues[item.sectionId];
+// -- QUEUE HELPERS -------------------------------------------------------------
+function requeueWrong(sid, qIdx) {
+  var q = state.queues[sid];
   var insertAt = Math.min(2, q.length);
-  var newItem = { sectionId: item.sectionId, qIdx: item.qIdx, isRepeat: true };
-  q.splice(insertAt, 0, newItem);
+  q.splice(insertAt, 0, { qIdx: qIdx, isRepeat: true });
   updateTabBadges();
 }
 
 function updateTabBadges() {
-  ['jk','ee','lr'].forEach(function(sid) {
+  SECTION_IDS.forEach(function(sid) {
     var btn = document.getElementById('tab-' + sid);
     var existing = btn.querySelector('.tab-badge');
     var count = state.queues[sid].length;
@@ -506,39 +562,59 @@ function updateTabBadges() {
   });
 }
 
+function updateProgress() {
+  var sid = state.section;
+  var total = SECTIONS[sid].questions.length;
+  var done = 0;
+  for (var i = 0; i < total; i++) {
+    if (state.results[sid][i] && !state.results[sid][i].skipped) done++;
+  }
+  var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = done + ' / ' + total;
+}
+
 // -- LOAD NEXT QUESTION --------------------------------------------------------
 function loadNext() {
-  var item = getNext(state.section);
-  updateTabBadges();
+  var sid   = state.section;
+  var queue = state.queues[sid];
 
-  if (!item) {
-    // No more questions in this section
-    document.getElementById('q-card').innerHTML =
-      '<div class="empty-state">' +
-      '<div>All questions in this section are complete.</div>' +
-      '<div style="margin-top:8px;font-size:12px;color:#9b9a97">Switch to another section or press Finish Quiz to see your diagnostics.</div>' +
-      '</div>';
+  restoreCardDOM(); // safety: ensure DOM structure exists
+
+  if (queue.length === 0) {
+    // Section complete - show friendly message but keep card structure intact
+    document.getElementById('q-section-label').textContent = SECTIONS[sid].label;
+    document.getElementById('q-subsection-label').textContent = '';
+    document.getElementById('q-text').textContent = 'All questions in this section are complete! Switch to another section or press Finish Quiz to see your diagnostics.';
+    document.getElementById('q-options').innerHTML = '';
+    document.getElementById('q-explanation').className = 'explanation';
+    document.getElementById('q-exp-text').textContent = '';
+    document.getElementById('q-verdict').textContent = '';
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('next-btn').disabled = true;
+    document.getElementById('skip-btn').disabled = true;
     document.getElementById('queue-note').classList.remove('show');
     document.getElementById('progress-fill').style.width = '100%';
     document.getElementById('progress-label').textContent = 'Complete';
+    state.current = null;
     return;
   }
 
-  state.current = item;
-  state.selected = null;
+  var item = queue.shift();
+  updateTabBadges();
+  state.suspended[sid] = null;
+
+  state.current   = { sectionId: sid, qIdx: item.qIdx, isRepeat: item.isRepeat };
+  state.selected  = null;
   state.submitted = false;
 
-  var sec = SECTIONS[item.sectionId];
-  var q = sec.questions[item.qIdx];
+  var sec = SECTIONS[sid];
+  var q   = sec.questions[item.qIdx];
 
-  // Queue note
   document.getElementById('queue-note').classList.toggle('show', item.isRepeat);
-
-  // Section labels
   document.getElementById('q-section-label').textContent = sec.label;
   document.getElementById('q-subsection-label').textContent = q.sub || '';
 
-  // Question text (handle newlines)
   var qEl = document.getElementById('q-text');
   qEl.innerHTML = '';
   q.q.split('\n').forEach(function(line, i) {
@@ -546,7 +622,6 @@ function loadNext() {
     qEl.appendChild(document.createTextNode(line));
   });
 
-  // Options
   var container = document.getElementById('q-options');
   container.innerHTML = '';
   ['A','B','C','D'].forEach(function(letter) {
@@ -554,39 +629,30 @@ function loadNext() {
     var div = document.createElement('div');
     div.className = 'option';
     div.id = 'opt-' + letter;
-    div.onclick = function() { selectOpt(letter); };
-    var l = document.createElement('span');
-    l.className = 'opt-letter';
-    l.textContent = letter + '.';
-    var t = document.createElement('span');
-    t.textContent = q.opts[letter];
-    div.appendChild(l);
-    div.appendChild(t);
+    div.onclick = (function(l) { return function() { selectOpt(l); }; })(letter);
+    var ls = document.createElement('span');
+    ls.className = 'opt-letter';
+    ls.textContent = letter + '.';
+    var ts = document.createElement('span');
+    ts.textContent = q.opts[letter];
+    div.appendChild(ls);
+    div.appendChild(ts);
     container.appendChild(div);
   });
 
-  // Reset explanation
-  var exp = document.getElementById('q-explanation');
-  exp.className = 'explanation';
+  document.getElementById('q-explanation').className = 'explanation';
   document.getElementById('q-exp-text').textContent = '';
   document.getElementById('q-verdict').textContent = '';
-
-  // Reset buttons
   document.getElementById('submit-btn').disabled = true;
   document.getElementById('next-btn').disabled = true;
   document.getElementById('skip-btn').disabled = false;
   document.getElementById('submit-btn').textContent = 'Check Answer';
   document.getElementById('next-btn').textContent = 'Next';
 
-  // Progress for current section
-  var total = SECTIONS[state.section].questions.length;
-  var done = Object.keys(state.results[state.section]).length;
-  var pct = total > 0 ? Math.round((done / total) * 100) : 0;
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('progress-label').textContent = done + ' / ' + total;
+  updateProgress();
 }
 
-// -- SELECT OPTION -------------------------------------------------------------
+// -- SELECT --------------------------------------------------------------------
 function selectOpt(letter) {
   if (state.submitted) return;
   state.selected = letter;
@@ -603,11 +669,11 @@ function submitAnswer() {
   state.submitted = true;
 
   var item = state.current;
-  var q = SECTIONS[item.sectionId].questions[item.qIdx];
-  var correct = q.correct;
+  var sid  = item.sectionId;
+  var q    = SECTIONS[sid].questions[item.qIdx];
+  var correct   = q.correct;
   var isCorrect = state.selected === correct;
 
-  // Lock options
   ['A','B','C','D'].forEach(function(l) {
     var el = document.getElementById('opt-' + l);
     if (!el) return;
@@ -617,78 +683,90 @@ function submitAnswer() {
     if (l === state.selected && !isCorrect) el.classList.add('wrong');
   });
 
-  // Explanation
-  var exp = document.getElementById('q-explanation');
-  exp.className = 'explanation show ' + (isCorrect ? 'correct' : 'wrong');
+  document.getElementById('q-explanation').className = 'explanation show ' + (isCorrect ? 'correct' : 'wrong');
   document.getElementById('q-verdict').textContent = isCorrect
     ? 'Correct!'
     : 'Incorrect - the correct answer is ' + correct + '.';
   document.getElementById('q-exp-text').textContent = q.exp;
 
-  // Track result (only count first attempt per question)
-  var prevResult = state.results[item.sectionId][item.qIdx];
-  if (!prevResult) {
-    state.results[item.sectionId][item.qIdx] = {
-      correct: isCorrect,
-      skipped: false,
-      sub: q.sub
-    };
+  // Record first-attempt result only
+  if (!state.results[sid][item.qIdx]) {
+    state.results[sid][item.qIdx] = { correct: isCorrect, skipped: false, sub: q.sub };
     state.totalAttempted++;
     if (isCorrect) state.totalCorrect++;
     else state.totalWrong++;
   }
 
-  // Requeue if wrong
-  if (!isCorrect) {
-    requeueWrong(item);
-  }
+  if (!isCorrect) requeueWrong(sid, item.qIdx);
 
   updateScore();
-
+  updateProgress();
   document.getElementById('submit-btn').disabled = true;
   document.getElementById('skip-btn').disabled = true;
   document.getElementById('next-btn').disabled = false;
-  document.getElementById('next-btn').textContent = 'Next';
 }
 
 // -- SKIP ----------------------------------------------------------------------
 function skipQuestion() {
-  if (state.submitted) return;
+  if (state.submitted || !state.current) return;
   var item = state.current;
-  var q = SECTIONS[item.sectionId].questions[item.qIdx];
+  var sid  = item.sectionId;
+  var q    = SECTIONS[sid].questions[item.qIdx];
 
-  // Record as skipped if not already answered
-  if (!state.results[item.sectionId][item.qIdx]) {
-    state.results[item.sectionId][item.qIdx] = {
-      correct: false,
-      skipped: true,
-      sub: q.sub
-    };
+  if (!state.results[sid][item.qIdx]) {
+    state.results[sid][item.qIdx] = { correct: false, skipped: true, sub: q.sub };
     state.totalSkipped++;
     state.totalAttempted++;
     updateScore();
   }
 
-  // Requeue at end
-  state.queues[item.sectionId].push({ sectionId: item.sectionId, qIdx: item.qIdx, isRepeat: true });
+  state.queues[sid].push({ qIdx: item.qIdx, isRepeat: true });
   updateTabBadges();
+  state.current = null;
   loadNext();
 }
 
-// -- NEXT ----------------------------------------------------------------------
-function nextQuestion() {
-  loadNext();
+// -- SHUFFLE -------------------------------------------------------------------
+function toggleShuffle() {
+  state.shuffled = !state.shuffled;
+  var btn = document.getElementById('shuffle-btn');
+  if (state.shuffled) {
+    btn.textContent = 'Shuffled';
+    btn.style.background  = '#edf9ee';
+    btn.style.borderColor = '#52c41a';
+    btn.style.color       = '#237804';
+  } else {
+    btn.textContent = 'Shuffle';
+    btn.style.background  = '';
+    btn.style.borderColor = '';
+    btn.style.color       = '';
+  }
+
+  // Reshuffle only the unanswered questions in each queue
+  SECTION_IDS.forEach(function(sid) {
+    var fresh = state.queues[sid].filter(function(x) { return !x.isRepeat; });
+    var repeats = state.queues[sid].filter(function(x) { return x.isRepeat; });
+    if (state.shuffled) {
+      for (var j = fresh.length - 1; j > 0; j--) {
+        var k = Math.floor(Math.random() * (j + 1));
+        var tmp = fresh[j]; fresh[j] = fresh[k]; fresh[k] = tmp;
+      }
+    } else {
+      fresh.sort(function(a, b) { return a.qIdx - b.qIdx; });
+    }
+    state.queues[sid] = repeats.concat(fresh);
+  });
 }
 
-// -- SCORE UPDATE --------------------------------------------------------------
+// -- SCORE ---------------------------------------------------------------------
 function updateScore() {
-  document.getElementById('sc-total').textContent = state.totalAttempted;
+  document.getElementById('sc-total').textContent   = state.totalAttempted;
   document.getElementById('sc-correct').textContent = state.totalCorrect;
-  document.getElementById('sc-wrong').textContent = state.totalWrong;
-  document.getElementById('sc-skip').textContent = state.totalSkipped;
+  document.getElementById('sc-wrong').textContent   = state.totalWrong;
+  document.getElementById('sc-skip').textContent    = state.totalSkipped;
   var answered = state.totalCorrect + state.totalWrong;
-  var pct = answered > 0 ? Math.round((state.totalCorrect / answered) * 100) + '%' : '-';
-  document.getElementById('sc-pct').textContent = pct;
+  document.getElementById('sc-pct').textContent = answered > 0
+    ? Math.round((state.totalCorrect / answered) * 100) + '%' : '-';
 }
 
 // -- DIAGNOSTICS ---------------------------------------------------------------
@@ -696,40 +774,37 @@ function showDiagnostics() {
   document.getElementById('quiz-area').style.display = 'none';
   document.getElementById('diagnostics-panel').className = 'diagnostics show';
 
-  // Overall summary
   var answered = state.totalCorrect + state.totalWrong;
   var pct = answered > 0 ? Math.round((state.totalCorrect / answered) * 100) : 0;
   var scoreClass = pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'needs';
-  var scoreMsg = pct >= 70 ? 'Strong performance' : pct >= 50 ? 'Room to improve' : 'Needs more practice';
+  var scoreMsg   = pct >= 70 ? 'Strong performance' : pct >= 50 ? 'Room to improve' : 'Needs more practice';
+
   document.getElementById('diag-summary').innerHTML =
     '<div class="big-score ' + scoreClass + '">' + (answered > 0 ? pct + '%' : '-') + '</div>' +
-    '<div style="font-size:13px;color:#6b6b6b;margin-top:4px">' + scoreMsg + ' &mdash; ' +
-    state.totalCorrect + ' correct, ' + state.totalWrong + ' wrong, ' + state.totalSkipped + ' skipped out of ' +
-    state.totalAttempted + ' attempted</div>';
+    '<div style="font-size:13px;color:#6b6b6b;margin-top:4px">' + scoreMsg + ' - ' +
+    state.totalCorrect + ' correct, ' + state.totalWrong + ' wrong, ' +
+    state.totalSkipped + ' skipped out of ' + state.totalAttempted + ' attempted</div>';
 
-  // Per-section breakdown
   var breakdown = document.getElementById('diag-breakdown');
   breakdown.innerHTML = '';
 
-  ['jk','ee','lr'].forEach(function(sid) {
+  SECTION_IDS.forEach(function(sid) {
     var sec = SECTIONS[sid];
     var res = state.results[sid];
-
-    // Group by subsection
     var subs = {};
+
     sec.questions.forEach(function(q, i) {
       if (!subs[q.sub]) subs[q.sub] = { correct: 0, wrong: 0, skipped: 0, total: 0 };
       subs[q.sub].total++;
       if (res[i]) {
-        if (res[i].skipped) subs[q.sub].skipped++;
+        if (res[i].skipped)      subs[q.sub].skipped++;
         else if (res[i].correct) subs[q.sub].correct++;
-        else subs[q.sub].wrong++;
+        else                     subs[q.sub].wrong++;
       }
     });
 
     var secDiv = document.createElement('div');
     secDiv.className = 'diag-section';
-
     var secName = document.createElement('div');
     secName.className = 'diag-section-name';
     secName.textContent = sec.label;
@@ -737,12 +812,11 @@ function showDiagnostics() {
 
     Object.keys(subs).forEach(function(subName) {
       var s = subs[subName];
-      var attempted = s.correct + s.wrong;
-      var subPct = attempted > 0 ? Math.round((s.correct / attempted) * 100) : null;
+      var att = s.correct + s.wrong;
+      var subPct = att > 0 ? Math.round((s.correct / att) * 100) : null;
       var barColor = subPct === null ? '#e3e2e0' : subPct >= 70 ? '#52c41a' : subPct >= 50 ? '#faad14' : '#f5222d';
       var tagClass = subPct === null ? 'tag-unanswered' : subPct >= 70 ? 'tag-strong' : subPct >= 50 ? 'tag-ok' : 'tag-weak';
-      var tagText = subPct === null ? 'Not attempted' : subPct >= 70 ? 'Strong' : subPct >= 50 ? 'Review' : 'Weak';
-
+      var tagText  = subPct === null ? 'Not attempted' : subPct >= 70 ? 'Strong' : subPct >= 50 ? 'Review' : 'Weak';
       var row = document.createElement('div');
       row.className = 'diag-row';
       row.innerHTML =
@@ -759,31 +833,53 @@ function showDiagnostics() {
 
 // -- RESTART -------------------------------------------------------------------
 function restartQuiz() {
-  state.results = { jk: {}, ee: {}, lr: {} };
-  state.totalAttempted = 0;
-  state.totalCorrect = 0;
-  state.totalWrong = 0;
-  state.totalSkipped = 0;
-  state.current = null;
-  state.selected = null;
-  state.submitted = false;
+  fullReset();
 
-  buildQueue('jk');
-  buildQueue('ee');
-  buildQueue('lr');
+  // Reset shuffle button
+  var btn = document.getElementById('shuffle-btn');
+  if (btn) {
+    btn.textContent = 'Shuffle';
+    btn.style.background  = '';
+    btn.style.borderColor = '';
+    btn.style.color       = '';
+  }
 
-  updateScore();
-  updateTabBadges();
-
+  // Hide diagnostics, show quiz
   document.getElementById('diagnostics-panel').className = 'diagnostics';
   document.getElementById('quiz-area').style.display = 'block';
 
-  showSection('jk');
+  // Restore card DOM structure fully
+  document.getElementById('q-card').innerHTML =
+    '<div class="section-label" id="q-section-label"></div>' +
+    '<div class="subsection-label" id="q-subsection-label"></div>' +
+    '<div class="question" id="q-text"></div>' +
+    '<div class="options" id="q-options"></div>' +
+    '<div class="explanation" id="q-explanation">' +
+      '<div class="verdict" id="q-verdict"></div>' +
+      '<div id="q-exp-text"></div>' +
+    '</div>' +
+    '<div class="btn-row">' +
+      '<button class="btn primary" id="submit-btn" onclick="submitAnswer()" disabled>Check Answer</button>' +
+      '<button class="btn" id="next-btn" onclick="nextQuestion()" disabled>Next</button>' +
+      '<button class="btn" id="skip-btn" onclick="skipQuestion()">Skip</button>' +
+    '</div>';
+
+  // Go to first section and load
+  state.section = 'jk';
+  SECTION_IDS.forEach(function(s) {
+    document.getElementById('tab-' + s).classList.toggle('active', s === 'jk');
+  });
+
+  updateTabBadges();
+  loadNext();
 }
 
+// -- NEXT ----------------------------------------------------------------------
+function nextQuestion() { loadNext(); }
+
 // -- INIT ----------------------------------------------------------------------
-updateTabBadges();
-loadNext();
+fullReset();
+showSection('jk');
 </script>
 </body>
 </html>
