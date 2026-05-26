@@ -283,6 +283,28 @@
     body { padding: 20px 24px; }
     .score-bar { gap: 20px; }
   }
+
+  /* -- PASSAGE BOX ----------------------------------------- */
+  .passage-counter {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #2eaadc;
+    margin-bottom: 6px;
+  }
+  .passage-box {
+    background: #f0f7fc;
+    border-left: 3px solid #2eaadc;
+    border-radius: 0 4px 4px 0;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.75;
+    color: #37352f;
+    max-height: 240px;
+    overflow-y: auto;
+  }
 </style>
 </head>
 <body>
@@ -307,9 +329,10 @@
   <button class="tab-btn" onclick="showSection('lr')" id="tab-lr">Logical Reasoning</button>
 </div>
 
-<!-- FINISH BUTTON -->
-<div style="margin-bottom:12px">
+<!-- CONTROLS ROW -->
+<div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
   <button class="btn danger" onclick="showDiagnostics()">Finish Quiz &amp; See Diagnostics</button>
+  <button class="btn" id="shuffle-btn" onclick="toggleShuffle()">Shuffle All</button>
 </div>
 
 <!-- QUIZ AREA -->
@@ -326,6 +349,10 @@
 
   <!-- QUESTION CARD -->
   <div class="card" id="q-card">
+    <div id="q-passage-wrap" style="display:none">
+      <div class="passage-counter" id="q-passage-counter"></div>
+      <div class="passage-box" id="q-passage-box"></div>
+    </div>
     <div class="section-label" id="q-section-label"></div>
     <div class="subsection-label" id="q-subsection-label"></div>
     <div class="question" id="q-text"></div>
@@ -349,19 +376,32 @@
   <div class="diag-subtitle">Based on your answers across all sections</div>
   <div class="diag-summary" id="diag-summary"></div>
   <div id="diag-breakdown"></div>
-  <div style="margin-top:16px">
-    <button class="btn primary" onclick="restartQuiz()">Start Over</button>
+  <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn primary" onclick="returnToQuiz()">Return to Quiz</button>
+    <button class="btn" onclick="restartQuiz()">Start Over</button>
   </div>
 </div>
 
 <script>
 
-// -- DATA ---------------------------------------------------------------------
+// -- DATA ----------------------------------------------------------------------
+// Each section has an `items` array.
+// Items are either:
+//   { type: 'standalone', sub, q, opts, correct, exp }
+//   { type: 'group', gid, sub, passage, questions: [{q, opts, correct, exp}, ...] }
+//
+// The queue holds entries like:
+//   { type: 'standalone', sid, itemIdx, isRepeat }
+//   { type: 'group',      sid, itemIdx, qInGroup, groupSize, gid, isRepeat }
+//
+// Results key: sid + ':' + itemIdx + ':' + qInGroup  (qInGroup=0 for standalones)
+
 var SECTIONS = {
   jk: {
     label: "Job Knowledge",
-    questions: [
+    items: [
       {
+        type: 'standalone',
         sub: "U.S. Government & Foreign Policy",
         q: "Which U.S. government agency is primarily responsible for managing foreign affairs and diplomatic relations?",
         opts: { A: "Department of Homeland Security", B: "Department of Defense", C: "Department of State", D: "Department of Justice" },
@@ -369,6 +409,7 @@ var SECTIONS = {
         exp: "The Department of State manages U.S. foreign affairs and diplomacy, including maintaining embassies and consulates, issuing passports and visas, and representing the U.S. in international negotiations."
       },
       {
+        type: 'standalone',
         sub: "U.S. History",
         q: "The Marshall Plan (1948) was a U.S. program designed to do which of the following?",
         opts: { A: "Build military alliances against the Soviet Union", B: "Provide economic aid to rebuild Western European economies after WWII", C: "Establish the United Nations", D: "Expand U.S. military bases in Europe" },
@@ -376,6 +417,7 @@ var SECTIONS = {
         exp: "The Marshall Plan provided over $12 billion in economic aid to rebuild Western European economies after WWII. It was named after Secretary of State George Marshall and is considered one of the most successful foreign policy initiatives in U.S. history."
       },
       {
+        type: 'standalone',
         sub: "International Relations",
         q: "What does the term 'detente' refer to in Cold War foreign policy?",
         opts: { A: "A military buildup to deter Soviet aggression", B: "A policy of massive retaliation", C: "A period of easing tensions and improved relations between the U.S. and Soviet Union", D: "The strategy of supporting anti-communist movements worldwide" },
@@ -386,8 +428,47 @@ var SECTIONS = {
   },
   ee: {
     label: "English Expression",
-    questions: [
+    items: [
       {
+        type: 'group',
+        gid: 'ee-g1',
+        sub: "Reading Comprehension",
+        passage: "Consular Policies and the Transmission of Citizenship\n\n(1) The acquisition of U.S. citizenship at birth by a child born abroad to one U.S. citizen parent and one alien parent is governed by Section 301(g) of the Immigration and Nationality Act (INA). This statute mandates that the citizen parent must have been physically present in the United States for a specific, cumulative duration prior to the child's birth. Consular officers evaluate the evidence presented during a Report of Birth Abroad (CRBA) interview to confirm that these precise presence minimums have been met before a claim is legally sustained.\n\n(2) For children born on or after November 14, 1986, the law requires the U.S. citizen parent to demonstrate a total of five years of physical presence in the United States, at least two of which must have occurred after the parent reached the age of fourteen. Consular adjudicators must meticulously calculate these timeframes, as simple mathematical errors during the interview can lead to the wrongful issuance or denial of vital citizenship documentation.\n\n(3) It is critical to distinguish between the legal definitions of \"residence\" and \"physical presence,\" as applicants frequently conflate them. While \"residence\" implies the creation of a primary domicile or general abode, \"physical presence\" requires actual, literal bodily existence within the geographic borders of the United States. Brief trips abroad for vacation do not count toward physical presence; conversely, time spent in the U.S. by an alien prior to naturalization can count toward their transmission requirements once citizenship is achieved.\n\n(4) The burden of proof during a consular adjudication rests entirely upon the applicant, who must establish the transmission claim by a preponderance of the evidence. Primary evidence generally includes official academic transcripts, employment records, and passports containing entry and exit stamps. When primary records are missing, consular officers evaluate secondary evidence, such as comprehensive sworn affidavits from family members, though these face heightened scrutiny to deter fraud.",
+        questions: [
+          {
+            q: "Which of the following is the primary legal standard an applicant must meet to establish a citizenship transmission claim during a consular adjudication?",
+            opts: { A: "The applicant must prove the claim beyond a reasonable doubt", B: "The applicant must prove the claim by a preponderance of the evidence", C: "The consular officer must independently verify the claim through government records", D: "The applicant must submit a sworn affidavit from at least two family members" },
+            correct: "B",
+            exp: "Paragraph 4 explicitly states the burden of proof rests entirely on the applicant, who must establish the claim 'by a preponderance of the evidence.' Beyond a reasonable doubt is a criminal law standard not mentioned in the passage. The other options misrepresent what the passage states."
+          },
+          {
+            q: "According to the passage, which correctly describes the physical presence requirement for a child born on or after November 14, 1986?",
+            opts: { A: "The U.S. citizen parent must have been present in the U.S. for at least two years total", B: "The U.S. citizen parent must have been present for five years with no age requirement", C: "The U.S. citizen parent must have been present for five years total, at least two of which occurred after age fourteen", D: "The U.S. citizen parent must have been present for at least two years after reaching age fourteen" },
+            correct: "C",
+            exp: "Paragraph 2 states the requirement is 'a total of five years of physical presence in the United States, at least two of which must have occurred after the parent reached the age of fourteen.' Option B omits the age requirement; Options A and D misstate the totals."
+          },
+          {
+            q: "The passage implies that consular officers must distinguish between 'residence' and 'physical presence' primarily because:",
+            opts: { A: "The INA uses the two terms interchangeably, creating ambiguity", B: "Applicants commonly confuse the two concepts, which could affect the accuracy of their claims", C: "Residence is a stricter standard than physical presence and is easier to prove", D: "Brief trips abroad are counted toward residence but not toward physical presence" },
+            correct: "B",
+            exp: "Paragraph 3 states it is 'critical to distinguish' between the terms specifically because 'applicants frequently conflate them.' The passage does not say the INA uses the terms interchangeably. Option C reverses the relationship described in the passage."
+          },
+          {
+            q: "Based on the passage, which of the following would NOT qualify as primary evidence during a CRBA adjudication?",
+            opts: { A: "Official academic transcripts", B: "Employment records", C: "Passports containing entry and exit stamps", D: "Sworn affidavits from family members" },
+            correct: "D",
+            exp: "Paragraph 4 identifies official academic transcripts, employment records, and passports with entry/exit stamps as primary evidence. Sworn affidavits from family members are explicitly classified as secondary evidence, used only when primary records are missing."
+          },
+          {
+            q: "Which of the following can be inferred from the passage about secondary evidence in a CRBA adjudication?",
+            opts: { A: "Secondary evidence is treated equally to primary evidence as long as it is notarized", B: "Secondary evidence is a fallback used when primary evidence is unavailable and faces a higher burden of scrutiny", C: "Consular officers are prohibited from accepting secondary evidence under any circumstances", D: "Secondary evidence is automatically sufficient to establish a transmission claim" },
+            correct: "B",
+            exp: "Paragraph 4 states secondary evidence is evaluated 'when primary records are missing' and faces 'heightened scrutiny to deter fraud.' Together these imply secondary evidence is a fallback subject to a higher burden. Options A, C, and D each contradict or overstate what the passage says."
+          }
+        ]
+      },
+      {
+        type: 'standalone',
         sub: "Verb Form",
         q: "The officer noted that the applicant had [went] to the embassy twice without success.\n\nFor the underlined word, which is correct?",
         opts: { A: "went", B: "gone", C: "go", D: "goes" },
@@ -395,6 +476,7 @@ var SECTIONS = {
         exp: "The past perfect construction 'had gone' requires the past participle 'gone,' not the simple past 'went.' The verb 'had' signals that a past participle must follow. 'Had went' is always incorrect in standard English."
       },
       {
+        type: 'standalone',
         sub: "Word Confusion",
         q: "The committee was asked to [insure] a smooth transition between administrations.\n\nFor the underlined word, which is correct?",
         opts: { A: "insure", B: "assure", C: "ensure", D: "secure" },
@@ -402,6 +484,7 @@ var SECTIONS = {
         exp: "'Ensure' means to make certain something happens or is the case. 'Insure' relates to financial insurance coverage. 'Assure' is used to put a person's mind at ease. 'Ensure' is correct when the subject is taking steps to guarantee a result."
       },
       {
+        type: 'standalone',
         sub: "Subject-Verb Agreement",
         q: "Read the following sentence and identify the error:\n\n\"The list of requirements are available on the agency website.\"\n\nIndicate the error type:",
         opts: { A: "Misspelled word", B: "Improper word choice", C: "Verb tense or agreement", D: "Punctuation error" },
@@ -412,8 +495,9 @@ var SECTIONS = {
   },
   lr: {
     label: "Logical Reasoning",
-    questions: [
+    items: [
       {
+        type: 'standalone',
         sub: "Deductive Reasoning",
         q: "All consular officers must complete training before being posted abroad. Maria has been posted abroad.\n\nWhich conclusion follows logically?",
         opts: { A: "Maria has not completed training.", B: "Maria completed training before being posted.", C: "Maria was exempt from the training requirement.", D: "Maria chose to complete training voluntarily." },
@@ -421,6 +505,7 @@ var SECTIONS = {
         exp: "This is a straightforward deductive syllogism. The first premise states ALL officers must complete training before posting. Maria has been posted. Therefore she must have completed training - this follows necessarily from the premises. Options A and C contradict the premise; D introduces an unsupported assumption."
       },
       {
+        type: 'standalone',
         sub: "Logical Inference",
         q: "A report states: 'Visa processing times increased in every month where staffing fell below 80% capacity. In March, processing times did not increase.'\n\nWhat can be logically concluded?",
         opts: { A: "Staffing was above 80% capacity in March.", B: "Staffing was exactly 80% capacity in March.", C: "Staffing increased significantly in March.", D: "Processing times will not increase next month." },
@@ -428,6 +513,7 @@ var SECTIONS = {
         exp: "The statement is: if staffing below 80%, then processing times increase. The contrapositive is: if processing times did NOT increase, then staffing was NOT below 80% - meaning staffing was at or above 80%. Option A correctly captures this. Options B and C are too specific; D makes an unsupported prediction."
       },
       {
+        type: 'standalone',
         sub: "Argument Analysis",
         q: "A manager argues: 'Our team processed 20% more applications this quarter than last quarter. Therefore our team's efficiency has improved.'\n\nWhich of the following most weakens this argument?",
         opts: { A: "Other teams also processed more applications this quarter.", B: "The team worked 30% more hours this quarter than last quarter.", C: "Application quality remained the same across both quarters.", D: "The manager has led the team for two years." },
@@ -440,17 +526,46 @@ var SECTIONS = {
 
 var SECTION_IDS = ['jk', 'ee', 'lr'];
 
+// -- RESULT KEY ----------------------------------------------------------------
+// sid:itemIdx:qInGroup  (qInGroup always 0 for standalones)
+function rKey(sid, itemIdx, qInGroup) {
+  return sid + ':' + itemIdx + ':' + (qInGroup || 0);
+}
+
+// -- TOTAL QUESTION COUNT per section (for progress bar) -----------------------
+function totalQs(sid) {
+  var n = 0;
+  SECTIONS[sid].items.forEach(function(item) {
+    if (item.type === 'group') n += item.questions.length;
+    else n++;
+  });
+  return n;
+}
+
+function answeredQs(sid) {
+  var n = 0;
+  var items = SECTIONS[sid].items;
+  items.forEach(function(item, itemIdx) {
+    if (item.type === 'group') {
+      item.questions.forEach(function(_, qi) {
+        var r = state.results[rKey(sid, itemIdx, qi)];
+        if (r && !r.skipped) n++;
+      });
+    } else {
+      var r = state.results[rKey(sid, itemIdx, 0)];
+      if (r && !r.skipped) n++;
+    }
+  });
+  return n;
+}
+
 // -- STATE ---------------------------------------------------------------------
-// queues[sid]   = remaining question indices to show (in order)
-// results[sid]  = { qIdx: {correct, skipped, sub} }  -- first-attempt only
-// suspended[sid]= the question index paused when user switched away mid-question
-//                 (null if none)
 var state = {
   section:  'jk',
   queues:   { jk: [], ee: [], lr: [] },
-  results:  { jk: {}, ee: {}, lr: {} },
+  results:  {},           // keyed by rKey()
   suspended:{ jk: null, ee: null, lr: null },
-  current:  null,
+  current:  null,         // queue entry currently being shown
   selected: null,
   submitted:false,
   shuffled: false,
@@ -461,21 +576,56 @@ var state = {
   totalRecovered:  0
 };
 
-// -- QUEUE INIT ----------------------------------------------------------------
-function buildQueue(sid, shuffle) {
-  var indices = [];
-  for (var i = 0; i < SECTIONS[sid].questions.length; i++) indices.push(i);
-  if (shuffle) {
-    for (var j = indices.length - 1; j > 0; j--) {
+// -- QUEUE BUILDER -------------------------------------------------------------
+// Builds a flat queue of individual question cards.
+// Groups are kept as a contiguous block; shuffle moves the block as a unit.
+
+function buildQueue(sid, doShuffle) {
+  var items = SECTIONS[sid].items;
+
+  // Build "units" - each unit is either a single standalone card or
+  // an ordered array of group cards. Shuffle happens at unit level.
+  var units = [];
+  items.forEach(function(item, itemIdx) {
+    if (item.type === 'group') {
+      var groupCards = item.questions.map(function(q, qi) {
+        return {
+          type:      'group',
+          sid:       sid,
+          itemIdx:   itemIdx,
+          qInGroup:  qi,
+          groupSize: item.questions.length,
+          gid:       item.gid,
+          isRepeat:  false
+        };
+      });
+      units.push(groupCards); // array = one shuffleable unit
+    } else {
+      units.push([{
+        type:     'standalone',
+        sid:      sid,
+        itemIdx:  itemIdx,
+        qInGroup: 0,
+        isRepeat: false
+      }]);
+    }
+  });
+
+  if (doShuffle) {
+    for (var j = units.length - 1; j > 0; j--) {
       var k = Math.floor(Math.random() * (j + 1));
-      var tmp = indices[j]; indices[j] = indices[k]; indices[k] = tmp;
+      var tmp = units[j]; units[j] = units[k]; units[k] = tmp;
     }
   }
-  state.queues[sid] = indices.map(function(i) { return { qIdx: i, isRepeat: false }; });
+
+  // Flatten units into a single queue array
+  var queue = [];
+  units.forEach(function(unit) { unit.forEach(function(card) { queue.push(card); }); });
+  state.queues[sid] = queue;
 }
 
 function fullReset() {
-  state.results   = { jk: {}, ee: {}, lr: {} };
+  state.results   = {};
   state.suspended = { jk: null, ee: null, lr: null };
   state.current   = null;
   state.selected  = null;
@@ -493,23 +643,17 @@ function fullReset() {
 
 // -- SECTION SWITCHING ---------------------------------------------------------
 function showSection(sid) {
-  // If diagnostics are showing, hide them and restore quiz area
   var diagPanel = document.getElementById('diagnostics-panel');
   if (diagPanel.classList.contains('show')) {
     diagPanel.className = 'diagnostics';
     document.getElementById('quiz-area').style.display = 'block';
   }
 
-  if (sid === state.section && state.current) return; // already here
+  if (sid === state.section && state.current) return;
 
-  // Suspend current mid-question so user can come back
   if (state.current && !state.submitted) {
-    // Put the question back at the FRONT of its queue so it's next when they return
-    state.queues[state.current.sectionId].unshift({
-      qIdx: state.current.qIdx,
-      isRepeat: state.current.isRepeat
-    });
-    state.suspended[state.current.sectionId] = state.current.qIdx;
+    state.queues[state.current.sid].unshift(state.current);
+    state.suspended[state.current.sid] = state.current;
     state.current  = null;
     state.selected = null;
     state.submitted = false;
@@ -524,12 +668,14 @@ function showSection(sid) {
   loadNext();
 }
 
-// -- RESTORE CARD DOM (in case empty-state replaced it) ------------------------
+// -- RESTORE CARD DOM ----------------------------------------------------------
 function restoreCardDOM() {
-  var card = document.getElementById('q-card');
-  // Check if the card still has the question structure
-  if (!document.getElementById('q-text')) {
-    card.innerHTML =
+  if (!document.getElementById('q-passage-wrap')) {
+    document.getElementById('q-card').innerHTML =
+      '<div id="q-passage-wrap" style="display:none">' +
+        '<div class="passage-counter" id="q-passage-counter"></div>' +
+        '<div class="passage-box" id="q-passage-box"></div>' +
+      '</div>' +
       '<div class="section-label" id="q-section-label"></div>' +
       '<div class="subsection-label" id="q-subsection-label"></div>' +
       '<div class="question" id="q-text"></div>' +
@@ -547,10 +693,12 @@ function restoreCardDOM() {
 }
 
 // -- QUEUE HELPERS -------------------------------------------------------------
-function requeueWrong(sid, qIdx) {
-  var q = state.queues[sid];
+function requeueWrong(entry) {
+  var q = state.queues[entry.sid];
   var insertAt = Math.min(2, q.length);
-  q.splice(insertAt, 0, { qIdx: qIdx, isRepeat: true });
+  var repeatEntry = JSON.parse(JSON.stringify(entry));
+  repeatEntry.isRepeat = true;
+  q.splice(insertAt, 0, repeatEntry);
   updateTabBadges();
 }
 
@@ -574,36 +722,32 @@ function updateTabBadges() {
 }
 
 function updateProgress() {
-  var sid = state.section;
-  var total = SECTIONS[sid].questions.length;
-  var done = 0;
-  for (var i = 0; i < total; i++) {
-    if (state.results[sid][i] && !state.results[sid][i].skipped) done++;
-  }
-  var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  var sid   = state.section;
+  var total = totalQs(sid);
+  var done  = answeredQs(sid);
+  var pct   = total > 0 ? Math.round((done / total) * 100) : 0;
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('progress-label').textContent = done + ' / ' + total;
 }
 
-// -- LOAD NEXT QUESTION --------------------------------------------------------
+// -- LOAD NEXT -----------------------------------------------------------------
 function loadNext() {
   var sid   = state.section;
   var queue = state.queues[sid];
-
-  restoreCardDOM(); // safety: ensure DOM structure exists
+  restoreCardDOM();
 
   if (queue.length === 0) {
-    // Section complete - show friendly message but keep card structure intact
     document.getElementById('q-section-label').textContent = SECTIONS[sid].label;
     document.getElementById('q-subsection-label').textContent = '';
+    var pw = document.getElementById('q-passage-wrap'); if (pw) pw.style.display = 'none';
     document.getElementById('q-text').textContent = 'All questions in this section are complete! Switch to another section or press Finish Quiz to see your diagnostics.';
     document.getElementById('q-options').innerHTML = '';
     document.getElementById('q-explanation').className = 'explanation';
     document.getElementById('q-exp-text').textContent = '';
     document.getElementById('q-verdict').textContent = '';
     document.getElementById('submit-btn').disabled = true;
-    document.getElementById('next-btn').disabled = true;
-    document.getElementById('skip-btn').disabled = true;
+    document.getElementById('next-btn').disabled   = true;
+    document.getElementById('skip-btn').disabled   = true;
     document.getElementById('queue-note').classList.remove('show');
     document.getElementById('progress-fill').style.width = '100%';
     document.getElementById('progress-label').textContent = 'Complete';
@@ -611,21 +755,42 @@ function loadNext() {
     return;
   }
 
-  var item = queue.shift();
+  var entry = queue.shift();
   updateTabBadges();
   state.suspended[sid] = null;
-
-  state.current   = { sectionId: sid, qIdx: item.qIdx, isRepeat: item.isRepeat };
+  state.current   = entry;
   state.selected  = null;
   state.submitted = false;
 
-  var sec = SECTIONS[sid];
-  var q   = sec.questions[item.qIdx];
+  var sec  = SECTIONS[sid];
+  var item = sec.items[entry.itemIdx];
 
-  document.getElementById('queue-note').classList.toggle('show', item.isRepeat);
+  // Determine the question object
+  var q = entry.type === 'group'
+    ? item.questions[entry.qInGroup]
+    : item;
+
+  document.getElementById('queue-note').classList.toggle('show', entry.isRepeat);
   document.getElementById('q-section-label').textContent = sec.label;
-  document.getElementById('q-subsection-label').textContent = q.sub || '';
+  document.getElementById('q-subsection-label').textContent = item.sub || '';
 
+  // Passage display
+  var passWrap = document.getElementById('q-passage-wrap');
+  if (entry.type === 'group') {
+    passWrap.style.display = 'block';
+    document.getElementById('q-passage-counter').textContent =
+      'Passage question ' + (entry.qInGroup + 1) + ' of ' + entry.groupSize;
+    var passBox = document.getElementById('q-passage-box');
+    passBox.innerHTML = '';
+    item.passage.split('\n').forEach(function(line, i) {
+      if (i > 0) passBox.appendChild(document.createElement('br'));
+      passBox.appendChild(document.createTextNode(line));
+    });
+  } else {
+    passWrap.style.display = 'none';
+  }
+
+  // Question text
   var qEl = document.getElementById('q-text');
   qEl.innerHTML = '';
   q.q.split('\n').forEach(function(line, i) {
@@ -633,6 +798,7 @@ function loadNext() {
     qEl.appendChild(document.createTextNode(line));
   });
 
+  // Options
   var container = document.getElementById('q-options');
   container.innerHTML = '';
   ['A','B','C','D'].forEach(function(letter) {
@@ -641,13 +807,9 @@ function loadNext() {
     div.className = 'option';
     div.id = 'opt-' + letter;
     div.onclick = (function(l) { return function() { selectOpt(l); }; })(letter);
-    var ls = document.createElement('span');
-    ls.className = 'opt-letter';
-    ls.textContent = letter + '.';
-    var ts = document.createElement('span');
-    ts.textContent = q.opts[letter];
-    div.appendChild(ls);
-    div.appendChild(ts);
+    var ls = document.createElement('span'); ls.className = 'opt-letter'; ls.textContent = letter + '.';
+    var ts = document.createElement('span'); ts.textContent = q.opts[letter];
+    div.appendChild(ls); div.appendChild(ts);
     container.appendChild(div);
   });
 
@@ -655,10 +817,10 @@ function loadNext() {
   document.getElementById('q-exp-text').textContent = '';
   document.getElementById('q-verdict').textContent = '';
   document.getElementById('submit-btn').disabled = true;
-  document.getElementById('next-btn').disabled = true;
-  document.getElementById('skip-btn').disabled = false;
+  document.getElementById('next-btn').disabled   = true;
+  document.getElementById('skip-btn').disabled   = false;
   document.getElementById('submit-btn').textContent = 'Check Answer';
-  document.getElementById('next-btn').textContent = 'Next';
+  document.getElementById('next-btn').textContent   = 'Next';
 
   updateProgress();
 }
@@ -676,14 +838,16 @@ function selectOpt(letter) {
 
 // -- SUBMIT --------------------------------------------------------------------
 function submitAnswer() {
-  if (!state.selected || state.submitted) return;
+  if (!state.selected || !state.current || state.submitted) return;
   state.submitted = true;
 
-  var item = state.current;
-  var sid  = item.sectionId;
-  var q    = SECTIONS[sid].questions[item.qIdx];
-  var correct   = q.correct;
+  var entry   = state.current;
+  var sid     = entry.sid;
+  var item    = SECTIONS[sid].items[entry.itemIdx];
+  var q       = entry.type === 'group' ? item.questions[entry.qInGroup] : item;
+  var correct = q.correct;
   var isCorrect = state.selected === correct;
+  var key = rKey(sid, entry.itemIdx, entry.qInGroup);
 
   ['A','B','C','D'].forEach(function(l) {
     var el = document.getElementById('opt-' + l);
@@ -700,78 +864,106 @@ function submitAnswer() {
     : 'Incorrect - the correct answer is ' + correct + '.';
   document.getElementById('q-exp-text').textContent = q.exp;
 
-  // Record first-attempt result only
-  if (!state.results[sid][item.qIdx]) {
-    state.results[sid][item.qIdx] = {
-      correct: isCorrect,
-      skipped: false,
-      wasRepeat: item.isRepeat,
-      sub: q.sub
-    };
+  // Record first-attempt only
+  if (!state.results[key]) {
+    state.results[key] = { correct: isCorrect, skipped: false, wasRepeat: entry.isRepeat, sub: item.sub };
     state.totalAttempted++;
-    if (isCorrect && item.isRepeat) state.totalRecovered++;
+    if (isCorrect && entry.isRepeat) state.totalRecovered++;
     else if (isCorrect) state.totalCorrect++;
     else state.totalWrong++;
   }
 
-  if (!isCorrect) requeueWrong(sid, item.qIdx);
+  if (!isCorrect) requeueWrong(entry);
 
   updateScore();
   updateProgress();
   document.getElementById('submit-btn').disabled = true;
-  document.getElementById('skip-btn').disabled = true;
-  document.getElementById('next-btn').disabled = false;
+  document.getElementById('skip-btn').disabled   = true;
+  document.getElementById('next-btn').disabled   = false;
 }
 
 // -- SKIP ----------------------------------------------------------------------
 function skipQuestion() {
   if (state.submitted || !state.current) return;
-  var item = state.current;
-  var sid  = item.sectionId;
-  var q    = SECTIONS[sid].questions[item.qIdx];
+  var entry = state.current;
+  var sid   = entry.sid;
+  var item  = SECTIONS[sid].items[entry.itemIdx];
+  var key   = rKey(sid, entry.itemIdx, entry.qInGroup);
 
-  if (!state.results[sid][item.qIdx]) {
-    state.results[sid][item.qIdx] = { correct: false, skipped: true, sub: q.sub };
+  if (!state.results[key]) {
+    state.results[key] = { correct: false, skipped: true, sub: item.sub };
     state.totalSkipped++;
     state.totalAttempted++;
     updateScore();
   }
 
-  state.queues[sid].push({ qIdx: item.qIdx, isRepeat: true });
+  var repeatEntry = JSON.parse(JSON.stringify(entry));
+  repeatEntry.isRepeat = true;
+  state.queues[sid].push(repeatEntry);
   updateTabBadges();
   state.current = null;
   loadNext();
 }
 
 // -- SHUFFLE -------------------------------------------------------------------
-function toggleShuffle() {
-  state.shuffled = !state.shuffled;
+function setShuffle(on) {
+  state.shuffled = on;
   var btn = document.getElementById('shuffle-btn');
-  if (state.shuffled) {
-    btn.textContent = 'Shuffled';
-    btn.style.background  = '#edf9ee';
-    btn.style.borderColor = '#52c41a';
-    btn.style.color       = '#237804';
-  } else {
-    btn.textContent = 'Shuffle';
-    btn.style.background  = '';
-    btn.style.borderColor = '';
-    btn.style.color       = '';
+  if (btn) {
+    btn.textContent       = on ? 'Shuffled' : 'Shuffle';
+    btn.style.background  = on ? '#edf9ee' : '';
+    btn.style.borderColor = on ? '#52c41a'  : '';
+    btn.style.color       = on ? '#237804'  : '';
   }
+}
 
-  // Reshuffle only the unanswered questions in each queue
+function toggleShuffle() {
+  setShuffle(!state.shuffled);
+  reshuffleQueues(state.shuffled);
+}
+
+// Reshuffle all queues treating groups as atomic units
+function reshuffleQueues(doShuffle) {
   SECTION_IDS.forEach(function(sid) {
-    var fresh = state.queues[sid].filter(function(x) { return !x.isRepeat; });
-    var repeats = state.queues[sid].filter(function(x) { return x.isRepeat; });
-    if (state.shuffled) {
-      for (var j = fresh.length - 1; j > 0; j--) {
+    var queue   = state.queues[sid];
+    var repeats = queue.filter(function(x) { return x.isRepeat; });
+    var fresh   = queue.filter(function(x) { return !x.isRepeat; });
+
+    // Re-group fresh items into units (contiguous group cards stay together)
+    var units = [];
+    var i = 0;
+    while (i < fresh.length) {
+      if (fresh[i].type === 'group') {
+        // Collect all cards with the same gid
+        var gid = fresh[i].gid;
+        var block = [];
+        while (i < fresh.length && fresh[i].type === 'group' && fresh[i].gid === gid) {
+          block.push(fresh[i]);
+          i++;
+        }
+        units.push(block);
+      } else {
+        units.push([fresh[i]]);
+        i++;
+      }
+    }
+
+    if (doShuffle) {
+      for (var j = units.length - 1; j > 0; j--) {
         var k = Math.floor(Math.random() * (j + 1));
-        var tmp = fresh[j]; fresh[j] = fresh[k]; fresh[k] = tmp;
+        var tmp = units[j]; units[j] = units[k]; units[k] = tmp;
       }
     } else {
-      fresh.sort(function(a, b) { return a.qIdx - b.qIdx; });
+      // Restore original order by itemIdx then qInGroup
+      units.sort(function(a, b) {
+        var ai = a[0].itemIdx, bi = b[0].itemIdx;
+        return ai !== bi ? ai - bi : a[0].qInGroup - b[0].qInGroup;
+      });
     }
-    state.queues[sid] = repeats.concat(fresh);
+
+    var newFresh = [];
+    units.forEach(function(unit) { unit.forEach(function(c) { newFresh.push(c); }); });
+    state.queues[sid] = repeats.concat(newFresh);
   });
 }
 
@@ -782,8 +974,7 @@ function updateScore() {
   document.getElementById('sc-wrong').textContent     = state.totalWrong;
   document.getElementById('sc-skip').textContent      = state.totalSkipped;
   document.getElementById('sc-recovered').textContent = state.totalRecovered;
-  var answered = state.totalCorrect + state.totalWrong + state.totalRecovered;
-  var pctBase  = state.totalCorrect + state.totalWrong;
+  var pctBase = state.totalCorrect + state.totalWrong;
   document.getElementById('sc-pct').textContent = pctBase > 0
     ? Math.round((state.totalCorrect / pctBase) * 100) + '%' : '-';
 }
@@ -793,41 +984,44 @@ function showDiagnostics() {
   document.getElementById('quiz-area').style.display = 'none';
   document.getElementById('diagnostics-panel').className = 'diagnostics show';
 
-  var answered  = state.totalCorrect + state.totalWrong + state.totalRecovered;
-  var pctBase   = state.totalCorrect + state.totalWrong;
+  var pctBase = state.totalCorrect + state.totalWrong;
   var pct = pctBase > 0 ? Math.round((state.totalCorrect / pctBase) * 100) : 0;
   var scoreClass = pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'needs';
   var scoreMsg   = pct >= 70 ? 'Strong performance' : pct >= 50 ? 'Room to improve' : 'Needs more practice';
+  var recovNote  = state.totalRecovered > 0 ? ', ' + state.totalRecovered + ' recovered after retry' : '';
 
-  var recoveredNote = state.totalRecovered > 0
-    ? ', ' + state.totalRecovered + ' recovered after retry' : '';
   document.getElementById('diag-summary').innerHTML =
-    '<div class="big-score ' + scoreClass + '">' + (answered > 0 ? pct + '%' : '-') + '</div>' +
+    '<div class="big-score ' + scoreClass + '">' + (pctBase > 0 ? pct + '%' : '-') + '</div>' +
     '<div style="font-size:12px;color:#9b9a97;margin-top:2px">First-attempt correct only (excludes recovered)</div>' +
     '<div style="font-size:13px;color:#6b6b6b;margin-top:6px">' + scoreMsg + ' - ' +
     state.totalCorrect + ' correct, ' + state.totalWrong + ' wrong, ' +
-    state.totalSkipped + ' skipped' + recoveredNote + ' out of ' + state.totalAttempted + ' attempted</div>';
+    state.totalSkipped + ' skipped' + recovNote + ' out of ' + state.totalAttempted + ' attempted</div>';
 
   var breakdown = document.getElementById('diag-breakdown');
   breakdown.innerHTML = '';
 
   SECTION_IDS.forEach(function(sid) {
-    var sec = SECTIONS[sid];
-    var res = state.results[sid];
-    var subs = {};
+    var sec   = SECTIONS[sid];
+    var items = sec.items;
+    var subs  = {};
 
-    sec.questions.forEach(function(q, i) {
-      if (!subs[q.sub]) subs[q.sub] = { correct: 0, wrong: 0, skipped: 0, recovered: 0, total: 0 };
-      subs[q.sub].total++;
-      if (res[i]) {
-        if (res[i].skipped)                    subs[q.sub].skipped++;
-        else if (res[i].correct && !res[i].wasRepeat) subs[q.sub].correct++;
-        else if (res[i].correct && res[i].wasRepeat)  subs[q.sub].recovered++;
-        else                                   subs[q.sub].wrong++;
-      }
+    items.forEach(function(item, itemIdx) {
+      var qs = item.type === 'group' ? item.questions : [item];
+      qs.forEach(function(q, qi) {
+        var sub = item.sub;
+        if (!subs[sub]) subs[sub] = { correct: 0, wrong: 0, skipped: 0, recovered: 0, total: 0 };
+        subs[sub].total++;
+        var r = state.results[rKey(sid, itemIdx, qi)];
+        if (r) {
+          if (r.skipped)                   subs[sub].skipped++;
+          else if (r.correct && !r.wasRepeat) subs[sub].correct++;
+          else if (r.correct && r.wasRepeat)  subs[sub].recovered++;
+          else                             subs[sub].wrong++;
+        }
+      });
     });
 
-    var secDiv = document.createElement('div');
+    var secDiv  = document.createElement('div');
     secDiv.className = 'diag-section';
     var secName = document.createElement('div');
     secName.className = 'diag-section-name';
@@ -836,18 +1030,16 @@ function showDiagnostics() {
 
     Object.keys(subs).forEach(function(subName) {
       var s = subs[subName];
-      var att = s.correct + s.wrong;
+      var att    = s.correct + s.wrong;
       var subPct = att > 0 ? Math.round((s.correct / att) * 100) : null;
-      // recovered doesn't affect the score - shown separately
       var barColor = subPct === null ? '#e3e2e0' : subPct >= 70 ? '#52c41a' : subPct >= 50 ? '#faad14' : '#f5222d';
       var tagClass = subPct === null ? 'tag-unanswered' : subPct >= 70 ? 'tag-strong' : subPct >= 50 ? 'tag-ok' : 'tag-weak';
-      var tagText  = subPct === null ? 'Not attempted' : subPct >= 70 ? 'Strong' : subPct >= 50 ? 'Review' : 'Weak';
-      var recoveredStr = s.recovered > 0
-        ? ' <span style="font-size:11px;color:#b36b00;font-weight:600">+' + s.recovered + ' recovered</span>' : '';
+      var tagText  = subPct === null ? 'Not attempted'  : subPct >= 70 ? 'Strong'     : subPct >= 50 ? 'Review'  : 'Weak';
+      var recStr   = s.recovered > 0 ? ' <span style="font-size:11px;color:#b36b00;font-weight:600">+' + s.recovered + ' recovered</span>' : '';
       var row = document.createElement('div');
       row.className = 'diag-row';
       row.innerHTML =
-        '<div class="diag-row-label">' + subName + recoveredStr + '</div>' +
+        '<div class="diag-row-label">' + subName + recStr + '</div>' +
         '<div class="diag-bar-track"><div class="diag-bar-fill" style="width:' + (subPct || 0) + '%;background:' + barColor + '"></div></div>' +
         '<div class="diag-pct" style="color:' + barColor + '">' + (subPct !== null ? subPct + '%' : '-') + '</div>' +
         '<div class="diag-tag ' + tagClass + '">' + tagText + '</div>';
@@ -858,25 +1050,25 @@ function showDiagnostics() {
   });
 }
 
+// -- RETURN TO QUIZ ------------------------------------------------------------
+function returnToQuiz() {
+  document.getElementById('diagnostics-panel').className = 'diagnostics';
+  document.getElementById('quiz-area').style.display = 'block';
+}
+
 // -- RESTART -------------------------------------------------------------------
 function restartQuiz() {
   fullReset();
+  setShuffle(false);
 
-  // Reset shuffle button
-  var btn = document.getElementById('shuffle-btn');
-  if (btn) {
-    btn.textContent = 'Shuffle';
-    btn.style.background  = '';
-    btn.style.borderColor = '';
-    btn.style.color       = '';
-  }
-
-  // Hide diagnostics, show quiz
   document.getElementById('diagnostics-panel').className = 'diagnostics';
   document.getElementById('quiz-area').style.display = 'block';
 
-  // Restore card DOM structure fully
   document.getElementById('q-card').innerHTML =
+    '<div id="q-passage-wrap" style="display:none">' +
+      '<div class="passage-counter" id="q-passage-counter"></div>' +
+      '<div class="passage-box" id="q-passage-box"></div>' +
+    '</div>' +
     '<div class="section-label" id="q-section-label"></div>' +
     '<div class="subsection-label" id="q-subsection-label"></div>' +
     '<div class="question" id="q-text"></div>' +
@@ -891,12 +1083,10 @@ function restartQuiz() {
       '<button class="btn" id="skip-btn" onclick="skipQuestion()">Skip</button>' +
     '</div>';
 
-  // Go to first section and load
   state.section = 'jk';
   SECTION_IDS.forEach(function(s) {
     document.getElementById('tab-' + s).classList.toggle('active', s === 'jk');
   });
-
   updateTabBadges();
   loadNext();
 }
@@ -907,6 +1097,8 @@ function nextQuestion() { loadNext(); }
 // -- INIT ----------------------------------------------------------------------
 fullReset();
 showSection('jk');
+
+
 </script>
 </body>
 </html>
