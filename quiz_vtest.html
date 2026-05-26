@@ -43,7 +43,8 @@
   .score-item span { font-weight: 700; color: #37352f; }
   .score-item .correct-num { color: #237804; }
   .score-item .wrong-num  { color: #820014; }
-  .score-item .skip-num   { color: #7B3F00; }
+  .score-item .skip-num      { color: #7B3F00; }
+  .score-item .recovered-num { color: #b36b00; }
 
   /* -- SECTION TABS ------------------------------------ */
   .section-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -295,6 +296,7 @@
   <div class="score-item">Correct: <span class="correct-num" id="sc-correct">0</span></div>
   <div class="score-item">Wrong: <span class="wrong-num" id="sc-wrong">0</span></div>
   <div class="score-item">Skipped: <span class="skip-num" id="sc-skip">0</span></div>
+  <div class="score-item">Recovered: <span class="recovered-num" id="sc-recovered">0</span></div>
   <div class="score-item">Score: <span id="sc-pct">-</span></div>
 </div>
 
@@ -452,10 +454,11 @@ var state = {
   selected: null,
   submitted:false,
   shuffled: false,
-  totalAttempted: 0,
-  totalCorrect:   0,
-  totalWrong:     0,
-  totalSkipped:   0
+  totalAttempted:  0,
+  totalCorrect:    0,
+  totalWrong:      0,
+  totalSkipped:    0,
+  totalRecovered:  0
 };
 
 // -- QUEUE INIT ----------------------------------------------------------------
@@ -478,10 +481,11 @@ function fullReset() {
   state.selected  = null;
   state.submitted = false;
   state.shuffled  = false;
-  state.totalAttempted = 0;
-  state.totalCorrect   = 0;
-  state.totalWrong     = 0;
-  state.totalSkipped   = 0;
+  state.totalAttempted  = 0;
+  state.totalCorrect    = 0;
+  state.totalWrong      = 0;
+  state.totalSkipped    = 0;
+  state.totalRecovered  = 0;
   SECTION_IDS.forEach(function(sid) { buildQueue(sid, false); });
   updateScore();
   updateTabBadges();
@@ -489,6 +493,13 @@ function fullReset() {
 
 // -- SECTION SWITCHING ---------------------------------------------------------
 function showSection(sid) {
+  // If diagnostics are showing, hide them and restore quiz area
+  var diagPanel = document.getElementById('diagnostics-panel');
+  if (diagPanel.classList.contains('show')) {
+    diagPanel.className = 'diagnostics';
+    document.getElementById('quiz-area').style.display = 'block';
+  }
+
   if (sid === state.section && state.current) return; // already here
 
   // Suspend current mid-question so user can come back
@@ -691,9 +702,15 @@ function submitAnswer() {
 
   // Record first-attempt result only
   if (!state.results[sid][item.qIdx]) {
-    state.results[sid][item.qIdx] = { correct: isCorrect, skipped: false, sub: q.sub };
+    state.results[sid][item.qIdx] = {
+      correct: isCorrect,
+      skipped: false,
+      wasRepeat: item.isRepeat,
+      sub: q.sub
+    };
     state.totalAttempted++;
-    if (isCorrect) state.totalCorrect++;
+    if (isCorrect && item.isRepeat) state.totalRecovered++;
+    else if (isCorrect) state.totalCorrect++;
     else state.totalWrong++;
   }
 
@@ -760,13 +777,15 @@ function toggleShuffle() {
 
 // -- SCORE ---------------------------------------------------------------------
 function updateScore() {
-  document.getElementById('sc-total').textContent   = state.totalAttempted;
-  document.getElementById('sc-correct').textContent = state.totalCorrect;
-  document.getElementById('sc-wrong').textContent   = state.totalWrong;
-  document.getElementById('sc-skip').textContent    = state.totalSkipped;
-  var answered = state.totalCorrect + state.totalWrong;
-  document.getElementById('sc-pct').textContent = answered > 0
-    ? Math.round((state.totalCorrect / answered) * 100) + '%' : '-';
+  document.getElementById('sc-total').textContent     = state.totalAttempted;
+  document.getElementById('sc-correct').textContent   = state.totalCorrect;
+  document.getElementById('sc-wrong').textContent     = state.totalWrong;
+  document.getElementById('sc-skip').textContent      = state.totalSkipped;
+  document.getElementById('sc-recovered').textContent = state.totalRecovered;
+  var answered = state.totalCorrect + state.totalWrong + state.totalRecovered;
+  var pctBase  = state.totalCorrect + state.totalWrong;
+  document.getElementById('sc-pct').textContent = pctBase > 0
+    ? Math.round((state.totalCorrect / pctBase) * 100) + '%' : '-';
 }
 
 // -- DIAGNOSTICS ---------------------------------------------------------------
@@ -774,16 +793,20 @@ function showDiagnostics() {
   document.getElementById('quiz-area').style.display = 'none';
   document.getElementById('diagnostics-panel').className = 'diagnostics show';
 
-  var answered = state.totalCorrect + state.totalWrong;
-  var pct = answered > 0 ? Math.round((state.totalCorrect / answered) * 100) : 0;
+  var answered  = state.totalCorrect + state.totalWrong + state.totalRecovered;
+  var pctBase   = state.totalCorrect + state.totalWrong;
+  var pct = pctBase > 0 ? Math.round((state.totalCorrect / pctBase) * 100) : 0;
   var scoreClass = pct >= 70 ? 'good' : pct >= 50 ? 'ok' : 'needs';
   var scoreMsg   = pct >= 70 ? 'Strong performance' : pct >= 50 ? 'Room to improve' : 'Needs more practice';
 
+  var recoveredNote = state.totalRecovered > 0
+    ? ', ' + state.totalRecovered + ' recovered after retry' : '';
   document.getElementById('diag-summary').innerHTML =
     '<div class="big-score ' + scoreClass + '">' + (answered > 0 ? pct + '%' : '-') + '</div>' +
-    '<div style="font-size:13px;color:#6b6b6b;margin-top:4px">' + scoreMsg + ' - ' +
+    '<div style="font-size:12px;color:#9b9a97;margin-top:2px">First-attempt correct only (excludes recovered)</div>' +
+    '<div style="font-size:13px;color:#6b6b6b;margin-top:6px">' + scoreMsg + ' - ' +
     state.totalCorrect + ' correct, ' + state.totalWrong + ' wrong, ' +
-    state.totalSkipped + ' skipped out of ' + state.totalAttempted + ' attempted</div>';
+    state.totalSkipped + ' skipped' + recoveredNote + ' out of ' + state.totalAttempted + ' attempted</div>';
 
   var breakdown = document.getElementById('diag-breakdown');
   breakdown.innerHTML = '';
@@ -794,12 +817,13 @@ function showDiagnostics() {
     var subs = {};
 
     sec.questions.forEach(function(q, i) {
-      if (!subs[q.sub]) subs[q.sub] = { correct: 0, wrong: 0, skipped: 0, total: 0 };
+      if (!subs[q.sub]) subs[q.sub] = { correct: 0, wrong: 0, skipped: 0, recovered: 0, total: 0 };
       subs[q.sub].total++;
       if (res[i]) {
-        if (res[i].skipped)      subs[q.sub].skipped++;
-        else if (res[i].correct) subs[q.sub].correct++;
-        else                     subs[q.sub].wrong++;
+        if (res[i].skipped)                    subs[q.sub].skipped++;
+        else if (res[i].correct && !res[i].wasRepeat) subs[q.sub].correct++;
+        else if (res[i].correct && res[i].wasRepeat)  subs[q.sub].recovered++;
+        else                                   subs[q.sub].wrong++;
       }
     });
 
@@ -814,13 +838,16 @@ function showDiagnostics() {
       var s = subs[subName];
       var att = s.correct + s.wrong;
       var subPct = att > 0 ? Math.round((s.correct / att) * 100) : null;
+      // recovered doesn't affect the score - shown separately
       var barColor = subPct === null ? '#e3e2e0' : subPct >= 70 ? '#52c41a' : subPct >= 50 ? '#faad14' : '#f5222d';
       var tagClass = subPct === null ? 'tag-unanswered' : subPct >= 70 ? 'tag-strong' : subPct >= 50 ? 'tag-ok' : 'tag-weak';
       var tagText  = subPct === null ? 'Not attempted' : subPct >= 70 ? 'Strong' : subPct >= 50 ? 'Review' : 'Weak';
+      var recoveredStr = s.recovered > 0
+        ? ' <span style="font-size:11px;color:#b36b00;font-weight:600">+' + s.recovered + ' recovered</span>' : '';
       var row = document.createElement('div');
       row.className = 'diag-row';
       row.innerHTML =
-        '<div class="diag-row-label">' + subName + '</div>' +
+        '<div class="diag-row-label">' + subName + recoveredStr + '</div>' +
         '<div class="diag-bar-track"><div class="diag-bar-fill" style="width:' + (subPct || 0) + '%;background:' + barColor + '"></div></div>' +
         '<div class="diag-pct" style="color:' + barColor + '">' + (subPct !== null ? subPct + '%' : '-') + '</div>' +
         '<div class="diag-tag ' + tagClass + '">' + tagText + '</div>';
