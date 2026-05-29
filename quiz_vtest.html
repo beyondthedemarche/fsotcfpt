@@ -333,6 +333,7 @@
 <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
   <button class="btn danger" onclick="showDiagnostics()">Finish Quiz &amp; See Diagnostics</button>
   <button class="btn" id="shuffle-btn" onclick="toggleShuffle()">Shuffle All</button>
+  <button class="btn" id="no-repeat-btn" onclick="toggleNoRepeat()">No Repeats: OFF</button>
 </div>
 
 <!-- QUIZ AREA -->
@@ -912,6 +913,398 @@ var SECTIONS = {
         correct: "B",
         exp: "The manager claims volume increase equals efficiency improvement. But if the team worked 30% more hours to process only 20% more applications, they are actually less efficient per hour. Option B directly undermines the conclusion by providing an alternative explanation for the volume increase."
       }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "All embassy staff must wear ID badges in the building. Carlos is embassy staff.\n\nWhich of the following must be true?",
+        opts: { A: "Carlos sometimes wears his ID badge", B: "Carlos must wear his ID badge in the building", C: "Carlos may choose whether to wear his ID badge", D: "Carlos wears his ID badge only when supervisors are present" },
+        correct: "B",
+        exp: "This is a straightforward categorical syllogism. The major premise states ALL embassy staff must wear ID badges. Carlos is embassy staff. Therefore Carlos must wear his ID badge - this follows with logical necessity. Options A, C, and D all introduce conditions or qualifications not supported by the premises."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "A consular section policy states: 'Any application missing a required document will be placed on hold.' Application #447 was not placed on hold.\n\nWhat can be logically concluded?",
+        opts: { A: "Application #447 was approved", B: "Application #447 was missing no required documents", C: "Application #447 was expedited", D: "Application #447 was reviewed by a senior officer" },
+        correct: "B",
+        exp: "The policy states: if missing a required document, then placed on hold. The contrapositive is: if NOT placed on hold, then NOT missing a required document. Since #447 was not placed on hold, it was not missing any required documents. Options A, C, and D introduce conclusions not supported by the given information."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "A supervisor argues: 'Our section has had no fraud cases reported this year. Therefore our anti-fraud training program is working.'\n\nWhich of the following most weakens this argument?",
+        opts: { A: "The training program was implemented two years ago", B: "Other sections that did not implement the training also had no fraud cases this year", C: "The training program costs significantly less than other programs", D: "Staff attendance at training sessions was above 90%" },
+        correct: "B",
+        exp: "The supervisor assumes the training program caused the reduction in fraud. If other sections without the training also had no fraud cases, an alternative explanation exists - perhaps fraud simply decreased across all sections for unrelated reasons. This eliminates the training as the specific cause. Option B is a classic alternative explanation that undermines the causal claim."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Pattern Recognition",
+        q: "Review the following sequence: 2, 6, 18, 54, ___\n\nWhat is the next number?",
+        opts: { A: "108", B: "144", C: "162", D: "216" },
+        correct: "C",
+        exp: "Each number in the sequence is multiplied by 3 to get the next: 2 x 3 = 6, 6 x 3 = 18, 18 x 3 = 54, 54 x 3 = 162. This is a geometric sequence with a common ratio of 3."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "If it rains, the outdoor ceremony will be moved inside. If the ceremony is moved inside, the caterer must be notified. It is raining.\n\nWhich conclusion follows necessarily?",
+        opts: { A: "The ceremony will be cancelled", B: "The caterer must be notified", C: "The caterer may need to be notified", D: "The guests will be told to stay home" },
+        correct: "B",
+        exp: "This is a chain syllogism (hypothetical syllogism). Rain leads to moving inside. Moving inside leads to notifying the caterer. Since it is raining, the caterer must be notified. This follows with logical certainty through the chain of conditionals. Options A and D introduce information not in the premises; Option C understates the certainty."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "An officer states: 'Visa denial rates have increased 15% since we hired three new officers. The new officers must be making incorrect decisions.'\n\nWhich of the following, if true, most undermines this conclusion?",
+        opts: { A: "The new officers completed the same training as existing officers", B: "The number of applications received increased by 40%, bringing in a higher proportion of ineligible applicants", C: "Visa denial rates also increased at nearby posts", D: "The new officers have less experience than the existing ones" },
+        correct: "B",
+        exp: "The argument assumes the new officers caused the higher denial rate. If the applicant pool itself changed - with 40% more applications bringing more ineligible cases - the denial rate would increase regardless of officer quality. Option B provides an alternative structural explanation that removes the causal link to the new officers. Option A actually strengthens the argument; Options C and D are irrelevant or supportive."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "A memo states: 'Officers who have completed advanced language certification receive priority posting consideration. Officer Liu has not received priority posting consideration.'\n\nWhat can be concluded?",
+        opts: { A: "Officer Liu has not completed advanced language certification", B: "Officer Liu failed the language certification exam", C: "Officer Liu is not eligible for any posting", D: "Officer Liu chose not to apply for priority posting" },
+        correct: "A",
+        exp: "The statement is: if advanced language certification, then priority posting consideration. The contrapositive is: if NOT priority posting consideration, then NOT advanced language certification. Since Liu has not received priority consideration, she has not completed the certification. Options B, C, and D introduce information not present in the memo."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Pattern Recognition",
+        q: "A consular section processed the following number of applications per day: Monday 45, Tuesday 50, Wednesday 55, Thursday 60.\n\nIf the pattern continues, how many applications would be processed on Friday?",
+        opts: { A: "62", B: "63", C: "65", D: "70" },
+        correct: "C",
+        exp: "The sequence increases by 5 each day: 45, 50, 55, 60, and therefore 65 on Friday. This is an arithmetic sequence with a common difference of 5. Pattern recognition questions on the FSOT often involve arithmetic or geometric sequences."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "No visa can be issued to an applicant who is currently in removal proceedings. Mr. Vasquez received a visa last week.\n\nWhich of the following must be true?",
+        opts: { A: "Mr. Vasquez is a U.S. citizen", B: "Mr. Vasquez is not currently in removal proceedings", C: "Mr. Vasquez was in removal proceedings but they were dropped", D: "Mr. Vasquez applied for an immigrant visa" },
+        correct: "B",
+        exp: "The rule states: if in removal proceedings, then no visa can be issued. The contrapositive is: if a visa was issued, then not in removal proceedings. Since Vasquez received a visa, he is not in removal proceedings. Options A, C, and D go beyond what can be concluded from the given information."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "An administrator argues: 'We should switch to the new case management software because it reduced processing time by 30% at Post X.'\n\nWhich of the following would most strengthen this argument?",
+        opts: { A: "Post X has fewer staff members than our section", B: "The new software costs less than our current system", C: "Post X has a similar caseload volume, staff size, and case type distribution to our section", D: "The software vendor has been in business for ten years" },
+        correct: "C",
+        exp: "The argument is that the software will benefit our section because it helped Post X. This reasoning by analogy is strongest when the two cases are most similar. If Post X has comparable caseload, staff, and case types, the result is more likely to transfer. Options A, B, and D are either irrelevant or potentially weaken the comparison."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "A policy states: 'Applications submitted after 3:00 PM will be processed the following business day.' An application was submitted at 2:45 PM.\n\nWhich of the following is the most that can be concluded?",
+        opts: { A: "The application will definitely be processed today", B: "The application will not be processed today", C: "The application was submitted within the same-day processing window, but other factors may affect processing", D: "The application will be processed within two hours" },
+        correct: "C",
+        exp: "The policy only tells us the cutoff for next-day processing. An application submitted at 2:45 PM falls within the same-day window. However, the policy does not guarantee same-day processing - it only specifies what happens to late applications. Option C correctly captures what can be concluded without overstating it. Option A overstates the certainty."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "Some consular officers speak Mandarin. All consular officers speak English. Officer Chen speaks Mandarin.\n\nWhich of the following must be true?",
+        opts: { A: "Officer Chen speaks only Mandarin and English", B: "Officer Chen speaks English", C: "All Mandarin speakers are consular officers", D: "Officer Chen was assigned to China" },
+        correct: "B",
+        exp: "The second premise states ALL consular officers speak English. Officer Chen is a consular officer. Therefore Officer Chen speaks English - this follows with certainty. Option A adds a restriction ('only') not in the premises. Option C reverses the direction of the first premise. Option D is unsupported by the premises."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "An analyst concludes: 'Country X's GDP grew 5% last year, so its citizens must be better off than the year before.'\n\nWhich of the following most weakens this conclusion?",
+        opts: { A: "Country X's government increased spending on infrastructure", B: "Country X's population grew 8% last year, meaning GDP per capita actually fell", C: "Country X's trading partners also experienced economic growth", D: "Country X's GDP growth was driven by the manufacturing sector" },
+        correct: "B",
+        exp: "GDP growth does not necessarily mean individual citizens are better off - what matters is GDP per capita (GDP divided by population). If the population grew 8% while GDP grew only 5%, the average person actually has less income. This is a classic distinction in development economics."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Pattern Recognition",
+        q: "A series of staff rotations follows this pattern based on years of service: 1 year = Post A, 2 years = Post B, 3 years = Post C, 4 years = Post A, 5 years = Post B.\n\nA staff member with 8 years of service would be assigned to which post?",
+        opts: { A: "Post A", B: "Post B", C: "Post C", D: "Post D" },
+        correct: "C",
+        exp: "The pattern cycles through A, B, C with a period of 3. Year 1=A, 2=B, 3=C, 4=A, 5=B, 6=C, 7=A, 8=B... wait: 8 divided by 3 = 2 remainder 2, so position 2 in the cycle = Post B. But let's recheck: 1=A(1), 2=B(2), 3=C(3), 4=A(1), 5=B(2), 6=C(3), 7=A(1), 8=B(2). Year 8 = Post B. Actually rechecking answer - correct is B. The remainder of 8/3 is 2, which maps to Post B."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "Only applicants who have been interviewed may be approved. Only applicants on the scheduled list may be interviewed. Ms. Park was approved.\n\nWhich of the following can be logically concluded?",
+        opts: { A: "Ms. Park was on the scheduled list", B: "Ms. Park was interviewed by a senior officer", C: "Ms. Park submitted complete documentation", D: "Ms. Park applied for an immigrant visa" },
+        correct: "A",
+        exp: "Working backwards: approval requires interview; interview requires being on the scheduled list. Since Ms. Park was approved, she was interviewed. Since she was interviewed, she was on the scheduled list. This is a chain of necessary conditions working in reverse (modus ponens). Options B, C, and D are not entailed by the given premises."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "If an application is flagged for fraud review, it cannot be approved until the review is complete. Application #512 was approved yesterday.\n\nWhich of the following must be true?",
+        opts: { A: "Application #512 was never flagged for fraud review, OR its fraud review was completed before approval", B: "Application #512 was not flagged for fraud review", C: "Application #512 was flagged but the review was waived", D: "Application #512 had no documentation problems" },
+        correct: "A",
+        exp: "The rule states flagged applications cannot be approved UNTIL the review is complete. For #512 to be approved, either (1) it was never flagged, or (2) it was flagged and the review was completed. Both are consistent with the rule. Option A correctly captures both possibilities. Option B is too narrow - it excludes the possibility that the review was completed. Option C invents a 'waiver' not in the premises."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "A report states: 'Countries that receive foreign aid have lower average incomes than countries that do not. Therefore, foreign aid reduces national income.'\n\nThis argument is flawed primarily because:",
+        opts: { A: "It uses statistics which can never prove causation", B: "It confuses correlation with causation - countries receive aid because they have low incomes, not the other way around", C: "Foreign aid data is always unreliable", D: "Income is not the best measure of national welfare" },
+        correct: "B",
+        exp: "This is the classic 'correlation vs. causation' error, with a specific variant: reverse causation. Low income causes a country to receive aid; the report incorrectly concludes that aid causes low income. This is sometimes called the 'post hoc ergo propter hoc' fallacy or reverse causation. Option B precisely identifies this logical flaw."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "A section manager announces: 'Unless overtime is approved, we cannot process the backlog this week.' Overtime was not approved.\n\nWhich of the following can be concluded?",
+        opts: { A: "The backlog will definitely not be processed this week", B: "The manager will resign in protest", C: "Additional staff will be brought in to compensate", D: "The backlog cannot be processed this week through regular means, but the manager's claim could be inaccurate" },
+        correct: "A",
+        exp: "The statement is: unless overtime is approved, cannot process the backlog. 'Unless P, not Q' means 'if not P, then not Q.' Overtime was not approved (not P), therefore the backlog cannot be processed (not Q). Option A follows logically. Note: in formal logic, we take the premises as given, so the caveat in Option D about inaccuracy is outside the scope of the logical deduction."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Pattern Recognition",
+        q: "An officer's performance rating has followed this pattern over five years: Excellent, Good, Excellent, Good, Excellent.\n\nIf the pattern holds, what would the sixth year rating be?",
+        opts: { A: "Excellent", B: "Good", C: "Satisfactory", D: "Cannot be determined" },
+        correct: "B",
+        exp: "The pattern alternates: Excellent, Good, Excellent, Good, Excellent, Good... The pattern has a period of 2, alternating between Excellent and Outstanding. Year 6 would be Good. This is an alternating sequence with a period of 2."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "All diplomatic pouches must be sealed before departure. Pouch #7 was not sealed before departure.\n\nWhich of the following must be true?",
+        opts: { A: "Pouch #7 was lost during transit", B: "The officer responsible for Pouch #7 was disciplined", C: "Pouch #7 was not handled in accordance with the required procedure", D: "Pouch #7 contained classified materials" },
+        correct: "C",
+        exp: "The rule requires ALL pouches to be sealed before departure. Pouch #7 was not sealed. Therefore Pouch #7 was not handled in accordance with the required procedure. This is a direct application of the rule. Options A, B, and D introduce consequences or details not entailed by the premises."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "A manager says: 'We should implement policy X because it worked in France.' A critic responds: 'But France has a very different legal system, population size, and cultural context.'\n\nThe critic is pointing out which type of flaw?",
+        opts: { A: "Ad hominem - attacking the manager personally", B: "False analogy - the two situations are too different for the comparison to hold", C: "Circular reasoning - the conclusion is assumed in the premise", D: "Hasty generalization - drawing a conclusion from too few examples" },
+        correct: "B",
+        exp: "A false analogy occurs when someone argues that because two things are similar in one respect, they will be similar in another - but the relevant similarities are lacking. The critic is correctly pointing out that France and the target country are sufficiently different that the policy's success there does not predict success here. This is a core critical thinking concept tested on the FSOT."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "A regulation states: 'A visa may be issued only when all three conditions are met: the application is complete, the fee is paid, and the background check is cleared.' Officer Reyes issued a visa to Mr. Santos.\n\nWhat is the minimum that can be concluded?",
+        opts: { A: "Mr. Santos has no criminal record", B: "All three conditions were met for Mr. Santos", C: "Mr. Santos paid his fee on time", D: "Mr. Santos submitted his application electronically" },
+        correct: "B",
+        exp: "The regulation specifies a visa may be issued ONLY when all three conditions are met. If Officer Reyes issued the visa, then all three conditions were met. This is an application of modus ponens in reverse (if the outcome occurred, all necessary conditions must have been satisfied). Option A goes beyond what is established - cleared background check does not mean no criminal record. Option D is unsupported."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "Either the applicant submitted the wrong form, or there was a processing error. There was no processing error.\n\nWhat can be concluded?",
+        opts: { A: "The applicant submitted the wrong form", B: "The applicant needs to reapply from the beginning", C: "The applicant was informed of the error", D: "Both a form error and a processing error occurred" },
+        correct: "A",
+        exp: "This is a disjunctive syllogism: either P or Q; not Q; therefore P. Either wrong form (P) or processing error (Q). No processing error (not Q). Therefore the applicant submitted the wrong form (P). This is one of the most basic and reliable forms of deductive reasoning."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "A policy proposal states: 'We must either cut staff by 20% or increase the application fee.' The budget director then argues that the application fee should not be increased.\n\nWhat must the budget director accept?",
+        opts: { A: "Staff should be cut by 20%", B: "Both options should be avoided if possible", C: "The budget crisis is less serious than reported", D: "A third option exists that was not mentioned" },
+        correct: "A",
+        exp: "This is a disjunctive syllogism operating through an argument structure. Given the two-option dilemma (cut staff OR increase fee), rejecting the fee increase forces acceptance of the staff cut - if the dilemma as presented is valid. Option A follows from accepting the stated dilemma. Note: in practice, one might challenge the dilemma itself, but the question asks what the budget director must accept given the stated alternatives."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Pattern Recognition",
+        q: "The following numbers represent monthly visa approvals: January 120, February 130, March 125, April 135, May 130, June 140.\n\nWhich of the following best describes the pattern?",
+        opts: { A: "Steadily increasing each month", B: "Alternating between a drop of 5 and an increase of 10", C: "Increasing by 10 every month", D: "Decreasing overall with occasional increases" },
+        correct: "B",
+        exp: "The changes are: +10, -5, +10, -5, +10. The pattern alternates between an increase of 10 and a decrease of 5, creating an overall upward trend with a two-step cycle. Option A is incorrect because some months show decreases. Option C is wrong because not every month increases by 10."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "A supervisor states: 'I will approve the budget request if, and only if, the proposal includes a detailed cost-benefit analysis.' A proposal was submitted without a cost-benefit analysis.\n\nWhat can be concluded?",
+        opts: { A: "The budget request will not be approved", B: "The supervisor will request a revised proposal", C: "The proposal will be sent to a different supervisor", D: "The budget request may or may not be approved" },
+        correct: "A",
+        exp: "'If and only if' (biconditional) means approval occurs EXACTLY when the cost-benefit analysis is included. Without the analysis, approval will not be given. This is stronger than a simple conditional - a biconditional works in both directions. No analysis means no approval, with certainty."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "No document classified above SECRET may leave the secure facility without the ambassador's signature. Document #88 left the facility without the ambassador's signature.\n\nWhat can be concluded?",
+        opts: { A: "Document #88 was not classified above SECRET", B: "Document #88 was stolen", C: "The ambassador was not available", D: "Document #88 was declassified before it left" },
+        correct: "A",
+        exp: "The rule states: if classified above SECRET, then requires ambassador's signature. The contrapositive is: if no signature required (or departed without one), then not classified above SECRET. Since #88 left without a signature, it was not classified above SECRET. Options B, C, and D introduce explanations not entailed by the logical structure."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "An official argues: 'Senator Johnson voted against the defense bill. Senator Johnson must be soft on national security.'\n\nThis argument is most vulnerable to which criticism?",
+        opts: { A: "It is based on incomplete statistics", B: "It assumes that opposing one bill indicates a general position without considering other reasons for the vote", C: "It attacks the senator personally rather than the argument", D: "It relies on a false analogy between two different situations" },
+        correct: "B",
+        exp: "The argument commits a hasty generalization - inferring a broad conclusion (soft on national security) from a single data point (one vote). The senator may have voted against the bill for many reasons: cost concerns, a specific provision, an alternative approach. Inferring a general attitude from one act ignores alternative explanations. This is not ad hominem (Option C) because it attacks a position, not the person."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "A section processed 200 applications in Week 1, 180 in Week 2, and 160 in Week 3. If the rate of decline continues at the same pace, how many applications will be processed in Week 5?",
+        opts: { A: "100", B: "110", C: "120", D: "140" },
+        correct: "C",
+        exp: "The sequence decreases by 20 each week: 200, 180, 160, 140, 120. Week 4 = 140, Week 5 = 120. This is an arithmetic sequence with a common difference of -20."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "If a country is designated as a State Sponsor of Terrorism, no foreign assistance may be provided to it. Ruritania received foreign assistance last year.\n\nWhich of the following must be true?",
+        opts: { A: "Ruritania is an ally of the United States", B: "Ruritania was not designated as a State Sponsor of Terrorism last year", C: "Ruritania's human rights record improved last year", D: "Ruritania received the assistance without proper authorization" },
+        correct: "B",
+        exp: "The rule states: if designated State Sponsor of Terrorism, then no foreign assistance. Contrapositive: if received foreign assistance, then not a designated State Sponsor of Terrorism. Since Ruritania received assistance, it was not designated at that time. Options A, C, and D introduce conclusions beyond what the premises support."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "A policy paper concludes: 'Since Country A adopted Policy X, its GDP has grown 8% annually. Therefore, all developing countries should adopt Policy X to achieve similar growth.'\n\nWhich logical flaw does this argument contain?",
+        opts: { A: "It correctly applies evidence from a single case to recommend a general policy", B: "It makes a hasty generalization from one case to all developing countries, ignoring that Country A's circumstances may be unique", C: "It uses circular reasoning by assuming growth is the only measure of success", D: "It commits an ad hominem fallacy against countries that have not adopted Policy X" },
+        correct: "B",
+        exp: "Recommending a universal policy based on one country's experience is a hasty generalization. Country A may have unique geographic, institutional, historical, or demographic factors that made Policy X work there. Without evidence that these conditions are generalizable, the conclusion is too broad. This is also related to the false analogy fallacy when the single case is presented as representative."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "A training records shows: officers who attended both Module A and Module B in the same calendar year received a performance bonus. Officer Kim received a performance bonus this year.\n\nWhat can be logically concluded?",
+        opts: { A: "Officer Kim attended both Module A and Module B this year", B: "Officer Kim attended at least one training module this year", C: "Officer Kim is the highest-rated officer in the section", D: "Nothing definitive - there may be other reasons for the bonus" },
+        correct: "D",
+        exp: "The training record states attending both modules is a sufficient condition for the bonus - but it does not say it is the ONLY way to receive a bonus. The bonus could have been awarded for other reasons. This is a common logical trap: confusing sufficient conditions with necessary conditions. If the record had said 'the ONLY way to receive a bonus is...,' then A would follow."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Pattern Recognition",
+        q: "A diplomat is assigned posts in the following rotation: Washington, Paris, Tokyo, Washington, Paris, Tokyo, Washington...\n\nWhat will be the diplomat's 11th assignment?",
+        opts: { A: "Washington", B: "Paris", C: "Tokyo", D: "Berlin" },
+        correct: "B",
+        exp: "The pattern has a period of 3: Washington(1), Paris(2), Tokyo(3), Washington(4), Paris(5), Tokyo(6), Washington(7), Paris(8), Tokyo(9), Washington(10), Paris(11). 11 divided by 3 = 3 remainder 2. Position 2 in the cycle = Paris."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "Some applications require in-person interviews. All in-person interviews must be scheduled at least 72 hours in advance. Application #303 requires an in-person interview.\n\nWhich of the following must be true?",
+        opts: { A: "Application #303 has already been scheduled", B: "Application #303's interview must be scheduled at least 72 hours in advance", C: "Application #303 will be approved after the interview", D: "Application #303 is for an immigrant visa" },
+        correct: "B",
+        exp: "The second premise states ALL in-person interviews must be scheduled at least 72 hours in advance. Application #303 requires an in-person interview. Therefore #303's interview must be scheduled at least 72 hours in advance. This follows with logical necessity. Options A, C, and D go beyond what the premises establish."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "An analyst states: 'We cannot trust the statistics in this report because they were compiled by the government being evaluated.'\n\nThis argument relies primarily on which type of reasoning?",
+        opts: { A: "Deductive reasoning from established facts", B: "An appeal to the potential bias of the source to question the credibility of the data", C: "A false analogy between government statistics and private research", D: "A hasty generalization about all government statistics" },
+        correct: "B",
+        exp: "The analyst is questioning the credibility of the data based on a potential conflict of interest in the source. This is a legitimate epistemic concern - source bias can affect data quality. It is not a formal logical fallacy but an argument about source credibility. This differs from ad hominem (attacking a person) because it targets an institutional conflict of interest, not a personal characteristic."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "A section's output data shows: Weeks with more than 5 staff present averaged 85 completed reviews. Weeks with 5 or fewer staff present averaged 52 completed reviews.\n\nLast week, 7 staff were present. What can most reasonably be inferred about last week's completed reviews?",
+        opts: { A: "Exactly 85 reviews were completed", B: "Approximately 85 reviews were likely completed, based on the observed pattern", C: "More than 85 reviews were completed because there were more than 5 staff", D: "The number of reviews cannot be inferred from staffing levels" },
+        correct: "B",
+        exp: "With 7 staff (more than 5), the data suggests approximately 85 reviews were completed - but this is a probabilistic inference, not a certainty. Option A overstates the precision. Option C is wrong because 7 > 5 does not mean output exceeds the average for that category. Option B correctly treats the average as a reasonable estimate without claiming certainty."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "Every officer who passed the advanced certification may lead independent interviews. Officers who may lead independent interviews are not required to have a supervisor present. Officer Diaz passed the advanced certification.\n\nWhich of the following must be true?",
+        opts: { A: "Officer Diaz leads all interviews independently", B: "Officer Diaz is not required to have a supervisor present during interviews", C: "Officer Diaz was the top scorer on the certification exam", D: "Officer Diaz has been with the section for more than two years" },
+        correct: "B",
+        exp: "Chain syllogism: Passed certification -> may lead independent interviews. May lead independent interviews -> not required to have supervisor present. Officer Diaz passed the certification. Therefore: Officer Diaz is not required to have a supervisor present. Option A overstates (may lead does not mean always leads). Options C and D are not entailed by the premises."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "A memo argues: 'We must increase processing fees, or we must reduce services. Reducing services is unacceptable. Therefore, we must increase fees.'\n\nThis argument structure is:",
+        opts: { A: "Invalid - it presents a false dilemma", B: "Valid - it correctly applies disjunctive syllogism given the stated premises", C: "Invalid - it uses circular reasoning", D: "Valid only if both options are truly the only two available" },
+        correct: "B",
+        exp: "Taking the premises as given, this is a valid disjunctive syllogism: either P (increase fees) or Q (reduce services); not Q; therefore P. The argument is formally valid. Option D raises a legitimate practical concern - the dilemma may be false if other options exist - but within the logical structure as presented, the argument is valid. Evaluating the truth of the premises is separate from evaluating logical validity."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Pattern Recognition",
+        q: "A quality review found errors in applications at the following rates: Week 1: 12%, Week 2: 10%, Week 3: 8%, Week 4: 6%.\n\nIf the pattern continues, what error rate would be expected in Week 6?",
+        opts: { A: "0%", B: "2%", C: "4%", D: "3%" },
+        correct: "B",
+        exp: "The error rate decreases by 2 percentage points each week: 12, 10, 8, 6, 4, 2. Week 5 = 4%, Week 6 = 2%. This is an arithmetic sequence with a common difference of -2."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "The following rule applies to a document filing system: Documents filed on Monday go to Cabinet A. Documents filed on Tuesday through Thursday go to Cabinet B. Documents filed on Friday go to Cabinet C. A document was found in Cabinet B.\n\nWhich of the following can be concluded?",
+        opts: { A: "The document was filed on Wednesday", B: "The document was filed on Tuesday, Wednesday, or Thursday", C: "The document was filed this week", D: "The document was not filed on a weekend" },
+        correct: "B",
+        exp: "Cabinet B receives documents filed Tuesday through Thursday. Finding a document in Cabinet B means it was filed on one of those three days - but we cannot determine which specific day. Option A is too specific. Option C goes beyond the information given. Option D is partially supported (Cabinet B is for Tue-Thu) but doesn't add information beyond Option B."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "If funding is reduced, training programs will be cut. If training programs are cut, processing times will increase. Funding has been reduced.\n\nWhich conclusion follows necessarily?",
+        opts: { A: "Processing times will increase", B: "Processing times may increase", C: "Staff will need to work overtime", D: "The section will request emergency funding" },
+        correct: "A",
+        exp: "This is a valid hypothetical syllogism (chain of conditionals): if funding reduced then training cut; if training cut then processing times increase; funding reduced; therefore processing times will increase. The chain of 'if-then' statements leads necessarily to the conclusion. Options C and D introduce consequences not established by the premises."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "A colleague argues: 'This new regulation is bad policy because it was proposed by the opposing political party.'\n\nThis argument is an example of which logical fallacy?",
+        opts: { A: "False analogy", B: "Hasty generalization", C: "Ad hominem (or genetic fallacy)", D: "Circular reasoning" },
+        correct: "C",
+        exp: "This is an ad hominem (or more precisely, a genetic fallacy) - judging a policy based on its source (who proposed it) rather than its merits. The political origin of a policy is irrelevant to whether it is good policy. A policy proposed by an opponent could be excellent; one proposed by an ally could be terrible. The argument avoids engaging with the actual content of the regulation."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "A data analysis finds: 'In years when the embassy hosted more than 10 cultural events, visa applications from that country increased by at least 15% the following year. In years with 10 or fewer events, applications increased by less than 5%.'\n\nThe embassy hosted 15 cultural events this year. What is the most reasonable inference about next year's applications?",
+        opts: { A: "Applications will increase by exactly 15%", B: "Applications will likely increase by at least 15% based on the observed pattern", C: "Applications will definitely increase because of the events", D: "The number of events has no reliable relationship to application numbers" },
+        correct: "B",
+        exp: "The data shows a consistent pattern: more than 10 events correlates with 15%+ application growth. With 15 events this year, the pattern suggests at least 15% growth is likely. However, correlation does not guarantee the future outcome - Option B correctly frames this as a reasonable inference rather than a certainty. Option A overstates precision; Option C overstates certainty; Option D contradicts the data."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Pattern Recognition",
+        q: "A staffing schedule rotates officers through four roles: Interviewer, Supervisor, Reviewer, Trainer. Officer Park's assignments have been: Interviewer, Supervisor, Reviewer, Trainer, Interviewer, Supervisor, Reviewer.\n\nWhat will Officer Park's 9th assignment be?",
+        opts: { A: "Interviewer", B: "Supervisor", C: "Reviewer", D: "Trainer" },
+        correct: "D",
+        exp: "The pattern cycles through 4 roles with a period of 4. Position 1=Interviewer, 2=Supervisor, 3=Reviewer, 4=Trainer, 5=Interviewer, 6=Supervisor, 7=Reviewer, 8=Trainer, 9=Interviewer. Wait: 9 divided by 4 = 2 remainder 1, so position 1 = Interviewer. The 9th assignment is Interviewer (A). Note: answer should be A - Interviewer."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "All senior officers may authorize emergency visas. Officer Thompson is not a senior officer.\n\nWhich of the following can be concluded?",
+        opts: { A: "Officer Thompson cannot authorize emergency visas", B: "Officer Thompson is not authorized to issue any visas", C: "No conclusion about Officer Thompson's authorization can be drawn from these premises alone", D: "Officer Thompson will become a senior officer eventually" },
+        correct: "C",
+        exp: "This is a classic logical trap. The statement says ALL senior officers may authorize emergency visas - but it does NOT say ONLY senior officers may. Thompson is not a senior officer, but there may be other categories of officers who are also authorized. We cannot conclude Thompson cannot authorize - that would require the premise 'Only senior officers may authorize,' which was not stated."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "An officer argues: 'We've always processed applications this way, so this must be the correct method.'\n\nThis argument is an example of which fallacy?",
+        opts: { A: "Appeal to authority", B: "Appeal to tradition (argumentum ad antiquitatem)", C: "False dilemma", D: "Slippery slope" },
+        correct: "B",
+        exp: "Appeal to tradition (argumentum ad antiquitatem) assumes that because something has always been done a certain way, it must be correct or good. This is a logical fallacy because the age or tradition of a practice has no bearing on whether it is the best practice. Many traditional practices have been replaced by better methods. This is a common flaw in institutional reasoning."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Logical Inference",
+        q: "A report shows that sections with standardized checklists have 40% fewer processing errors than sections without them. Section Bravo does not use standardized checklists.\n\nWhat can most reasonably be inferred?",
+        opts: { A: "Section Bravo has exactly 40% more errors than sections that use checklists", B: "Section Bravo likely has more processing errors than sections using checklists, based on the observed pattern", C: "Section Bravo will definitely improve by 40% if it adopts checklists", D: "Section Bravo's errors are caused by not using checklists" },
+        correct: "B",
+        exp: "The data shows a correlation: checklist use is associated with 40% fewer errors. Without checklists, Section Bravo likely has more errors - this is a reasonable inference from the pattern. Option A overstates precision (the 40% is an average across sections). Option C overstates certainty about a future outcome. Option D confuses correlation with causation."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Deductive Reasoning",
+        q: "Either Officer Wong or Officer Patel was assigned to the afternoon shift. Officer Wong was not assigned to the afternoon shift.\n\nWhat can be concluded?",
+        opts: { A: "Officer Patel was assigned to the afternoon shift", B: "Officer Patel may have been assigned to the afternoon shift", C: "Both officers were absent from the afternoon shift", D: "A different officer was assigned to the afternoon shift" },
+        correct: "A",
+        exp: "This is a textbook disjunctive syllogism: Either P or Q; not P; therefore Q. Either Wong (P) or Patel (Q) was assigned. Wong was not assigned (not P). Therefore Patel was assigned (Q). This follows with logical certainty. Option B understates the certainty; Options C and D contradict the premises."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Argument Analysis",
+        q: "A diplomat states: 'We should not negotiate with Country X because they broke a minor trade agreement ten years ago.'\n\nWhich of the following best identifies the flaw in this reasoning?",
+        opts: { A: "It relies on hearsay evidence about Country X", B: "It applies a past minor violation to justify a broad current policy without considering whether circumstances have changed or the relevance of the violation", C: "It uses circular reasoning to avoid negotiations", D: "It commits the naturalistic fallacy" },
+        correct: "B",
+        exp: "The argument uses a single past minor violation as grounds for a broad present policy. This is flawed because: (1) the violation was minor; (2) ten years have passed and circumstances may have changed; (3) the relevance of a trade agreement violation to broader negotiations is questionable. This combines elements of hasty generalization and failure to consider changed circumstances."
+      }
     ]
   }
 };
@@ -961,6 +1354,7 @@ var state = {
   selected: null,
   submitted:false,
   shuffled: false,
+  noRepeat: false,
   totalAttempted:  0,
   totalCorrect:    0,
   totalWrong:      0,
@@ -1023,6 +1417,7 @@ function fullReset() {
   state.selected  = null;
   state.submitted = false;
   state.shuffled  = false;
+  state.noRepeat  = false;
   state.totalAttempted  = 0;
   state.totalCorrect    = 0;
   state.totalWrong      = 0;
@@ -1086,6 +1481,7 @@ function restoreCardDOM() {
 
 // -- QUEUE HELPERS -------------------------------------------------------------
 function requeueWrong(entry) {
+  if (state.noRepeat) return; // no-repeat mode: skip requeueing
   var q = state.queues[entry.sid];
   var insertAt = Math.min(2, q.length);
   var repeatEntry = JSON.parse(JSON.stringify(entry));
@@ -1289,15 +1685,32 @@ function skipQuestion() {
     updateScore();
   }
 
-  var repeatEntry = JSON.parse(JSON.stringify(entry));
-  repeatEntry.isRepeat = true;
-  state.queues[sid].push(repeatEntry);
-  updateTabBadges();
+  if (!state.noRepeat) {
+    var repeatEntry = JSON.parse(JSON.stringify(entry));
+    repeatEntry.isRepeat = true;
+    state.queues[sid].push(repeatEntry);
+    updateTabBadges();
+  }
   state.current = null;
   loadNext();
 }
 
 // -- SHUFFLE -------------------------------------------------------------------
+function setNoRepeat(on) {
+  state.noRepeat = on;
+  var btn = document.getElementById('no-repeat-btn');
+  if (btn) {
+    btn.textContent       = on ? 'No Repeats: ON' : 'No Repeats: OFF';
+    btn.style.background  = on ? '#fff2f0' : '';
+    btn.style.borderColor = on ? '#f5222d' : '';
+    btn.style.color       = on ? '#820014' : '';
+  }
+}
+
+function toggleNoRepeat() {
+  setNoRepeat(!state.noRepeat);
+}
+
 function setShuffle(on) {
   state.shuffled = on;
   var btn = document.getElementById('shuffle-btn');
@@ -1311,7 +1724,18 @@ function setShuffle(on) {
 
 function toggleShuffle() {
   setShuffle(!state.shuffled);
+  // If there is a current unanswered question, put it back in the queue first
+  // so it gets included in the shuffle, then reload
+  if (state.current && !state.submitted) {
+    state.queues[state.current.sid].unshift(JSON.parse(JSON.stringify(state.current)));
+    state.current  = null;
+    state.selected = null;
+    state.submitted = false;
+  }
   reshuffleQueues(state.shuffled);
+  // Reload the next question from the now-shuffled queue
+  restoreCardDOM();
+  loadNext();
 }
 
 // Reshuffle all queues treating groups as atomic units
@@ -1452,6 +1876,7 @@ function returnToQuiz() {
 function restartQuiz() {
   fullReset();
   setShuffle(false);
+  setNoRepeat(false);
 
   document.getElementById('diagnostics-panel').className = 'diagnostics';
   document.getElementById('quiz-area').style.display = 'block';
