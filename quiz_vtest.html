@@ -859,24 +859,609 @@ var SECTIONS = {
             exp: "Paragraph 4 states secondary evidence is evaluated 'when primary records are missing' and faces 'heightened scrutiny to deter fraud.' Together these imply secondary evidence is a fallback subject to a higher burden. Options A, C, and D each contradict or overstate what the passage says."
           }
         ]
-      },
-      {
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Error",
+        q: "Read the following sentence and identify the error:\n\n\"The officer, together with her two colleagues, were present at the briefing.\"\n\nIndicate the error type:",
+        opts: { A: "Misspelled word", B: "Improper word choice", C: "Verb tense or agreement", D: "Punctuation error" },
+        correct: "C",
+        exp: "Phrases introduced by 'together with,' 'along with,' 'as well as,' or 'in addition to' do not create compound subjects. The true subject remains 'the officer,' which is singular. The verb should be 'was present,' not 'were present.'"
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "Having reviewed the file, the decision was made by the officer.",
+          B: "After the officer reviewed the file, she made the decision.",
+          C: "The officer made the decision, having the file been reviewed.",
+          D: "The decision was made after reviewing the file by the officer."
+        },
+        correct: "B",
+        exp: "Option B is correct. Option A has a dangling participle - 'Having reviewed the file' implies the decision reviewed the file. Option C is grammatically incoherent. Option D is ambiguous - it is unclear who reviewed the file. Option B clearly states who performed each action."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"The officer [A: reviewed] the application careful and [B: noted] that the supporting [C: documents was] incomplete.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "reviewed", B: "noted", C: "documents was", D: "No error" },
+        correct: "C",
+        exp: "'Documents' is plural, so the verb must be 'were,' not 'was.' The correct phrase is 'the supporting documents were incomplete.' Options A and B are correctly formed past tense verbs with no errors."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Error",
+        q: "Read the following sentence and identify the error:\n\n\"Between you and I, the new policy will create significant delays.\"\n\nIndicate the error type:",
+        opts: { A: "Misspelled word", B: "Improper word choice", C: "Verb tense or agreement", D: "Punctuation error" },
+        correct: "B",
+        exp: "After a preposition, pronouns must be in the objective case. 'Between' is a preposition, so it requires 'me,' not 'I.' The correct phrase is 'between you and me.' Using 'I' after a preposition is a hypercorrection - people avoid 'me' thinking it sounds informal, but it is grammatically required here."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "The ambassador, along with her staff, were briefed on the situation.",
+          B: "The ambassador, along with her staff, was briefed on the situation.",
+          C: "The ambassador along with her staff, was briefed on the situation.",
+          D: "The ambassador, along with her staff was briefed on the situation."
+        },
+        correct: "B",
+        exp: "Option B is correct. The subject is 'the ambassador' (singular), so the verb must be 'was,' not 'were' (eliminating A). The phrase 'along with her staff' is a parenthetical modifier set off by commas on both sides - Option C is missing the opening comma and Option D is missing the closing comma."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"[A: Neither] the applicant [B: nor her attorney were] present when the [C: decision was] announced.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "Neither", B: "nor her attorney were", C: "decision was", D: "No error" },
+        correct: "B",
+        exp: "With 'neither...nor,' the verb agrees with the subject closest to it. The nearest subject is 'her attorney,' which is singular. The verb should be 'was present,' not 'were present.' The proximity rule determines agreement when neither/nor connects subjects of different numbers."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Error",
+        q: "Read the following sentence and identify the error:\n\n\"The report was thorough, well-researched, and showed attention to the details.\"\n\nIndicate the error type:",
+        opts: { A: "Misspelled word", B: "Improper word choice", C: "Lack of parallel structure", D: "Punctuation error" },
+        correct: "C",
+        exp: "The list of three descriptors is not parallel. 'Thorough' and 'well-researched' are adjectives, but 'showed attention to the details' is a verb phrase. The corrected version maintains parallel adjective form: 'thorough, well-researched, and detail-oriented.'"
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "The applicant insisted that the officer reviews her documentation again.",
+          B: "The applicant insisted that the officer reviewed her documentation again.",
+          C: "The applicant insisted that the officer review her documentation again.",
+          D: "The applicant insisted that the officer would review her documentation again."
+        },
+        correct: "C",
+        exp: "Option C is correct. After 'insisted that,' the subjunctive mood requires the base form of the verb ('review'), not 'reviews' (indicative), 'reviewed' (past indicative), or 'would review' (conditional). The subjunctive is required after verbs of insisting, requesting, demanding, and recommending."
+      }
+      ,{
+        type: 'group',
+        gid: 'ee-g2',
+        sub: "Reading Comprehension",
+        passage: "The Role of Consular Officers in Notarial Services\n\n(1) Among the many functions performed by U.S. consular officers abroad, notarial services represent a significant but often overlooked area of consular work. Under federal law, consular officers are authorized to perform certain notarial acts for U.S. citizens and others in foreign countries, including administering oaths, taking affidavits, and certifying copies of documents. These services carry the same legal force as those performed by notaries public within the United States.\n\n(2) The authority to perform notarial services does not extend to all documents or all persons. Consular officers may notarize documents that are intended for use in the United States, but they generally lack jurisdiction over documents that will have legal effect solely in the host country. Additionally, consular officers must decline to notarize documents when they have reason to believe the transaction is fraudulent or when the individual requesting the service does not understand the nature of the document being notarized.\n\n(3) A fee is charged for most notarial services performed at a consular post. These fees are set by regulation and are not subject to waiver except in limited circumstances prescribed by law. The fees collected by consular posts are remitted to the U.S. Treasury and do not remain with the post as operating revenue. Applicants who disagree with a fee assessment have the right to request a formal review.\n\n(4) In practice, consular officers must exercise careful judgment in notarial work. Unlike domestic notaries, who generally confirm only the identity of the signer, consular officers are expected to satisfy themselves that the person understands what they are signing. The officer bears professional responsibility for the act and may face administrative consequences if a notarial service is performed improperly.",
+        questions: [
+          {
+            q: "According to the passage, what is the primary legal significance of notarial services performed by consular officers?",
+            opts: { A: "They are advisory only and carry no binding legal force", B: "They carry the same legal force as those performed by notaries public in the United States", C: "They are valid only in the country where the consulate is located", D: "They require subsequent ratification by a domestic court" },
+            correct: "B",
+            exp: "Paragraph 1 explicitly states that consular notarial services 'carry the same legal force as those performed by notaries public within the United States.' Options A and D contradict this statement. Option C is incorrect because paragraph 2 clarifies that consular notarial authority covers documents intended for use in the United States."
+          },
+          {
+            q: "Based on the passage, which of the following documents would a consular officer be LEAST likely authorized to notarize?",
+            opts: { A: "An affidavit to be filed in a U.S. federal court", B: "A certified copy of a U.S. birth certificate", C: "A contract that will have legal effect exclusively under the laws of the host country", D: "An oath administered to a U.S. citizen traveling abroad" },
+            correct: "C",
+            exp: "Paragraph 2 states that consular officers 'generally lack jurisdiction over documents that will have legal effect solely in the host country.' A contract with exclusive legal effect under host country law falls within this limitation. The other options involve documents intended for U.S. use or U.S. citizens."
+          },
+          {
+            q: "According to the passage, what happens to fees collected for notarial services at a consular post?",
+            opts: { A: "They are retained by the post as operating revenue", B: "They are divided equally between the post and the host government", C: "They are remitted to the U.S. Treasury", D: "They are used to fund consular outreach programs" },
+            correct: "C",
+            exp: "Paragraph 3 explicitly states that fees 'are remitted to the U.S. Treasury and do not remain with the post as operating revenue.' This directly contradicts Option A."
+          },
+          {
+            q: "The passage implies that consular officers performing notarial work have a greater responsibility than domestic notaries because:",
+            opts: { A: "Consular officers charge higher fees for the same services", B: "Consular officers must ensure the signer understands the document, not merely confirm their identity", C: "Consular officers are required to translate documents before notarizing them", D: "Consular officers can notarize documents in any language" },
+            correct: "B",
+            exp: "Paragraph 4 draws this comparison explicitly: 'Unlike domestic notaries, who generally confirm only the identity of the signer, consular officers are expected to satisfy themselves that the person understands what they are signing.' This represents an elevated duty beyond what domestic notaries perform."
+          },
+          {
+            q: "Which of the following situations would most likely require a consular officer to DECLINE a notarial request, based on the passage?",
+            opts: { A: "The applicant requests the service outside of normal business hours", B: "The fee for the service has not yet been paid", C: "The officer has reason to believe the transaction is fraudulent", D: "The applicant cannot produce a second form of identification" },
+            correct: "C",
+            exp: "Paragraph 2 identifies two grounds for declining: the officer has reason to believe the transaction is fraudulent, or the individual does not understand the document. Option C directly matches the first stated ground. The other options introduce conditions not mentioned in the passage."
+          }
+        ]
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"The consul general has [A: spoke] at three regional conferences [B: this year] and is [C: scheduled] to appear at two more.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "spoke", B: "this year", C: "scheduled", D: "No error" },
+        correct: "A",
+        exp: "'Has spoke' is incorrect. The present perfect requires the past participle 'spoken,' not the simple past 'spoke.' The correct form is 'has spoken.' This is a commonly confused irregular verb: speak / spoke / spoken."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Error",
+        q: "Read the following sentence and identify the error:\n\n\"The consul general asked that each officer submits their section report by Friday.\"\n\nIndicate the error type:",
+        opts: { A: "Misspelled word", B: "Improper word choice", C: "Verb tense or agreement", D: "Punctuation error" },
+        correct: "C",
+        exp: "After verbs of requesting, demanding, or suggesting, the subjunctive mood requires the base form of the verb. The correct form is 'asked that each officer submit' (not 'submits'). This subjunctive construction is required after verbs like ask, require, recommend, insist, and suggest."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "Fewer information was available about the applicant's travel history.",
+          B: "Less informations were available about the applicant's travel history.",
+          C: "Less information was available about the applicant's travel history.",
+          D: "Fewer informations was available about the applicant's travel history."
+        },
+        correct: "C",
+        exp: "Option C is correct. 'Information' is an uncountable noun and therefore takes 'less' (not 'fewer,' which is for countable items) and a singular verb ('was'). 'Informations' is never a valid plural - information has no plural form. 'Fewer information' is incorrect because 'fewer' requires countable nouns."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"The training program was [A: designed] to improve [B: officer's] skills and to [C: ensure] compliance with updated procedures.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "designed", B: "officer's", C: "ensure", D: "No error" },
+        correct: "B",
+        exp: "The context refers to the skills of multiple officers, requiring the plural possessive 'officers'' (apostrophe after the s). 'Officer's' indicates possession by only one officer. 'Designed' and 'ensure' are both correctly used."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Error",
+        q: "Read the following sentence and identify the error:\n\n\"The number of unresolved cases have been growing steadily for three months.\"\n\nIndicate the error type:",
+        opts: { A: "Misspelled word", B: "Improper word choice", C: "Verb tense or agreement", D: "Punctuation error" },
+        correct: "C",
+        exp: "'The number of' is always treated as a singular subject in American English - it refers to the number itself, which is one thing. The verb should be 'has been growing,' not 'have been growing.' Note the distinction: 'a number of' (meaning several) takes a plural verb, but 'the number of' takes a singular verb."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "The officer who the supervisor praised received a commendation.",
+          B: "The officer whom the supervisor praised received a commendation.",
+          C: "The officer which the supervisor praised received a commendation.",
+          D: "The officer that the supervisor praised, received a commendation."
+        },
+        correct: "B",
+        exp: "Option B is correct. 'Whom' is required because the pronoun is the object of the verb 'praised' (the supervisor praised him/her - 'him/her' = object = whom). 'Who' would be used for subjects. 'Which' is not used for people. Option D uses 'that' acceptably for people but adds an incorrect comma that separates the subject from the verb."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"[A: Reviewing] the file before the interview [B: is] the most [C: efficient] way to prepare.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "Reviewing", B: "is", C: "efficient", D: "No error" },
+        correct: "D",
+        exp: "The sentence is entirely correct. 'Reviewing the file before the interview' is a gerund phrase acting as the subject, correctly followed by the singular verb 'is.' 'Efficient' is correctly spelled and used. There are no errors."
+      }
+      ,{
+        type: 'group',
+        gid: 'ee-g3',
+        sub: "Reading Comprehension",
+        passage: "Diplomatic Immunity: Scope, Limits, and the Role of the Receiving State\n\n(1) Diplomatic immunity is a principle of international law that grants foreign diplomats protection from the civil and criminal jurisdiction of the receiving state. This protection derives from the Vienna Convention on Diplomatic Relations (1961), which codified centuries of customary practice into a binding multilateral treaty. The Convention distinguishes between different categories of diplomatic personnel, each of which enjoys a different scope of immunity.\n\n(2) Diplomatic agents enjoy the broadest protections. They are immune from all criminal jurisdiction of the receiving state and from civil and administrative jurisdiction except in three specific cases: actions relating to private immovable property, matters of succession unrelated to their official functions, and professional or commercial activity conducted outside their official functions. Members of the administrative and technical staff enjoy full criminal immunity but more limited civil immunity.\n\n(3) Immunity does not mean impunity. The sending state may waive the immunity of its diplomatic personnel, and this waiver must be express, not implied. When a diplomat commits a serious offense, the receiving state's primary remedies are to declare the individual persona non grata - requiring the sending state to recall them - or to deem them no longer acceptable.\n\n(4) The receiving state also bears obligations under the Convention. It must take all appropriate steps to protect the premises of the mission and may not enter those premises without the consent of the head of mission. The practical effect is a reciprocal system of mutual restraint: each state both extends and benefits from diplomatic immunity, creating incentives to respect the system even when doing so is politically difficult.",
+        questions: [
+          {
+            q: "According to the passage, the Vienna Convention on Diplomatic Relations (1961) accomplished which of the following?",
+            opts: { A: "It created diplomatic immunity for the first time in international history", B: "It codified existing customary practice into a binding multilateral treaty", C: "It abolished all civil jurisdiction over diplomatic agents", D: "It established the International Court of Justice" },
+            correct: "B",
+            exp: "Paragraph 1 states that the Convention 'codified centuries of customary practice into a binding multilateral treaty.' It did not create immunity from scratch - customary practice predated it. Option C is incorrect because paragraph 2 identifies three exceptions to civil immunity."
+          },
+          {
+            q: "Based on the passage, a diplomatic agent could be subject to civil jurisdiction of the receiving state in which of the following situations?",
+            opts: { A: "A traffic violation resulting in property damage", B: "A contract dispute arising from their official diplomatic work", C: "A succession dispute unrelated to their official functions", D: "A criminal matter involving a local national" },
+            correct: "C",
+            exp: "Paragraph 2 lists three exceptions to diplomatic agents' civil immunity, one of which is 'matters of succession unrelated to their official functions.' A succession dispute not related to official functions falls within this exception."
+          },
+          {
+            q: "According to the passage, what is the receiving state's strongest available tool when a diplomat commits a serious offense, short of severing diplomatic relations?",
+            opts: { A: "Filing criminal charges in absentia", B: "Requesting that the sending state waive immunity", C: "Declaring the diplomat persona non grata", D: "Closing the diplomatic mission temporarily" },
+            correct: "C",
+            exp: "Paragraph 3 states: 'Persona non grata status is the strongest tool a receiving state possesses short of severing diplomatic relations entirely.' Option B describes waiver, which the passage notes must come from the sending state."
+          },
+          {
+            q: "The passage implies that the system of diplomatic immunity functions effectively primarily because:",
+            opts: { A: "International courts can enforce compliance with the Vienna Convention", B: "The system is reciprocal - each state both extends and benefits from immunity, creating mutual incentives to respect it", C: "Sending states voluntarily waive immunity in most serious cases", D: "The receiving state can enter mission premises to investigate violations" },
+            correct: "B",
+            exp: "Paragraph 4 explains: 'each state both extends and benefits from diplomatic immunity, creating incentives to respect the system even when doing so is politically difficult.' This mutual interest is identified as the system's functional foundation."
+          },
+          {
+            q: "Which of the following can be inferred from the passage about the waiver of diplomatic immunity?",
+            opts: { A: "The receiving state may waive immunity if the diplomat commits a serious crime", B: "Immunity can be waived implicitly by the diplomat's conduct", C: "Only the sending state can waive immunity, and the waiver must be express", D: "A waiver of criminal immunity automatically waives civil immunity as well" },
+            correct: "C",
+            exp: "Paragraph 3 states: 'The sending state may waive the immunity of its diplomatic personnel, and this waiver must be express, not implied.' Only the sending state can waive, and it must do so expressly. Options A, B, and D each contradict specific statements in the passage."
+          }
+        ]
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Error",
+        q: "Read the following sentence and identify the error:\n\n\"Walking into the embassy, the flag was visible from the street.\"\n\nIndicate the error type:",
+        opts: { A: "Misspelled word", B: "Dangling modifier", C: "Verb tense or agreement", D: "Punctuation error" },
+        correct: "B",
+        exp: "This is a dangling participle. The participial phrase 'Walking into the embassy' implies a subject doing the walking, but the sentence's subject is 'the flag' - flags do not walk. The phrase must be rewritten so the participial phrase modifies the correct subject: 'Walking into the embassy, I could see the flag from the street.'"
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "Each of the reports were submitted on time and was thorough.",
+          B: "Each of the reports was submitted on time and were thorough.",
+          C: "Each of the reports was submitted on time and was thorough.",
+          D: "Each of the reports were submitted on time and were thorough."
+        },
+        correct: "C",
+        exp: "Option C is correct. 'Each' is always singular and requires singular verbs throughout the sentence. Both verbs in the compound predicate ('was submitted' and 'was thorough') must agree with the singular subject 'each.' Options A, B, and D each use at least one incorrect plural verb form."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"The memorandum [A: clearly states] that all officers [B: must to submit] their reports [C: before noon] on Friday.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "clearly states", B: "must to submit", C: "before noon", D: "No error" },
+        correct: "B",
+        exp: "Modal verbs (must, can, will, should, may) are followed by the base form of the verb without 'to.' The correct form is 'must submit,' not 'must to submit.' This is a common error made by speakers whose first language uses modal-infinitive constructions differently."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Error",
+        q: "Read the following sentence and identify the error:\n\n\"The applicant's passport, which expired last March, were submitted with the application.\"\n\nIndicate the error type:",
+        opts: { A: "Misspelled word", B: "Improper word choice", C: "Verb tense or agreement", D: "Punctuation error" },
+        correct: "C",
+        exp: "The subject is 'passport,' which is singular. The relative clause 'which expired last March' is a non-restrictive modifier that does not change the subject's number. The verb should be 'was submitted,' not 'were submitted.'"
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "The new policy affects all applicants, regardless of when they applied.",
+          B: "The new policy effects all applicants, regardless of when they applied.",
+          C: "The new policy affects all applicants regardless of when they applied.",
+          D: "The new policy will effect all applicants, regardless of when they applied."
+        },
+        correct: "A",
+        exp: "Option A is correct. 'Affects' is the correct verb meaning 'to have an impact on.' 'Effects' as a verb means 'to bring about' (as in 'to effect change') - not appropriate here. Option C is missing the comma before the parenthetical phrase 'regardless of when they applied.' Option D uses 'effect' as a verb incorrectly in this context."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"The applicant [A: lay] her documents on the counter [B: and waited] patiently [C: for her] name to be called.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "lay", B: "and waited", C: "for her", D: "No error" },
+        correct: "D",
+        exp: "The sentence is correct. 'Lay' here is the past tense of 'lay' (to place something down) - she laid/lay her documents. In this context 'lay' is the correct simple past form of the transitive verb 'lay' (lay/laid/laid). 'And waited' and 'for her' are correctly formed. No error exists."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Error",
+        q: "Read the following sentence and identify the error:\n\n\"She is one of those officers who always goes above and beyond for applicants.\"\n\nIndicate the error type:",
+        opts: { A: "Misspelled word", B: "Improper word choice", C: "Verb tense or agreement", D: "No error" },
+        correct: "C",
+        exp: "The relative clause 'who always goes above and beyond' modifies 'officers,' which is plural. The verb should be 'go,' not 'goes.' The full clause means: of those officers [who always go above and beyond], she is one. The antecedent of 'who' is 'officers,' not 'one.'"
+      }
+      ,{
+        type: 'group',
+        gid: 'ee-g4',
+        sub: "Reading Comprehension",
+        passage: "Administrative Processing and Section 221(g) of the Immigration and Nationality Act\n\n(1) When a consular officer cannot make an immediate determination on a visa application - typically because additional documentation is needed or the case requires administrative review - the application is refused under Section 221(g) of the Immigration and Nationality Act. A 221(g) refusal is not a final denial; it is a suspension of the application pending the receipt of additional information or the completion of a security clearance or other review process.\n\n(2) Consular officers are required to inform applicants of the specific basis for a 221(g) refusal and to provide a list of any additional documents required. An applicant who fails to submit the requested materials within one year of the refusal date is considered to have abandoned the application, and a new application and fee will be required to resume the process.\n\n(3) A subset of 221(g) cases involves security-related administrative processing, sometimes referred to as a SAO (Security Advisory Opinion). These cases are not resolved at the post level; instead, the consulate forwards the file to the Department of State in Washington, which coordinates with relevant agencies. The consular officer has no independent authority to resolve an SAO-related hold and cannot provide applicants with a timeline for resolution.\n\n(4) The 221(g) process has been the subject of criticism from applicants and advocacy groups who argue that extended administrative processing periods - sometimes lasting months or years - cause substantial hardship without adequate procedural protections. The Department of State has maintained that security review processes are a necessary component of visa adjudication and that the need for thorough vetting outweighs the inconvenience caused by delays.",
+        questions: [
+          {
+            q: "According to the passage, how does a 221(g) refusal differ from an outright visa denial?",
+            opts: { A: "A 221(g) refusal permanently bars the applicant from reapplying", B: "A 221(g) refusal is a suspension pending additional information or review, not a final denial", C: "A 221(g) refusal requires the applicant to appear before an immigration judge", D: "A 221(g) refusal applies only to immigrant visa applicants" },
+            correct: "B",
+            exp: "Paragraph 1 explicitly states: 'A 221(g) refusal is not a final denial; it is a suspension of the application pending the receipt of additional information or the completion of a security clearance or other review process.' Option A directly contradicts this."
+          },
+          {
+            q: "What happens to a 221(g) application if the applicant fails to submit requested materials within one year?",
+            opts: { A: "The application is automatically denied on the merits", B: "The consular officer extends the deadline by 90 days", C: "The application is considered abandoned and a new application and fee are required", D: "The applicant is barred from applying for three years" },
+            correct: "C",
+            exp: "Paragraph 2 states: 'An applicant who fails to submit the requested materials within one year of the refusal date is considered to have abandoned the application, and a new application and fee will be required to resume the process.'"
+          },
+          {
+            q: "Which of the following best describes the consular officer's role when a 221(g) case involves security-related administrative processing (SAO)?",
+            opts: { A: "The officer independently resolves the security hold after 60 days", B: "The officer forwards the file to Washington and cannot independently resolve the hold or provide a timeline", C: "The officer contacts the applicant's home government to verify security information", D: "The officer suspends all other casework until the SAO is resolved" },
+            correct: "B",
+            exp: "Paragraph 3 states: 'The consular officer has no independent authority to resolve an SAO-related hold and cannot provide applicants with a timeline for resolution.' The file is forwarded to the Department of State in Washington."
+          },
+          {
+            q: "Based on the passage, critics of the 221(g) process argue that:",
+            opts: { A: "Consular officers lack sufficient training to conduct security reviews", B: "Extended administrative processing causes substantial hardship without adequate procedural protections", C: "The one-year abandonment rule is too lenient toward applicants", D: "Security Advisory Opinions should be conducted by immigration courts" },
+            correct: "B",
+            exp: "Paragraph 4 describes the criticism: 'extended administrative processing periods - sometimes lasting months or years - cause substantial hardship without adequate procedural protections.' Options A, C, and D introduce details not mentioned in the passage."
+          },
+          {
+            q: "Which of the following can be inferred from the passage about the distinction between a 221(g) and other types of visa refusals?",
+            opts: { A: "A 221(g) refusal creates a permanent bar to admissibility", B: "A 221(g) refusal has no effect on future applications", C: "The type of refusal matters because it affects the applicant's ability to reapply and any applicable bars to future admissibility", D: "A 221(g) refusal is treated identically to all other INA refusal sections" },
+            correct: "C",
+            exp: "Paragraph 1 states the distinction 'affects the applicant's ability to reapply and any applicable bars to future admissibility.' Option A overstates the effect. Option B understates it. Option D directly contradicts the passage."
+          }
+        ]
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "The team of analysts have completed their review of the application.",
+          B: "The team of analysts has completed its review of the application.",
+          C: "The team of analysts has completed their review of the application.",
+          D: "The team of analysts have completed its review of the application."
+        },
+        correct: "B",
+        exp: "Option B is correct. In American English, collective nouns like 'team' take singular verbs and singular pronouns when acting as a unified body. 'Has completed' (singular verb) and 'its review' (singular pronoun) are both correct. Option C mixes a singular verb with a plural pronoun. Options A and D use the plural verb 'have,' which is incorrect in American English for collective nouns acting as a unit."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"The section [A: has processed] less [B: applications] this quarter [C: than] it did during the same period last year.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "has processed", B: "applications", C: "than", D: "No error" },
+        correct: "B",
+        exp: "'Less' is used with uncountable nouns; 'fewer' is used with countable nouns. Applications are countable (you can say 'three applications'), so the correct word is 'fewer applications.' This is one of the most frequently tested grammar distinctions on government writing exams."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Error",
+        q: "Read the following sentence and identify the error:\n\n\"The data supports the conclusion that processing times have improved significantly.\"\n\nIndicate the error type:",
+        opts: { A: "Misspelled word", B: "Improper word choice", C: "Verb tense or agreement", D: "No error" },
+        correct: "D",
+        exp: "While 'data' is technically the plural of 'datum,' in modern American English usage - especially in government and professional writing - 'data' is widely accepted as a collective singular noun taking a singular verb ('supports'). This sentence is grammatically correct in standard American English usage."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "The officer recommended that all documentation be submitted before the deadline.",
+          B: "The officer recommended that all documentation is submitted before the deadline.",
+          C: "The officer recommended that all documentation was submitted before the deadline.",
+          D: "The officer recommended all documentation to be submitted before the deadline."
+        },
+        correct: "A",
+        exp: "Option A is correct. After 'recommended that,' the subjunctive mood requires the base form of the verb ('be submitted'), not the indicative 'is submitted' or past 'was submitted.' Option D uses an infinitive construction ('to be submitted') which is grammatically awkward and non-standard after 'recommended.'"
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"[A: Walking] into the section, [B: the long queue] of applicants [C: was immediately visible].\"\n\nWhich underlined part contains an error?",
+        opts: { A: "Walking", B: "the long queue", C: "was immediately visible", D: "No error" },
+        correct: "A",
+        exp: "This is a dangling participle. 'Walking into the section' implies that the subject walking is 'the long queue of applicants' - but queues do not walk. The participial phrase must modify the true actor (a person walking in). A correct version would be: 'Walking into the section, I immediately noticed the long queue of applicants.'"
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Error",
+        q: "Read the following sentence and identify the error:\n\n\"Neither the section chief nor the officers was informed of the policy change.\"\n\nIndicate the error type:",
+        opts: { A: "Misspelled word", B: "Improper word choice", C: "Verb tense or agreement", D: "Punctuation error" },
+        correct: "C",
+        exp: "With 'neither...nor,' the verb agrees with the subject closest to it (the proximity rule). The subject closest to the verb is 'the officers,' which is plural. The verb should be 'were informed,' not 'was informed.'"
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "Whomever submitted the incomplete application will need to reapply.",
+          B: "Whoever submitted the incomplete application will need to reapply.",
+          C: "Who submitted the incomplete application will need to reapply.",
+          D: "The person which submitted the incomplete application will need to reapply."
+        },
+        correct: "B",
+        exp: "Option B is correct. The pronoun is the subject of the subordinate clause 'submitted the incomplete application,' requiring the subject form 'whoever' (not 'whomever,' which is the object form). The entire clause 'Whoever submitted the incomplete application' is the subject of 'will need to reapply.' Option C uses 'who' rather than 'whoever,' creating an awkward structure. Option D uses 'which' for a person, which is incorrect."
+      }
+      ,{
+        type: 'group',
+        gid: 'ee-g5',
+        sub: "Reading Comprehension",
+        passage: "The Foreign Service Act of 1980 and the Structure of the American Foreign Service\n\n(1) The Foreign Service Act of 1980 is the foundational statute governing the personnel system of the United States Foreign Service. It established the current structure of the Foreign Service, which consists of five categories of personnel: Foreign Service Officers (FSOs), Foreign Service Specialists, members of the Senior Foreign Service, Foreign Service personnel of other agencies, and Foreign Service nationals (locally employed staff).\n\n(2) Foreign Service Officers are generalist diplomats who rotate through assignments in a variety of functional and geographic areas over the course of their careers. They are expected to serve both domestically and abroad, and assignments are typically two to three years in duration. FSOs compete for promotion on an 'up or out' basis: officers who are not promoted within a certain time frame may be separated from the Service.\n\n(3) Foreign Service Specialists occupy defined technical or administrative roles, such as information technology, security, medical services, and office management. Unlike generalist FSOs, specialists are recruited for and remain within their specific occupational specialty. They are subject to the same worldwide availability requirement as FSOs but advance along separate promotion tracks.\n\n(4) Locally employed staff - referred to in the Act as Foreign Service nationals - are citizens or permanent residents of the country in which they serve. They are not subject to rotation and bring invaluable local knowledge, language expertise, and institutional continuity to diplomatic missions. They are not eligible to serve as consular officers but may perform a wide range of consular support functions.",
+        questions: [
+          {
+            q: "According to the passage, how many categories of personnel are established by the Foreign Service Act of 1980?",
+            opts: { A: "Three", B: "Four", C: "Five", D: "Six" },
+            correct: "C",
+            exp: "Paragraph 1 lists five categories: Foreign Service Officers, Foreign Service Specialists, members of the Senior Foreign Service, Foreign Service personnel of other agencies, and Foreign Service nationals (locally employed staff)."
+          },
+          {
+            q: "The 'up or out' promotion system described in the passage is designed primarily to:",
+            opts: { A: "Reduce the overall size of the Foreign Service over time", B: "Maintain a competitive, high-performing workforce by separating officers who do not advance", C: "Ensure that all FSOs serve in both domestic and overseas assignments", D: "Reserve senior positions for officers with the most years of service" },
+            correct: "B",
+            exp: "Paragraph 2 states officers not promoted 'may be separated from the Service.' The system creates promotion pressure intended to maintain a high-performing workforce, not simply reduce size or impose seniority rules."
+          },
+          {
+            q: "According to the passage, which of the following best distinguishes Foreign Service Specialists from Foreign Service Officers?",
+            opts: { A: "Specialists serve only in domestic assignments; FSOs serve only abroad", B: "Specialists are recruited for and remain in a specific occupational specialty; FSOs are generalist diplomats", C: "Specialists are not subject to the worldwide availability requirement", D: "Specialists do not receive promotions under the Foreign Service Act" },
+            correct: "B",
+            exp: "Paragraph 3 states: 'Unlike generalist FSOs, specialists are recruited for and remain within their specific occupational specialty.' Option C directly contradicts paragraph 3, which states they are 'subject to the same worldwide availability requirement as FSOs.'"
+          },
+          {
+            q: "Based on the passage, which of the following statements about locally employed staff is accurate?",
+            opts: { A: "They are subject to the same rotation requirements as FSOs", B: "They are compensated according to U.S. government pay scales", C: "They bring local knowledge and institutional continuity but are not eligible to serve as consular officers", D: "They are appointed under the same authority as Foreign Service Officers" },
+            correct: "C",
+            exp: "Paragraph 4 states they 'bring invaluable local knowledge, language expertise, and institutional continuity' and 'are not eligible to serve as consular officers.' Option A is contradicted by 'not subject to rotation.'"
+          },
+          {
+            q: "Which of the following can be inferred from the passage about the role of locally employed staff in consular operations?",
+            opts: { A: "They perform the same functions as Foreign Service Officers in all areas", B: "They cannot contribute meaningfully to consular work because they lack U.S. citizenship", C: "They may perform consular support functions but cannot exercise the authority of a consular officer", D: "They are fully interchangeable with Foreign Service Specialists at consular posts" },
+            correct: "C",
+            exp: "Paragraph 4 states they 'may perform a wide range of consular support functions' but 'are not eligible to serve as consular officers.' This implies they contribute in a support capacity without exercising consular authority."
+          }
+        ]
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"The policy [A: effects] all staff members [B: who have] been employed [C: for less than] two years.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "effects", B: "who have", C: "for less than", D: "No error" },
+        correct: "A",
+        exp: "'Effects' as a verb means to bring about something new (as in 'to effect change'). The intended meaning here is 'has an impact on,' which requires the verb 'affects.' This is one of the most commonly confused word pairs in English. 'Who have' and 'for less than' (modifying the time period, not a countable noun) are both correct."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "The report, which took three weeks to prepare, were distributed to all staff.",
+          B: "The report which took three weeks to prepare was distributed to all staff.",
+          C: "The report, which took three weeks to prepare, was distributed to all staff.",
+          D: "The report, that took three weeks to prepare, was distributed to all staff."
+        },
+        correct: "C",
+        exp: "Option C is correct. The subject 'report' is singular, requiring 'was' (not 'were,' eliminating A). The clause 'which took three weeks to prepare' is non-restrictive (it adds information but is not essential to identifying which report), so it must be set off by commas on both sides (eliminating B). 'That' introduces restrictive clauses and is not set off by commas, so Option D is also incorrect."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"The ambassador [A: insisted] that the report [B: is submitted] to her office [C: before] the press briefing.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "insisted", B: "is submitted", C: "before", D: "No error" },
+        correct: "B",
+        exp: "After verbs of insisting, demanding, and requesting followed by 'that,' the subjunctive mood requires the base form. The correct form is 'be submitted,' not 'is submitted.' Subjunctive: 'insisted that the report be submitted.' The indicative 'is submitted' incorrectly replaces the required subjunctive 'be submitted.'"
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "Between the three candidates, Officer Reyes is the most qualified.",
+          B: "Among the three candidates, Officer Reyes is the more qualified.",
+          C: "Among the three candidates, Officer Reyes is the most qualified.",
+          D: "Between the three candidates, Officer Reyes is the most qualified of the three."
+        },
+        correct: "C",
+        exp: "Option C is correct. 'Among' is used when referring to three or more items ('between' is for two). 'Most qualified' is the correct superlative for three or more candidates ('more qualified' is the comparative used for exactly two). Option D uses 'between' incorrectly and is redundant. Option B correctly uses 'among' but incorrectly uses 'more' (comparative) instead of 'most' (superlative)."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"[A: Irregardless] of the circumstances, [B: all applications] must be [C: processed] within the standard timeframe.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "Irregardless", B: "all applications", C: "processed", D: "No error" },
+        correct: "A",
+        exp: "'Irregardless' is not a standard word in formal English. The correct word is 'regardless.' 'Irregardless' is a double negative (the prefix 'ir-' and the suffix '-less' both negate), making it non-standard. 'All applications' and 'processed' are both correct."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "The policy applies to anyone whom enters the facility after hours.",
+          B: "The policy applies to anyone which enters the facility after hours.",
+          C: "The policy applies to anyone who enters the facility after hours.",
+          D: "The policy applies to anyone that enters the facility after hours."
+        },
+        correct: "C",
+        exp: "Option C is correct. 'Who' is the subject form of the relative pronoun for people - it is the subject of the verb 'enters' (he/she enters = who enters). 'Whom' is the object form. 'Which' is not used for people. While 'that' can refer to people in informal usage, 'who' is preferred in formal and government writing."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"The committee [A: comprised of] senior officers [B: will meet] on Thursday [C: to review] the proposed changes.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "comprised of", B: "will meet", C: "to review", D: "No error" },
+        correct: "A",
+        exp: "'Is comprised of' is formally incorrect. 'Comprise' means to contain or be made up of - the whole comprises the parts. The correct phrasing is either 'composed of senior officers' or 'comprising senior officers.' 'The committee comprised senior officers' (no 'of') is the formal correct form. 'Will meet' and 'to review' are both correct."
+      }
+      ,{
+        type: 'group',
+        gid: 'ee-g6',
+        sub: "Reading Comprehension",
+        passage: "The Doctrine of Consular Non-Reviewability\n\n(1) One of the most distinctive features of U.S. immigration law is the doctrine of consular non-reviewability. Under this doctrine, a consular officer's decision to deny a visa is generally not subject to review by any other executive branch agency, by immigration courts, or by the federal judiciary. An applicant denied a visa has no right to a formal hearing, no right to a statement of reasons sufficient to challenge the denial, and no right to judicial review of the consular officer's decision.\n\n(2) The doctrine has deep roots in both statute and case law. The Supreme Court affirmed in Kleindienst v. Mandel (1972) that Congress has plenary power over the admission of aliens, and that consular officers exercise this power on behalf of the executive branch. Because the admission of foreign nationals is considered a foreign policy and national security matter, courts have historically been reluctant to second-guess consular judgments.\n\n(3) There are, however, limited exceptions to the doctrine. The most significant is the 'facially legitimate and bona fide reason' standard established in Mandel. Under this standard, a consular denial will be upheld if the officer can point to a facially legitimate and bona fide reason for it - the court will not look behind the reason to evaluate its merits. A second exception applies when a U.S. citizen petitioner's own constitutional rights are implicated by the denial.\n\n(4) Critics argue that the doctrine creates a system in which government officers exercise unchecked power over decisions that profoundly affect individuals' lives and family relationships. Proponents counter that visa decisions involve sensitive national security information that cannot be disclosed in adversarial proceedings.",
+        questions: [
+          {
+            q: "According to the passage, which of the following accurately describes the doctrine of consular non-reviewability?",
+            opts: { A: "Consular visa denials may be appealed to the Secretary of State", B: "Consular visa denials are generally not subject to review by other agencies, immigration courts, or the federal judiciary", C: "Consular officers must provide written reasons sufficient for an applicant to challenge a denial", D: "Visa denials based on national security grounds are exempt from the doctrine" },
+            correct: "B",
+            exp: "Paragraph 1 defines the doctrine: 'a consular officer's decision to deny a visa is generally not subject to review by any other executive branch agency, by immigration courts, or by the federal judiciary.' Option C directly contradicts paragraph 1, which states there is 'no right to a statement of reasons sufficient to challenge the denial.'"
+          },
+          {
+            q: "What did the Supreme Court affirm in Kleindienst v. Mandel (1972)?",
+            opts: { A: "It created the doctrine of consular non-reviewability for the first time", B: "Congress has plenary power over alien admission and consular officers exercise this power for the executive branch", C: "All visa denials must include written reasons", D: "Immigration courts have the power to review consular decisions" },
+            correct: "B",
+            exp: "Paragraph 2 states: 'The Supreme Court affirmed in Kleindienst v. Mandel (1972) that Congress has plenary power over the admission of aliens, and that consular officers exercise this power on behalf of the executive branch.' The doctrine predates Mandel; the case affirmed it, not created it."
+          },
+          {
+            q: "Under the 'facially legitimate and bona fide reason' standard described in the passage, what will a court do when evaluating a challenged consular denial?",
+            opts: { A: "Conduct a full independent review of the evidence underlying the denial", B: "Uphold the denial if the officer can point to a facially legitimate reason, without examining the merits behind it", C: "Require the consular officer to testify about the basis for the decision", D: "Refer the case to the Department of State for reconsideration" },
+            correct: "B",
+            exp: "Paragraph 3 states: 'the court will not look behind the reason to evaluate its merits.' If the officer provides a facially legitimate and bona fide reason, the denial is upheld without deeper scrutiny - a very deferential standard."
+          },
+          {
+            q: "According to the passage, when may a U.S. citizen's constitutional rights create an exception to consular non-reviewability?",
+            opts: { A: "Whenever the citizen is related to the visa applicant", B: "When the citizen's own constitutional rights are implicated by the denial", C: "When the denial affects the citizen's employment abroad", D: "When the citizen files suit within 60 days of the denial" },
+            correct: "B",
+            exp: "Paragraph 3 states the exception applies 'when a U.S. citizen petitioner's own constitutional rights are implicated by the denial.' The exception is based on the citizen's own constitutional rights, not merely their relationship or other circumstances."
+          },
+          {
+            q: "Based on the passage, which argument do proponents of consular non-reviewability make in its defense?",
+            opts: { A: "Consular officers have superior legal training compared to immigration judges", B: "Visa decisions involve sensitive national security information that cannot be disclosed in adversarial proceedings", C: "Most visa denials are overturned on administrative appeal anyway", D: "The doctrine applies only to nonimmigrant visa applicants" },
+            correct: "B",
+            exp: "Paragraph 4 presents the proponents' argument: 'visa decisions involve sensitive national security information that cannot be disclosed in adversarial proceedings.' Options A, C, and D are not mentioned as arguments in the passage."
+          }
+        ]
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "Please insure that all forms are completed prior to your interview.",
+          B: "Please ensure that all forms are completed prior to your interview.",
+          C: "Please assure that all forms are completed prior to your interview.",
+          D: "Please be sure to insure the completion of all forms prior to your interview."
+        },
+        correct: "B",
+        exp: "Option B is correct. 'Ensure' means to make certain that something happens - the appropriate word when confirming a process or outcome. 'Insure' refers to financial insurance. 'Assure' is used to relieve a person's doubts or concerns (you assure someone, not a process). Option D uses 'insure' incorrectly and is unnecessarily wordy."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"The officer [A: who] approved the visa has [B: since been] transferred [C: to another post].\"\n\nWhich underlined part contains an error?",
+        opts: { A: "who", B: "since been", C: "to another post", D: "No error" },
+        correct: "D",
+        exp: "The sentence is entirely correct. 'Who' is the correct subject pronoun (the officer approved the visa - subject role). 'Has since been transferred' is a correct present perfect passive construction. 'To another post' is a correct prepositional phrase. No error exists."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Choose the Correct Sentence",
+        q: "Choose the sentence that is most grammatically correct.",
+        opts: {
+          A: "The reason the application was delayed is because of missing documentation.",
+          B: "The reason the application was delayed is due to missing documentation.",
+          C: "The reason the application was delayed is that documentation was missing.",
+          D: "The application was delayed for the reason that documentation was missing."
+        },
+        correct: "C",
+        exp: "Option C is correct. 'The reason is that...' is the correct construction - 'reason' is followed by 'that,' not 'because' (redundant: reason already implies cause) or 'due to' (a prepositional phrase, not a clause). 'The reason is because' is a common but grammatically redundant construction. Option D is grammatically acceptable but awkward and indirect."
+      }
+      ,      {
+        type: 'standalone',
+        sub: "Identify the Underlined Error",
+        q: "Read the sentence below. Three parts are underlined (A, B, C). Choose the underlined part that contains an error, or choose D if there is no error.\n\n\"[A: Between] the four regional offices, the capital [B: processes] the [C: most] applications annually.\"\n\nWhich underlined part contains an error?",
+        opts: { A: "Between", B: "processes", C: "most", D: "No error" },
+        correct: "A",
+        exp: "'Between' is used when referring to two items. When comparing three or more things, 'among' is correct. Since there are four regional offices, the correct word is 'among.' 'Processes' correctly agrees with the singular subject 'capital,' and 'most' is the correct superlative for comparing more than two."
+      }
+      ,      {
         type: 'standalone',
         sub: "Verb Form",
         q: "The officer noted that the applicant had [went] to the embassy twice without success.\n\nFor the underlined word, which is correct?",
         opts: { A: "went", B: "gone", C: "go", D: "goes" },
         correct: "B",
         exp: "The past perfect construction 'had gone' requires the past participle 'gone,' not the simple past 'went.' The verb 'had' signals that a past participle must follow. 'Had went' is always incorrect in standard English."
-      },
-      {
+      }
+      ,      {
         type: 'standalone',
         sub: "Word Confusion",
         q: "The committee was asked to [insure] a smooth transition between administrations.\n\nFor the underlined word, which is correct?",
         opts: { A: "insure", B: "assure", C: "ensure", D: "secure" },
         correct: "C",
         exp: "'Ensure' means to make certain something happens or is the case. 'Insure' relates to financial insurance coverage. 'Assure' is used to put a person's mind at ease. 'Ensure' is correct when the subject is taking steps to guarantee a result."
-      },
-      {
+      }
+      ,      {
         type: 'standalone',
         sub: "Subject-Verb Agreement",
         q: "Read the following sentence and identify the error:\n\n\"The list of requirements are available on the agency website.\"\n\nIndicate the error type:",
@@ -884,6 +1469,7 @@ var SECTIONS = {
         correct: "C",
         exp: "The subject is 'the list,' which is singular. The prepositional phrase 'of requirements' is a decoy - it does not change the subject. The verb should be 'is,' not 'are.' This is a subject-verb agreement error caused by attraction to the nearest plural noun."
       }
+    
     ]
   },
   lr: {
