@@ -305,6 +305,55 @@
     max-height: 240px;
     overflow-y: auto;
   }
+
+  /* -- PILL TOGGLE ----------------------------------------- */
+  .pill-toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: #37352f;
+    cursor: pointer;
+    user-select: none;
+  }
+  .pill-toggle {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  .pill-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+  .pill-slider {
+    position: absolute;
+    inset: 0;
+    background: #d3d3d3;
+    border-radius: 22px;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .pill-slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .pill-toggle input:checked + .pill-slider {
+    background: #e03e3e;
+  }
+  .pill-toggle input:checked + .pill-slider::before {
+    transform: translateX(18px);
+  }
 </style>
 </head>
 <body>
@@ -333,7 +382,13 @@
 <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
   <button class="btn danger" onclick="showDiagnostics()">Finish Quiz &amp; See Diagnostics</button>
   <button class="btn" id="shuffle-btn" onclick="toggleShuffle()">Shuffle All</button>
-  <button class="btn" id="no-repeat-btn" onclick="toggleNoRepeat()">No Repeats: OFF</button>
+  <label class="pill-toggle-wrap" title="When ON, wrong answers and skips are not repeated">
+    <span>No Repeats</span>
+    <span class="pill-toggle">
+      <input type="checkbox" id="no-repeat-chk" onchange="toggleNoRepeat()">
+      <span class="pill-slider"></span>
+    </span>
+  </label>
 </div>
 
 <!-- QUIZ AREA -->
@@ -817,46 +872,358 @@ var SECTIONS = {
         correct: "C",
         exp: "The FOMC is the monetary policy-setting body of the Federal Reserve. It meets approximately eight times per year to set the target federal funds rate (the interest rate banks charge each other for overnight loans) and to decide whether to buy or sell government securities (open market operations) to influence the money supply, credit conditions, inflation, and employment."
       }
+      ,{
+        type: 'standalone',
+        sub: "U.S. Government & Foreign Policy",
+        q: "What is the primary role of the Office of Management and Budget (OMB)?",
+        opts: { A: "To manage the Federal Reserve's monetary policy decisions", B: "To prepare and oversee the federal budget and evaluate the effectiveness of agency programs", C: "To conduct audits of all federal agencies for waste and fraud", D: "To manage the U.S. national debt and Treasury bond issuance" },
+        correct: "B",
+        exp: "The OMB, part of the Executive Office of the President, prepares the President's annual budget proposal to Congress and oversees federal agency performance and regulatory policy. The Federal Reserve manages monetary policy; the GAO conducts audits; the Treasury manages debt issuance."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. History",
+        q: "The Compromise of 1877 effectively ended Reconstruction by:",
+        opts: { A: "Granting full citizenship rights to formerly enslaved people across all Southern states", B: "Withdrawing federal troops from the South in exchange for the Republican presidential candidate being awarded the disputed 1876 election", C: "Establishing the Jim Crow laws that mandated racial segregation", D: "Creating the Freedmen's Bureau to assist formerly enslaved people" },
+        correct: "B",
+        exp: "The Compromise of 1877 resolved the disputed 1876 presidential election between Rutherford B. Hayes and Samuel Tilden by awarding the presidency to Hayes in exchange for withdrawing federal troops from the South. This effectively ended Reconstruction and allowed Southern states to restore white Democratic control. Jim Crow laws developed afterward; the Freedmen's Bureau was created in 1865."
+      }
+      ,{
+        type: 'standalone',
+        sub: "International Relations",
+        q: "What is the primary distinction between 'hard power' and 'soft power' in international relations?",
+        opts: { A: "Hard power refers to military alliances; soft power refers to economic sanctions", B: "Hard power uses coercion through military or economic force; soft power uses attraction through culture, values, and diplomacy", C: "Hard power is used by great powers; soft power is used by small states", D: "Hard power involves direct confrontation; soft power involves covert operations" },
+        correct: "B",
+        exp: "Coined by Joseph Nye, hard power refers to coercive influence through military force or economic pressure. Soft power refers to the ability to attract and co-opt through culture, political values, and foreign policy credibility. Both are legitimate tools of statecraft. Small states can exercise soft power effectively."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Economics",
+        q: "The Federal Reserve's 'dual mandate' requires it to pursue which two goals?",
+        opts: { A: "Low inflation and a balanced federal budget", B: "Maximum employment and stable prices (low inflation)", C: "Economic growth and a strong dollar", D: "Low interest rates and reduced national debt" },
+        correct: "B",
+        exp: "Under the Federal Reserve Act, the Fed has a dual mandate: to promote maximum employment and maintain stable prices (typically interpreted as low, stable inflation around 2%). The Fed does not directly control the federal budget, national debt, or dollar exchange rates, though its policies influence them."
+      }
+      ,{
+        type: 'standalone',
+        sub: "World Geography",
+        q: "Which of the following countries is entirely surrounded by South Africa?",
+        opts: { A: "Zimbabwe", B: "Mozambique", C: "Lesotho", D: "Eswatini (Swaziland)" },
+        correct: "C",
+        exp: "Lesotho is completely surrounded by South Africa, making it one of only three enclaved nations in the world (along with Vatican City and San Marino, both surrounded by Italy). Eswatini borders both South Africa and Mozambique. Zimbabwe and Mozambique have multiple neighbors."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. History",
+        q: "The Monroe Doctrine (1823) declared that:",
+        opts: { A: "The United States would annex Texas and California from Mexico", B: "European powers should not attempt to colonize or interfere with the affairs of nations in the Western Hemisphere", C: "The United States would maintain strict neutrality in European wars", D: "Native American tribes would be relocated west of the Mississippi River" },
+        correct: "B",
+        exp: "President Monroe's 1823 doctrine declared the Western Hemisphere closed to further European colonization and warned European powers against interfering in the affairs of independent nations in the Americas. In exchange, the U.S. pledged not to interfere in European affairs. The doctrine became a cornerstone of U.S. foreign policy and was later invoked to justify intervention throughout Latin America."
+      }
+      ,{
+        type: 'standalone',
+        sub: "International Organizations",
+        q: "The G7 (Group of Seven) is an informal forum consisting of which countries?",
+        opts: { A: "USA, China, Russia, Germany, UK, France, and Japan", B: "USA, Canada, UK, France, Germany, Italy, and Japan", C: "USA, Brazil, India, China, Russia, South Africa, and Germany", D: "USA, UK, France, China, Russia, Germany, and Saudi Arabia" },
+        correct: "B",
+        exp: "The G7 consists of the United States, Canada, United Kingdom, France, Germany, Italy, and Japan - seven of the world's largest advanced economies. Russia was a member (making it the G8) until its suspension following the 2014 annexation of Crimea. China, Brazil, and India are not G7 members but participate in G20 meetings."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Economics",
+        q: "What does the Consumer Price Index (CPI) measure?",
+        opts: { A: "The total output of goods and services produced in the economy", B: "The average change over time in prices paid by urban consumers for a representative basket of goods and services", C: "The difference between the prices producers receive and the prices consumers pay", D: "The rate at which businesses invest in new capital equipment" },
+        correct: "B",
+        exp: "The CPI, published monthly by the Bureau of Labor Statistics, measures the average change in prices paid by urban consumers for a fixed basket of goods and services. It is the most widely used measure of inflation. GDP measures total output; the producer price index measures prices received by producers."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. Government & Foreign Policy",
+        q: "The 22nd Amendment to the U.S. Constitution, ratified in 1951, established:",
+        opts: { A: "The right of citizens 18 and older to vote", B: "A two-term limit on the presidency", C: "The process for presidential succession when a president is incapacitated", D: "The abolition of poll taxes in federal elections" },
+        correct: "B",
+        exp: "The 22nd Amendment limits presidents to two terms in office (or up to 10 years if they served part of a predecessor's term). It was ratified following FDR's unprecedented four terms. The 26th Amendment lowered the voting age to 18; the 25th Amendment addresses presidential succession; the 24th Amendment abolished poll taxes."
+      }
+      ,{
+        type: 'standalone',
+        sub: "World Geography",
+        q: "Which of the following mountain ranges forms the natural boundary between Europe and Asia?",
+        opts: { A: "The Alps", B: "The Carpathians", C: "The Ural Mountains", D: "The Caucasus Mountains" },
+        correct: "C",
+        exp: "The Ural Mountains, running north to south through Russia, form the conventional boundary between Europe and Asia. The Caucasus Mountains (between Russia and Georgia/Azerbaijan/Armenia) mark the southern portion of this boundary. The Alps are entirely within Europe; the Carpathians run through Central and Eastern Europe."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. History",
+        q: "The Dawes Act of 1887 is significant because it:",
+        opts: { A: "Granted citizenship to all Native Americans born in the United States", B: "Divided communal tribal lands into individual allotments and opened surplus land to white settlement, accelerating the destruction of tribal culture", C: "Established the reservation system for Native American tribes", D: "Prohibited further westward expansion of U.S. territory" },
+        correct: "B",
+        exp: "The Dawes Act broke up collectively held tribal lands into individual allotments (160 acres per family head), with 'surplus' land sold to white settlers. It resulted in the loss of approximately two-thirds of Native American land holdings by 1934 and accelerated the destruction of tribal governance and culture. Citizenship was granted to all Native Americans by the Indian Citizenship Act of 1924."
+      }
+      ,{
+        type: 'standalone',
+        sub: "International Relations",
+        q: "What does the term 'failed state' refer to in international relations?",
+        opts: { A: "A state that has been economically sanctioned by the UN Security Council", B: "A state that has lost the ability to perform basic government functions including providing security, basic services, and exercising sovereign authority over its territory", C: "A state whose government has been overthrown by foreign intervention", D: "A state with a GDP per capita below the World Bank's poverty threshold" },
+        correct: "B",
+        exp: "A failed state is characterized by collapse of core government functions: providing security, delivering basic public services, maintaining functioning courts, and exercising effective authority throughout its territory. Somalia in the 1990s is the classic example. Economic sanctions, foreign intervention, or poverty alone do not constitute state failure."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Economics",
+        q: "Which of the following correctly describes a 'progressive tax system'?",
+        opts: { A: "A system in which all taxpayers pay the same flat percentage of income regardless of earnings", B: "A system in which the tax rate increases as the taxable amount increases, so higher earners pay a larger percentage", C: "A system in which lower-income earners pay a larger share of income in taxes than higher earners", D: "A system in which taxes are levied only on consumption, not on income" },
+        correct: "B",
+        exp: "A progressive tax system imposes higher marginal tax rates on higher income brackets, so the effective tax rate rises with income. The U.S. federal income tax is a progressive system. A flat tax applies the same rate to all (Option A). A regressive tax takes a larger share from lower earners (Option C, describing sales tax effects). A consumption tax taxes spending rather than income."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. Government & Foreign Policy",
+        q: "Which constitutional amendment abolished slavery throughout the United States?",
+        opts: { A: "The 13th Amendment", B: "The 14th Amendment", C: "The 15th Amendment", D: "The 16th Amendment" },
+        correct: "A",
+        exp: "The 13th Amendment (1865) abolished slavery and involuntary servitude throughout the United States, except as punishment for crime. The 14th Amendment established citizenship and equal protection; the 15th Amendment prohibited denial of voting rights based on race; the 16th Amendment authorized the federal income tax."
+      }
+      ,{
+        type: 'standalone',
+        sub: "World Geography",
+        q: "Which of the following bodies of water does the Suez Canal connect?",
+        opts: { A: "The Atlantic Ocean and the Indian Ocean", B: "The Mediterranean Sea and the Red Sea", C: "The Black Sea and the Mediterranean Sea", D: "The Persian Gulf and the Red Sea" },
+        correct: "B",
+        exp: "The Suez Canal connects the Mediterranean Sea (north) to the Red Sea (south), providing a direct shipping route between Europe and Asia without circumnavigating Africa. Opened in 1869, it is approximately 193 km long and controlled by Egypt. The Bosphorus connects the Black Sea to the Mediterranean; the Strait of Hormuz connects the Persian Gulf to the Gulf of Oman."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. History",
+        q: "The Alien and Sedition Acts of 1798 were significant because they:",
+        opts: { A: "Established the first immigration quotas for different nationalities", B: "Restricted freedom of speech and press and made it easier to deport foreigners, generating major controversy about civil liberties", C: "Granted citizenship to all aliens who had resided in the U.S. for five years", D: "Authorized the President to negotiate immigration treaties with foreign nations" },
+        correct: "B",
+        exp: "Passed by Federalists and signed by President Adams, the Alien and Sedition Acts restricted immigration (extending the residency requirement for citizenship from 5 to 14 years), gave the President power to deport aliens, and made it a crime to publish 'false, scandalous, and malicious' writings against the government. They were bitterly opposed by Democratic-Republicans including Jefferson and Madison, who articulated states' rights through the Virginia and Kentucky Resolutions."
+      }
+      ,{
+        type: 'standalone',
+        sub: "International Organizations",
+        q: "What is the primary function of the World Bank?",
+        opts: { A: "To provide short-term loans to countries facing currency crises", B: "To set global interest rates and coordinate international monetary policy", C: "To provide long-term loans and grants for development projects in lower-income countries", D: "To enforce international trade agreements and resolve trade disputes" },
+        correct: "C",
+        exp: "The World Bank Group provides long-term financial assistance (loans, grants, and guarantees) to developing countries for economic development projects in areas like infrastructure, education, and health. The IMF handles short-term balance of payments crises; the WTO enforces trade agreements. The World Bank and IMF are both headquartered in Washington, D.C."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Economics",
+        q: "Which of the following best describes 'externalities' in economics?",
+        opts: { A: "The costs and benefits of economic transactions that fall on parties not directly involved in the transaction", B: "The profits earned by companies from foreign markets", C: "Government regulations that affect private sector behavior", D: "The portion of national income derived from international trade" },
+        correct: "A",
+        exp: "Externalities are costs or benefits that affect third parties not directly involved in an economic transaction. Negative externalities (pollution, noise) impose costs on others; positive externalities (vaccinations, education) confer benefits on others. They cause market inefficiency and are a classic justification for government intervention through taxes, subsidies, or regulation."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. Government & Foreign Policy",
+        q: "The principle of federalism in the U.S. constitutional system refers to:",
+        opts: { A: "The separation of power among the three branches of the federal government", B: "The division of governmental authority between the national government and state governments", C: "The system by which federal courts can strike down state laws", D: "The requirement that all states have equal representation in the Senate" },
+        correct: "B",
+        exp: "Federalism divides sovereign authority between the national government and the states, with each having distinct powers. The 10th Amendment reserves powers not delegated to the federal government to the states or the people. The separation of powers refers to the division among branches (Option A); judicial review addresses state laws (Option C); equal Senate representation relates to compromise in Congress (Option D)."
+      }
+      ,{
+        type: 'standalone',
+        sub: "World Geography",
+        q: "The Amazon River basin contains what percentage of the world's tropical rainforest?",
+        opts: { A: "About 10%", B: "About 25%", C: "About 40%", D: "About 60%" },
+        correct: "C",
+        exp: "The Amazon basin contains approximately 40% of the world's remaining tropical rainforest and produces roughly 20% of the world's oxygen. It spans nine South American countries, with approximately 60% in Brazil. The Amazon is also the world's largest river by volume of water discharged, carrying about 20% of the world's freshwater into the Atlantic Ocean."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. History",
+        q: "The Korean War (1950-1953) ended with:",
+        opts: { A: "A peace treaty that formally ended the war and reunified Korea under a democratic government", B: "A North Korean victory and the unification of the peninsula under communist rule", C: "An armistice agreement that established a ceasefire roughly along the 38th parallel, leaving Korea divided", D: "A U.S. military withdrawal after failing to achieve its objectives" },
+        correct: "C",
+        exp: "The Korean War ended with an armistice signed on July 27, 1953, establishing a ceasefire roughly along the 38th parallel - close to where the war began - with a demilitarized zone (DMZ). No formal peace treaty has ever been signed, meaning the Korean War technically remains ongoing. Korea remains divided between North and South."
+      }
+      ,{
+        type: 'standalone',
+        sub: "International Relations",
+        q: "The term 'hegemony' in international relations refers to:",
+        opts: { A: "A military alliance between two or more states against a common threat", B: "The dominant leadership or influence of one state over others in the international system", C: "The policy of maintaining strict neutrality in international conflicts", D: "An international agreement to collectively manage a global commons" },
+        correct: "B",
+        exp: "Hegemony refers to the dominant leadership, preponderant power, or cultural influence of one state over the international system or a region. The United States is often described as the post-Cold War hegemon due to its unrivaled military, economic, and cultural power. The concept draws on Gramsci's theory of social dominance and is central to debates about the stability of the international order."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Economics",
+        q: "What is 'moral hazard' in economics?",
+        opts: { A: "The tendency for businesses to engage in unethical practices when profits are high", B: "The situation where someone takes greater risks because they do not bear the full consequences of those risks", C: "The cost imposed on third parties by private economic transactions", D: "The practice of pricing goods below cost to drive out competition" },
+        correct: "B",
+        exp: "Moral hazard occurs when someone takes greater risks because another party bears the cost of those risks. Classic examples: people drive less carefully with car insurance; banks take on more risk when they expect government bailouts; insured patients may seek more medical procedures. It is a key concept in insurance, banking regulation, and public policy."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. Government & Foreign Policy",
+        q: "What is the significance of the Marbury v. Madison (1803) Supreme Court decision?",
+        opts: { A: "It established that Congress could regulate interstate commerce", B: "It established the Supreme Court's power of judicial review - the authority to strike down laws that violate the Constitution", C: "It ruled that the President could not be prosecuted while in office", D: "It established that the Bill of Rights applied to the states" },
+        correct: "B",
+        exp: "Chief Justice John Marshall's opinion in Marbury v. Madison established the principle of judicial review - the power of the Supreme Court to declare acts of Congress unconstitutional. Though not explicitly stated in the Constitution, this power became foundational to American constitutional law. McCulloch v. Maryland addressed commerce; Marbury did not address presidential immunity or application of the Bill of Rights to states."
+      }
+      ,{
+        type: 'standalone',
+        sub: "World Geography",
+        q: "Which of the following correctly identifies the Tropic of Capricorn?",
+        opts: { A: "The parallel at 23.5 degrees North latitude, marking the northernmost point where the sun can appear directly overhead", B: "The parallel at 23.5 degrees South latitude, marking the southernmost point where the sun can appear directly overhead", C: "The line at 0 degrees latitude that divides the Northern and Southern hemispheres", D: "The parallel at 66.5 degrees South latitude that marks the Antarctic Circle" },
+        correct: "B",
+        exp: "The Tropic of Capricorn is at 23.5 degrees South latitude. During the Southern Hemisphere's summer solstice (approximately December 21), the sun appears directly overhead at this line. Countries it passes through include Brazil, South Africa, Australia, and Chile. The Tropic of Cancer is 23.5 degrees North; the equator is 0 degrees; the Antarctic Circle is 66.5 degrees South."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. History",
+        q: "The Manhattan Project was a secret U.S. government program during World War II that:",
+        opts: { A: "Developed the first operational jet aircraft for military use", B: "Developed the first nuclear weapons, which were eventually dropped on Hiroshima and Nagasaki", C: "Created a network of underground bunkers to protect government leadership in case of invasion", D: "Coordinated intelligence operations against Nazi Germany in preparation for D-Day" },
+        correct: "B",
+        exp: "The Manhattan Project (1942-1945) was a secret research program that developed the first nuclear weapons. Led by physicist J. Robert Oppenheimer at Los Alamos, New Mexico, it produced the atomic bombs dropped on Hiroshima (August 6, 1945) and Nagasaki (August 9, 1945), leading to Japan's surrender and the end of WWII. The project involved over 130,000 people at its peak."
+      }
+      ,{
+        type: 'standalone',
+        sub: "International Organizations",
+        q: "The Organization of American States (OAS) was founded in 1948 with the primary purpose of:",
+        opts: { A: "Creating a common market and currency union for the Western Hemisphere", B: "Providing a framework for regional peace, security, democracy, and development cooperation in the Americas", C: "Countering Soviet influence in Latin America through a NATO-like military alliance", D: "Managing immigration flows between North and South America" },
+        correct: "B",
+        exp: "The OAS, headquartered in Washington D.C., is the world's oldest regional organization. Its purposes include strengthening democracy, defending human rights, promoting development, and maintaining security in the Americas. It is not a military alliance or economic union and does not manage immigration flows."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Economics",
+        q: "What is meant by the 'multiplier effect' in Keynesian economics?",
+        opts: { A: "The tendency for interest rate cuts to double economic growth over time", B: "The phenomenon where an initial increase in spending produces a larger overall increase in economic output as money circulates through the economy", C: "The compounding growth of national debt relative to GDP", D: "The disproportionate impact of tax increases on higher-income earners" },
+        correct: "B",
+        exp: "The multiplier effect holds that an initial injection of spending (e.g., government investment) generates a larger total increase in output because the money is respent multiple times as it circulates. If the government spends $1 billion on infrastructure, workers and suppliers receive income, spend it on goods and services, creating additional rounds of income and spending. The total economic impact exceeds the initial investment."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. Government & Foreign Policy",
+        q: "The role of the U.S. Senate in treaty ratification requires:",
+        opts: { A: "A simple majority vote (51%) of senators present and voting", B: "A two-thirds majority vote of the full Senate", C: "Approval by both the Senate Foreign Relations Committee and the House Armed Services Committee", D: "A joint resolution of both the House and Senate by simple majority" },
+        correct: "B",
+        exp: "Under Article II of the Constitution, the President may make treaties 'with the Advice and Consent of the Senate' provided two-thirds of senators present concur. This high threshold has meant that presidents often prefer executive agreements (which require no Senate approval) to formal treaties. The House plays no formal role in treaty ratification."
+      }
+      ,{
+        type: 'standalone',
+        sub: "World Geography",
+        q: "Which of the following African countries has the largest economy by GDP?",
+        opts: { A: "South Africa", B: "Egypt", C: "Nigeria", D: "Ethiopia" },
+        correct: "C",
+        exp: "Nigeria has Africa's largest economy by GDP, fueled primarily by its oil sector and large population (approximately 220 million - Africa's most populous). South Africa has historically been considered Africa's most developed economy but has been overtaken by Nigeria. Egypt has the second or third largest economy depending on measurement. Ethiopia has one of Africa's fastest-growing economies but from a lower base."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. History",
+        q: "The Immigration Act of 1965 (Hart-Celler Act) was significant because it:",
+        opts: { A: "Established the first numerical limits on immigration from Europe", B: "Abolished the national-origins quota system that had favored Northern and Western European immigrants since 1924 and replaced it with a system based on family reunification and skills", C: "Created the Border Patrol and established the first controls on unauthorized immigration", D: "Granted amnesty to approximately three million undocumented immigrants in the United States" },
+        correct: "B",
+        exp: "The Hart-Celler Act abolished the national-origins quota system established by the Immigration Act of 1924, which had severely restricted immigration from Southern and Eastern Europe, Asia, and Africa. The 1965 Act replaced it with a preference system based on family reunification and occupational skills. It dramatically transformed the demographics of U.S. immigration, shifting flows from Europe to Asia and Latin America."
+      }
+      ,{
+        type: 'standalone',
+        sub: "International Relations",
+        q: "The concept of 'collective security' as embodied in the United Nations Charter refers to:",
+        opts: { A: "The mutual defense commitment among NATO allies that treats an attack on one as an attack on all", B: "The principle that member states will collectively respond to acts of aggression against any member through UN Security Council authorization", C: "The pooling of national militaries into a single UN peacekeeping force", D: "Economic sanctions imposed collectively by all UN members against aggressors" },
+        correct: "B",
+        exp: "Collective security, as embodied in the UN Charter, holds that all member states commit to collective action against aggression threatening international peace - authorized by the Security Council. It differs from collective defense (mutual defense alliances like NATO) in that it is universal in membership and directed at maintaining peace generally, not defending a specific alliance."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Economics",
+        q: "What is 'stagflation' and why was it considered paradoxical?",
+        opts: { A: "Rapid growth combined with falling prices, paradoxically reducing business investment", B: "High inflation combined with high unemployment, paradoxical because traditional economics predicted these could not coexist", C: "Low growth combined with rising government spending, creating an unsustainable debt spiral", D: "A currency that simultaneously appreciates and depreciates against different trading partners" },
+        correct: "B",
+        exp: "Stagflation - stagnation plus inflation - combines high unemployment with high inflation. Traditional Keynesian economics and the Phillips Curve suggested these moved inversely: inflation would be high when unemployment was low. The 1970s oil shocks produced simultaneous high inflation and high unemployment, challenging prevailing economic theory and prompting a shift toward monetarist and supply-side approaches."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. Government & Foreign Policy",
+        q: "Which of the following best describes the concept of 'executive privilege'?",
+        opts: { A: "The President's authority to pardon federal offenders without congressional approval", B: "The claimed right of the President and senior executive officials to withhold certain communications from Congress or courts to protect the confidentiality of executive deliberations", C: "The President's authority to issue executive orders that have the force of law", D: "The immunity of sitting presidents from criminal prosecution" },
+        correct: "B",
+        exp: "Executive privilege is the implied constitutional right of the President to withhold certain communications from Congress, courts, and the public to protect the confidentiality of executive deliberations and national security information. It was addressed in United States v. Nixon (1974), where the Supreme Court held that executive privilege is not absolute. It is distinct from presidential pardon power, executive orders, or immunity from prosecution."
+      }
+      ,{
+        type: 'standalone',
+        sub: "World Geography",
+        q: "The Congo River is notable for which of the following geographic distinctions?",
+        opts: { A: "It is the longest river in Africa", B: "It is the world's deepest river and the second-largest by discharge volume", C: "It forms the entire eastern border of the Democratic Republic of Congo", D: "It is the only major African river that flows northward" },
+        correct: "B",
+        exp: "The Congo River is the world's deepest river (reaching depths of over 220 meters) and second only to the Amazon in discharge volume. It is not the longest river in Africa (the Nile is longer). It forms part of the border between the DRC and Republic of Congo but not the entire eastern border. Several African rivers flow northward, including the Nile."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. History",
+        q: "Which of the following statements about the Constitutional Convention of 1787 is accurate?",
+        opts: { A: "The Convention was called specifically to write a new constitution to replace the Articles of Confederation", B: "The Convention was called to revise the Articles of Confederation but instead drafted an entirely new Constitution", C: "All thirteen original states sent delegates and participated fully in drafting the Constitution", D: "The Convention completed its work in two weeks due to broad consensus among the delegates" },
+        correct: "B",
+        exp: "The Constitutional Convention was authorized to revise the Articles of Confederation but quickly decided to replace them entirely with a new constitution. Rhode Island refused to send delegates. The Convention lasted four months (May-September 1787) and involved significant disagreement over issues including representation (Great Compromise), slavery (Three-Fifths Compromise), and executive power."
+      }
+      ,{
+        type: 'standalone',
+        sub: "International Relations",
+        q: "The concept of 'zero-sum' vs. 'positive-sum' thinking in international relations refers to:",
+        opts: { A: "Zero-sum: both parties can benefit from cooperation; positive-sum: one party's gain is the other's loss", B: "Zero-sum: one party's gain is the other's loss; positive-sum: all parties can benefit through cooperation", C: "Zero-sum: military outcomes; positive-sum: economic outcomes", D: "Zero-sum: bilateral relations; positive-sum: multilateral relations" },
+        correct: "B",
+        exp: "In zero-sum thinking, international relations is a fixed pie: what one state gains another loses (territorial conquest is the classic example). Positive-sum (or non-zero-sum) thinking holds that cooperation can expand the pie, benefiting all parties (free trade, arms control). Realist theories tend toward zero-sum; liberal internationalist theories emphasize positive-sum possibilities."
+      }
+      ,{
+        type: 'standalone',
+        sub: "Economics",
+        q: "What is the difference between 'nominal' GDP and 'real' GDP?",
+        opts: { A: "Nominal GDP measures only manufacturing output; real GDP includes services", B: "Nominal GDP is measured in current prices; real GDP is adjusted for inflation to reflect true changes in output volume", C: "Nominal GDP is measured at purchasing power parity; real GDP uses market exchange rates", D: "Nominal GDP includes government spending; real GDP excludes it" },
+        correct: "B",
+        exp: "Nominal GDP measures total economic output using current prices, so it can increase simply because prices rise (inflation) even without any increase in actual production. Real GDP is adjusted for inflation using a base year price index, allowing economists to measure actual changes in the volume of output. When evaluating economic growth, real GDP is the more meaningful measure."
+      }
+      ,{
+        type: 'standalone',
+        sub: "U.S. Government & Foreign Policy",
+        q: "The Hatch Act (1939) primarily restricts:",
+        opts: { A: "Lobbying activities by former government officials", B: "Partisan political activities by federal government employees while on duty or using government resources", C: "Foreign nationals from donating to U.S. political campaigns", D: "The President's ability to dismiss civil servants without cause" },
+        correct: "B",
+        exp: "The Hatch Act limits the political activities of federal employees, restricting them from engaging in partisan political activities while on duty, in uniform, or using government resources. It does not prohibit federal employees from voting or expressing political opinions in their personal capacity. The revolving door restrictions apply to lobbying; the Federal Election Campaign Act addresses foreign donations."
+      }
     ]
   },
   ee: {
     label: "English Expression",
     items: [
-      {
+            {
         type: 'group',
         gid: 'ee-g1',
         sub: "Reading Comprehension",
-        passage: "Consular Policies and the Transmission of Citizenship\n\n(1) The acquisition of U.S. citizenship at birth by a child born abroad to one U.S. citizen parent and one alien parent is governed by Section 301(g) of the Immigration and Nationality Act (INA). This statute mandates that the citizen parent must have been physically present in the United States for a specific, cumulative duration prior to the child's birth. Consular officers evaluate the evidence presented during a Report of Birth Abroad (CRBA) interview to confirm that these precise presence minimums have been met before a claim is legally sustained.\n\n(2) For children born on or after November 14, 1986, the law requires the U.S. citizen parent to demonstrate a total of five years of physical presence in the United States, at least two of which must have occurred after the parent reached the age of fourteen. Consular adjudicators must meticulously calculate these timeframes, as simple mathematical errors during the interview can lead to the wrongful issuance or denial of vital citizenship documentation.\n\n(3) It is critical to distinguish between the legal definitions of \"residence\" and \"physical presence,\" as applicants frequently conflate them. While \"residence\" implies the creation of a primary domicile or general abode, \"physical presence\" requires actual, literal bodily existence within the geographic borders of the United States. Brief trips abroad for vacation do not count toward physical presence; conversely, time spent in the U.S. by an alien prior to naturalization can count toward their transmission requirements once citizenship is achieved.\n\n(4) The burden of proof during a consular adjudication rests entirely upon the applicant, who must establish the transmission claim by a preponderance of the evidence. Primary evidence generally includes official academic transcripts, employment records, and passports containing entry and exit stamps. When primary records are missing, consular officers evaluate secondary evidence, such as comprehensive sworn affidavits from family members, though these face heightened scrutiny to deter fraud.",
+        passage: "The Separation of Powers in the United States\n\n(1) The framers of the U.S. Constitution deliberately divided governmental authority among three branches - the legislative, executive, and judicial - to prevent the concentration of power in any single institution. This structure, often called the separation of powers, was complemented by a system of checks and balances in which each branch was given specific tools to constrain the others. The framers drew heavily on the political philosophy of Montesquieu, who argued that liberty could only be preserved when governmental power was divided.\n\n(2) Congress, the legislative branch, holds the power to make law, appropriate funds, declare war, and - through the Senate - to ratify treaties and confirm presidential appointments. The House of Representatives originates revenue bills, while the Senate plays the exclusive role of providing advice and consent on treaties and nominations. Together, the two chambers can override a presidential veto by a two-thirds majority in each house.\n\n(3) The executive branch, headed by the President, is responsible for implementing and enforcing the laws passed by Congress. The President serves as Commander-in-Chief of the armed forces, directs foreign policy, and nominates federal judges and cabinet officers. Executive power has expanded significantly since the founding era, particularly through the growth of the administrative state and the increasing reliance on executive orders and national security directives.\n\n(4) The judicial branch, led by the Supreme Court, interprets the law and has the authority to strike down legislation or executive action that conflicts with the Constitution. This power of judicial review, established by Chief Justice John Marshall in Marbury v. Madison (1803), is not explicitly stated in the Constitution but has become one of the most consequential features of American governance. Federal judges are appointed for life, insulating them from short-term political pressures.",
         questions: [
           {
-            q: "Which of the following is the primary legal standard an applicant must meet to establish a citizenship transmission claim during a consular adjudication?",
-            opts: { A: "The applicant must prove the claim beyond a reasonable doubt", B: "The applicant must prove the claim by a preponderance of the evidence", C: "The consular officer must independently verify the claim through government records", D: "The applicant must submit a sworn affidavit from at least two family members" },
+            q: "According to the passage, the system of checks and balances was designed primarily to:",
+            opts: { A: "Ensure that the legislative branch remained the most powerful", B: "Give each branch specific tools to constrain the other branches and prevent concentration of power", C: "Allow the President to override decisions made by Congress", D: "Protect individual rights from government interference" },
             correct: "B",
-            exp: "Paragraph 4 explicitly states the burden of proof rests entirely on the applicant, who must establish the claim 'by a preponderance of the evidence.' Beyond a reasonable doubt is a criminal law standard not mentioned in the passage. The other options misrepresent what the passage states."
+            exp: "Paragraph 1 states the system of checks and balances gave 'each branch specific tools to constrain the others' in order to 'prevent the concentration of power in any single institution.' The passage does not establish any branch as most powerful, nor does it describe the President overriding Congress."
           },
           {
-            q: "According to the passage, which correctly describes the physical presence requirement for a child born on or after November 14, 1986?",
-            opts: { A: "The U.S. citizen parent must have been present in the U.S. for at least two years total", B: "The U.S. citizen parent must have been present for five years with no age requirement", C: "The U.S. citizen parent must have been present for five years total, at least two of which occurred after age fourteen", D: "The U.S. citizen parent must have been present for at least two years after reaching age fourteen" },
+            q: "Based on the passage, which of the following is an exclusive power of the Senate that is NOT shared with the House?",
+            opts: { A: "Originating revenue bills", B: "Passing legislation into law", C: "Providing advice and consent on treaties and nominations", D: "Overriding presidential vetoes" },
             correct: "C",
-            exp: "Paragraph 2 states the requirement is 'a total of five years of physical presence in the United States, at least two of which must have occurred after the parent reached the age of fourteen.' Option B omits the age requirement; Options A and D misstate the totals."
+            exp: "Paragraph 2 states the Senate 'plays the exclusive role of providing advice and consent on treaties and nominations.' Originating revenue bills is identified as a House power. Passing legislation and overriding vetoes are shared by both chambers."
           },
           {
-            q: "The passage implies that consular officers must distinguish between 'residence' and 'physical presence' primarily because:",
-            opts: { A: "The INA uses the two terms interchangeably, creating ambiguity", B: "Applicants commonly confuse the two concepts, which could affect the accuracy of their claims", C: "Residence is a stricter standard than physical presence and is easier to prove", D: "Brief trips abroad are counted toward residence but not toward physical presence" },
+            q: "According to the passage, the power of judicial review was established by:",
+            opts: { A: "Article III of the Constitution", B: "The Bill of Rights", C: "Chief Justice John Marshall in Marbury v. Madison (1803)", D: "An act of Congress following the Civil War" },
+            correct: "C",
+            exp: "Paragraph 4 explicitly states: 'This power of judicial review, established by Chief Justice John Marshall in Marbury v. Madison (1803).' The passage also notes it 'is not explicitly stated in the Constitution,' eliminating Option A."
+          },
+          {
+            q: "The passage implies that executive power has expanded since the founding era primarily because of:",
+            opts: { A: "Constitutional amendments that strengthened the presidency", B: "The growth of the administrative state and increasing reliance on executive orders and national security directives", C: "Supreme Court rulings that transferred legislative authority to the President", D: "Declining congressional willingness to pass legislation" },
             correct: "B",
-            exp: "Paragraph 3 states it is 'critical to distinguish' between the terms specifically because 'applicants frequently conflate them.' The passage does not say the INA uses the terms interchangeably. Option C reverses the relationship described in the passage."
+            exp: "Paragraph 3 states executive power 'has expanded significantly since the founding era, particularly through the growth of the administrative state and the increasing reliance on executive orders and national security directives.' The passage does not mention constitutional amendments or Supreme Court transfers of authority as causes."
           },
           {
-            q: "Based on the passage, which of the following would NOT qualify as primary evidence during a CRBA adjudication?",
-            opts: { A: "Official academic transcripts", B: "Employment records", C: "Passports containing entry and exit stamps", D: "Sworn affidavits from family members" },
-            correct: "D",
-            exp: "Paragraph 4 identifies official academic transcripts, employment records, and passports with entry/exit stamps as primary evidence. Sworn affidavits from family members are explicitly classified as secondary evidence, used only when primary records are missing."
-          },
-          {
-            q: "Which of the following can be inferred from the passage about secondary evidence in a CRBA adjudication?",
-            opts: { A: "Secondary evidence is treated equally to primary evidence as long as it is notarized", B: "Secondary evidence is a fallback used when primary evidence is unavailable and faces a higher burden of scrutiny", C: "Consular officers are prohibited from accepting secondary evidence under any circumstances", D: "Secondary evidence is automatically sufficient to establish a transmission claim" },
-            correct: "B",
-            exp: "Paragraph 4 states secondary evidence is evaluated 'when primary records are missing' and faces 'heightened scrutiny to deter fraud.' Together these imply secondary evidence is a fallback subject to a higher burden. Options A, C, and D each contradict or overstate what the passage says."
+            q: "Which of the following can be inferred from the passage about the appointment of federal judges?",
+            opts: { A: "Federal judges are elected by popular vote in their jurisdictions", B: "Federal judges are appointed for fixed terms of ten years", C: "Life tenure for federal judges is intended to insulate them from short-term political pressures", D: "Federal judges are appointed exclusively by the Senate" },
+            correct: "C",
+            exp: "Paragraph 4 states federal judges 'are appointed for life, insulating them from short-term political pressures.' This is stated as the purpose of life tenure. The President nominates judges (paragraph 3) and the Senate confirms them (paragraph 2) - they are not elected or appointed exclusively by the Senate."
           }
         ]
       }
@@ -939,41 +1306,41 @@ var SECTIONS = {
         correct: "C",
         exp: "Option C is correct. After 'insisted that,' the subjunctive mood requires the base form of the verb ('review'), not 'reviews' (indicative), 'reviewed' (past indicative), or 'would review' (conditional). The subjunctive is required after verbs of insisting, requesting, demanding, and recommending."
       }
-      ,{
+      ,      {
         type: 'group',
         gid: 'ee-g2',
         sub: "Reading Comprehension",
-        passage: "The Role of Consular Officers in Notarial Services\n\n(1) Among the many functions performed by U.S. consular officers abroad, notarial services represent a significant but often overlooked area of consular work. Under federal law, consular officers are authorized to perform certain notarial acts for U.S. citizens and others in foreign countries, including administering oaths, taking affidavits, and certifying copies of documents. These services carry the same legal force as those performed by notaries public within the United States.\n\n(2) The authority to perform notarial services does not extend to all documents or all persons. Consular officers may notarize documents that are intended for use in the United States, but they generally lack jurisdiction over documents that will have legal effect solely in the host country. Additionally, consular officers must decline to notarize documents when they have reason to believe the transaction is fraudulent or when the individual requesting the service does not understand the nature of the document being notarized.\n\n(3) A fee is charged for most notarial services performed at a consular post. These fees are set by regulation and are not subject to waiver except in limited circumstances prescribed by law. The fees collected by consular posts are remitted to the U.S. Treasury and do not remain with the post as operating revenue. Applicants who disagree with a fee assessment have the right to request a formal review.\n\n(4) In practice, consular officers must exercise careful judgment in notarial work. Unlike domestic notaries, who generally confirm only the identity of the signer, consular officers are expected to satisfy themselves that the person understands what they are signing. The officer bears professional responsibility for the act and may face administrative consequences if a notarial service is performed improperly.",
+        passage: "The New Deal and the Transformation of American Government\n\n(1) The New Deal, a series of programs and reforms enacted by President Franklin D. Roosevelt beginning in 1933, fundamentally altered the relationship between the federal government and the American people. Launched in response to the Great Depression - the most severe economic crisis in American history - the New Deal represented a significant expansion of federal authority into areas previously left to states, localities, and private markets. Critics argued it threatened constitutional principles of limited government; supporters contended it saved capitalism by reforming its most destructive excesses.\n\n(2) The New Deal can be understood in two broad phases. The First New Deal (1933-1934) focused on immediate relief and economic stabilization. It produced landmark legislation including the Emergency Banking Act, the Agricultural Adjustment Act, and the National Industrial Recovery Act. The Second New Deal (1935-1936) was more ambitious structurally, creating enduring institutions such as the Social Security Act and the National Labor Relations Act, which established workers' rights to organize and bargain collectively.\n\n(3) The constitutional legitimacy of New Deal programs was sharply contested. The Supreme Court initially struck down several key statutes, ruling that Congress had exceeded its authority under the Commerce Clause. Roosevelt responded with his court-packing plan - a proposal to add up to six new justices to the Court - which was ultimately rejected by Congress but coincided with a shift in the Court's jurisprudence. Beginning in 1937, the Court began upholding New Deal legislation, a transition historians have called the 'switch in time that saved nine.'\n\n(4) The long-term legacy of the New Deal was a durable expansion of the federal government's role in economic and social life. Programs created in this era - including Social Security, federal deposit insurance, and agricultural price supports - became permanent features of American governance. The New Deal also entrenched the Democratic Party's coalition of labor unions, urban immigrants, Southern whites, and African Americans that dominated national politics for decades.",
         questions: [
           {
-            q: "According to the passage, what is the primary legal significance of notarial services performed by consular officers?",
-            opts: { A: "They are advisory only and carry no binding legal force", B: "They carry the same legal force as those performed by notaries public in the United States", C: "They are valid only in the country where the consulate is located", D: "They require subsequent ratification by a domestic court" },
+            q: "According to the passage, what was the primary purpose of the First New Deal (1933-1934)?",
+            opts: { A: "Creating permanent social insurance programs for American workers", B: "Immediate relief and economic stabilization in response to the Depression", C: "Establishing workers' rights to organize and bargain collectively", D: "Reforming the Supreme Court to allow greater federal authority" },
             correct: "B",
-            exp: "Paragraph 1 explicitly states that consular notarial services 'carry the same legal force as those performed by notaries public within the United States.' Options A and D contradict this statement. Option C is incorrect because paragraph 2 clarifies that consular notarial authority covers documents intended for use in the United States."
+            exp: "Paragraph 2 states: 'The First New Deal (1933-1934) focused on immediate relief and economic stabilization.' The Social Security Act and workers' rights legislation are identified as products of the Second New Deal. Court reform is discussed in paragraph 3, not as a New Deal goal."
           },
           {
-            q: "Based on the passage, which of the following documents would a consular officer be LEAST likely authorized to notarize?",
-            opts: { A: "An affidavit to be filed in a U.S. federal court", B: "A certified copy of a U.S. birth certificate", C: "A contract that will have legal effect exclusively under the laws of the host country", D: "An oath administered to a U.S. citizen traveling abroad" },
-            correct: "C",
-            exp: "Paragraph 2 states that consular officers 'generally lack jurisdiction over documents that will have legal effect solely in the host country.' A contract with exclusive legal effect under host country law falls within this limitation. The other options involve documents intended for U.S. use or U.S. citizens."
-          },
-          {
-            q: "According to the passage, what happens to fees collected for notarial services at a consular post?",
-            opts: { A: "They are retained by the post as operating revenue", B: "They are divided equally between the post and the host government", C: "They are remitted to the U.S. Treasury", D: "They are used to fund consular outreach programs" },
-            correct: "C",
-            exp: "Paragraph 3 explicitly states that fees 'are remitted to the U.S. Treasury and do not remain with the post as operating revenue.' This directly contradicts Option A."
-          },
-          {
-            q: "The passage implies that consular officers performing notarial work have a greater responsibility than domestic notaries because:",
-            opts: { A: "Consular officers charge higher fees for the same services", B: "Consular officers must ensure the signer understands the document, not merely confirm their identity", C: "Consular officers are required to translate documents before notarizing them", D: "Consular officers can notarize documents in any language" },
+            q: "Based on the passage, why did Roosevelt propose his court-packing plan?",
+            opts: { A: "To replace aging justices who were too old to serve effectively", B: "To respond to the Supreme Court striking down key New Deal statutes", C: "To fulfill a campaign promise made during the 1936 election", D: "To ensure that future Democratic presidents could appoint more justices" },
             correct: "B",
-            exp: "Paragraph 4 draws this comparison explicitly: 'Unlike domestic notaries, who generally confirm only the identity of the signer, consular officers are expected to satisfy themselves that the person understands what they are signing.' This represents an elevated duty beyond what domestic notaries perform."
+            exp: "Paragraph 3 states that the Court began upholding New Deal legislation beginning in 1937, a transition historians call the switch in time that saved nine. The phrase refers to the Court\'s changed jurisprudential approach - not new appointments (the court-packing plan was rejected by Congress) or state resistance."
           },
           {
-            q: "Which of the following situations would most likely require a consular officer to DECLINE a notarial request, based on the passage?",
-            opts: { A: "The applicant requests the service outside of normal business hours", B: "The fee for the service has not yet been paid", C: "The officer has reason to believe the transaction is fraudulent", D: "The applicant cannot produce a second form of identification" },
+            q: "The phrase 'switch in time that saved nine' as used in the passage refers to:",
+            opts: { A: "The nine original New Deal programs that survived Supreme Court review", B: "Roosevelt's successful appointment of nine new justices to the Court", C: "The shift in Supreme Court jurisprudence beginning in 1937 toward upholding New Deal legislation", D: "The nine states that initially refused to implement New Deal programs" },
             correct: "C",
-            exp: "Paragraph 2 identifies two grounds for declining: the officer has reason to believe the transaction is fraudulent, or the individual does not understand the document. Option C directly matches the first stated ground. The other options introduce conditions not mentioned in the passage."
+            exp: "Paragraph 3 states: 'Beginning in 1937, the Court began upholding New Deal legislation, a transition historians have called the 'switch in time that saved nine.'' The phrase refers to the Court's changed approach - not new appointments (the plan was rejected) or state resistance."
+          },
+          {
+            q: "According to the passage, critics of the New Deal argued that it:",
+            opts: { A: "Did not go far enough in restructuring the capitalist economy", B: "Threatened constitutional principles of limited government", C: "Favored urban workers at the expense of farmers", D: "Concentrated too much power in the judicial branch" },
+            correct: "B",
+            exp: "Paragraph 1 states: 'Critics argued it threatened constitutional principles of limited government.' Supporters - not critics - made arguments about saving capitalism. The passage does not attribute the other positions to critics of the New Deal."
+          },
+          {
+            q: "Based on the passage, which of the following best describes the long-term legacy of the New Deal?",
+            opts: { A: "The programs were largely dismantled by subsequent Republican administrations", B: "The New Deal permanently expanded the federal government's role in economic and social life", C: "The New Deal strengthened state governments at the expense of federal authority", D: "The New Deal's primary legacy was the transformation of the Republican Party" },
+            correct: "B",
+            exp: "Paragraph 4 states: 'The long-term legacy of the New Deal was a durable expansion of the federal government's role in economic and social life' and that programs 'became permanent features of American governance.' Option A contradicts 'permanent'; Options C and D are not supported by the passage."
           }
         ]
       }
@@ -1043,41 +1410,41 @@ var SECTIONS = {
         correct: "D",
         exp: "The sentence is entirely correct. 'Reviewing the file before the interview' is a gerund phrase acting as the subject, correctly followed by the singular verb 'is.' 'Efficient' is correctly spelled and used. There are no errors."
       }
-      ,{
+      ,      {
         type: 'group',
         gid: 'ee-g3',
         sub: "Reading Comprehension",
-        passage: "Diplomatic Immunity: Scope, Limits, and the Role of the Receiving State\n\n(1) Diplomatic immunity is a principle of international law that grants foreign diplomats protection from the civil and criminal jurisdiction of the receiving state. This protection derives from the Vienna Convention on Diplomatic Relations (1961), which codified centuries of customary practice into a binding multilateral treaty. The Convention distinguishes between different categories of diplomatic personnel, each of which enjoys a different scope of immunity.\n\n(2) Diplomatic agents enjoy the broadest protections. They are immune from all criminal jurisdiction of the receiving state and from civil and administrative jurisdiction except in three specific cases: actions relating to private immovable property, matters of succession unrelated to their official functions, and professional or commercial activity conducted outside their official functions. Members of the administrative and technical staff enjoy full criminal immunity but more limited civil immunity.\n\n(3) Immunity does not mean impunity. The sending state may waive the immunity of its diplomatic personnel, and this waiver must be express, not implied. When a diplomat commits a serious offense, the receiving state's primary remedies are to declare the individual persona non grata - requiring the sending state to recall them - or to deem them no longer acceptable.\n\n(4) The receiving state also bears obligations under the Convention. It must take all appropriate steps to protect the premises of the mission and may not enter those premises without the consent of the head of mission. The practical effect is a reciprocal system of mutual restraint: each state both extends and benefits from diplomatic immunity, creating incentives to respect the system even when doing so is politically difficult.",
+        passage: "Supply, Demand, and Market Equilibrium\n\n(1) The law of demand states that, all else being equal, as the price of a good or service rises, the quantity demanded by consumers will fall, and as the price falls, the quantity demanded will rise. This inverse relationship between price and quantity demanded reflects the reality that consumers substitute cheaper alternatives when prices rise and purchase more when goods become more affordable. The demand curve, when plotted on a graph with price on the vertical axis and quantity on the horizontal axis, slopes downward from left to right.\n\n(2) The law of supply describes the opposite relationship from the producer's perspective: as prices rise, producers are willing to supply more of a good, because higher prices make production more profitable. Conversely, when prices fall, producers reduce output. The supply curve slopes upward from left to right. Changes in production costs, technology, the number of producers in the market, and government policies such as subsidies or taxes can shift the supply curve itself, independent of price.\n\n(3) Market equilibrium occurs at the price where the quantity supplied equals the quantity demanded. At equilibrium, the market clears - there is no surplus (excess supply) and no shortage (excess demand). If the price is set above equilibrium, a surplus develops as producers supply more than consumers want to purchase at that price. If the price falls below equilibrium, a shortage develops as consumers demand more than producers are willing to supply.\n\n(4) Governments sometimes intervene in markets by setting price controls. A price ceiling, set below the equilibrium price, prevents prices from rising to market levels and typically results in shortages - as seen historically with rent control and gasoline rationing. A price floor, set above equilibrium, prevents prices from falling to market levels and typically results in surpluses - the minimum wage and agricultural price supports are common examples. Economic theory predicts that price controls, while often well-intentioned, create inefficiencies by preventing the market from clearing.",
         questions: [
           {
-            q: "According to the passage, the Vienna Convention on Diplomatic Relations (1961) accomplished which of the following?",
-            opts: { A: "It created diplomatic immunity for the first time in international history", B: "It codified existing customary practice into a binding multilateral treaty", C: "It abolished all civil jurisdiction over diplomatic agents", D: "It established the International Court of Justice" },
+            q: "According to the passage, what happens to quantity demanded when the price of a good rises?",
+            opts: { A: "Quantity demanded rises, reflecting greater consumer interest", B: "Quantity demanded falls, as consumers substitute cheaper alternatives", C: "Quantity demanded remains constant unless consumer income changes", D: "Quantity demanded rises only if the good is a necessity" },
             correct: "B",
-            exp: "Paragraph 1 states that the Convention 'codified centuries of customary practice into a binding multilateral treaty.' It did not create immunity from scratch - customary practice predated it. Option C is incorrect because paragraph 2 identifies three exceptions to civil immunity."
+            exp: "Paragraph 1 states: 'as the price of a good or service rises, the quantity demanded by consumers will fall.' The passage also explains why: 'consumers substitute cheaper alternatives when prices rise.' Options A and C contradict the law of demand; Option D adds a condition not stated in the passage."
           },
           {
-            q: "Based on the passage, a diplomatic agent could be subject to civil jurisdiction of the receiving state in which of the following situations?",
-            opts: { A: "A traffic violation resulting in property damage", B: "A contract dispute arising from their official diplomatic work", C: "A succession dispute unrelated to their official functions", D: "A criminal matter involving a local national" },
+            q: "Based on the passage, which of the following would cause the supply curve to shift independently of price?",
+            opts: { A: "A decrease in consumer income", B: "An increase in consumer preferences for the good", C: "A government subsidy that lowers production costs", D: "A reduction in the quantity demanded at current prices" },
             correct: "C",
-            exp: "Paragraph 2 lists three exceptions to diplomatic agents' civil immunity, one of which is 'matters of succession unrelated to their official functions.' A succession dispute not related to official functions falls within this exception."
+            exp: "Paragraph 2 states that 'changes in production costs, technology, the number of producers in the market, and government policies such as subsidies or taxes can shift the supply curve itself, independent of price.' A subsidy lowering production costs falls within this category. Consumer income and preferences are demand-side factors."
           },
           {
-            q: "According to the passage, what is the receiving state's strongest available tool when a diplomat commits a serious offense, short of severing diplomatic relations?",
-            opts: { A: "Filing criminal charges in absentia", B: "Requesting that the sending state waive immunity", C: "Declaring the diplomat persona non grata", D: "Closing the diplomatic mission temporarily" },
+            q: "According to the passage, what condition defines market equilibrium?",
+            opts: { A: "The price at which producers maximize their profit", B: "The price at which all consumers can afford the good", C: "The price at which quantity supplied equals quantity demanded", D: "The price set by government regulation" },
             correct: "C",
-            exp: "Paragraph 3 states: 'Persona non grata status is the strongest tool a receiving state possesses short of severing diplomatic relations entirely.' Option B describes waiver, which the passage notes must come from the sending state."
+            exp: "Paragraph 3 states: 'Market equilibrium occurs at the price where the quantity supplied equals the quantity demanded.' At this point 'the market clears - there is no surplus and no shortage.' The other options describe conditions not mentioned as the definition of equilibrium."
           },
           {
-            q: "The passage implies that the system of diplomatic immunity functions effectively primarily because:",
-            opts: { A: "International courts can enforce compliance with the Vienna Convention", B: "The system is reciprocal - each state both extends and benefits from immunity, creating mutual incentives to respect it", C: "Sending states voluntarily waive immunity in most serious cases", D: "The receiving state can enter mission premises to investigate violations" },
+            q: "Based on the passage, a price ceiling set below the equilibrium price would most likely result in:",
+            opts: { A: "A surplus, as producers supply more than consumers demand", B: "A shortage, as consumers demand more than producers are willing to supply", C: "Market equilibrium, as prices adjust to the new ceiling", D: "Increased production, as producers seek higher profits" },
             correct: "B",
-            exp: "Paragraph 4 explains: 'each state both extends and benefits from diplomatic immunity, creating incentives to respect the system even when doing so is politically difficult.' This mutual interest is identified as the system's functional foundation."
+            exp: "Paragraph 4 states: 'A price ceiling, set below the equilibrium price, prevents prices from rising to market levels and typically results in shortages.' A surplus results from a price floor (set above equilibrium), not a price ceiling. Market equilibrium requires prices to move freely."
           },
           {
-            q: "Which of the following can be inferred from the passage about the waiver of diplomatic immunity?",
-            opts: { A: "The receiving state may waive immunity if the diplomat commits a serious crime", B: "Immunity can be waived implicitly by the diplomat's conduct", C: "Only the sending state can waive immunity, and the waiver must be express", D: "A waiver of criminal immunity automatically waives civil immunity as well" },
-            correct: "C",
-            exp: "Paragraph 3 states: 'The sending state may waive the immunity of its diplomatic personnel, and this waiver must be express, not implied.' Only the sending state can waive, and it must do so expressly. Options A, B, and D each contradict specific statements in the passage."
+            q: "The passage implies that price controls are problematic primarily because:",
+            opts: { A: "They are always imposed by authoritarian governments", B: "They prevent markets from clearing, creating inefficiencies", C: "They benefit producers at the expense of consumers", D: "They are impossible to enforce in practice" },
+            correct: "B",
+            exp: "Paragraph 4 states: 'Economic theory predicts that price controls, while often well-intentioned, create inefficiencies by preventing the market from clearing.' The passage acknowledges they are 'often well-intentioned' (eliminating Option A). The effects vary by type - ceilings may benefit consumers, floors may benefit producers. Option D is not stated."
           }
         ]
       }
@@ -1147,41 +1514,41 @@ var SECTIONS = {
         correct: "C",
         exp: "The relative clause 'who always goes above and beyond' modifies 'officers,' which is plural. The verb should be 'go,' not 'goes.' The full clause means: of those officers [who always go above and beyond], she is one. The antecedent of 'who' is 'officers,' not 'one.'"
       }
-      ,{
+      ,      {
         type: 'group',
         gid: 'ee-g4',
         sub: "Reading Comprehension",
-        passage: "Administrative Processing and Section 221(g) of the Immigration and Nationality Act\n\n(1) When a consular officer cannot make an immediate determination on a visa application - typically because additional documentation is needed or the case requires administrative review - the application is refused under Section 221(g) of the Immigration and Nationality Act. A 221(g) refusal is not a final denial; it is a suspension of the application pending the receipt of additional information or the completion of a security clearance or other review process.\n\n(2) Consular officers are required to inform applicants of the specific basis for a 221(g) refusal and to provide a list of any additional documents required. An applicant who fails to submit the requested materials within one year of the refusal date is considered to have abandoned the application, and a new application and fee will be required to resume the process.\n\n(3) A subset of 221(g) cases involves security-related administrative processing, sometimes referred to as a SAO (Security Advisory Opinion). These cases are not resolved at the post level; instead, the consulate forwards the file to the Department of State in Washington, which coordinates with relevant agencies. The consular officer has no independent authority to resolve an SAO-related hold and cannot provide applicants with a timeline for resolution.\n\n(4) The 221(g) process has been the subject of criticism from applicants and advocacy groups who argue that extended administrative processing periods - sometimes lasting months or years - cause substantial hardship without adequate procedural protections. The Department of State has maintained that security review processes are a necessary component of visa adjudication and that the need for thorough vetting outweighs the inconvenience caused by delays.",
+        passage: "The Civil Rights Movement and Federal Legislation\n\n(1) The American civil rights movement of the 1950s and 1960s was a sustained campaign to end racial segregation and discrimination, particularly in the South, and to secure equal legal rights for African Americans. The movement employed a range of tactics including nonviolent direct action, legal challenges, voter registration drives, and political mobilization. Its leadership included figures such as the Reverend Martin Luther King Jr., whose philosophy of nonviolent resistance drew on the teachings of Mahatma Gandhi and the African American church tradition.\n\n(2) The movement achieved its most significant legislative victories in the mid-1960s. The Civil Rights Act of 1964 prohibited discrimination based on race, color, religion, sex, or national origin in employment and public accommodations. It created the Equal Employment Opportunity Commission (EEOC) to enforce its provisions. The Voting Rights Act of 1965 prohibited discriminatory voting practices, including literacy tests and poll taxes, that had been used to prevent Black Americans from registering and voting, particularly in Southern states.\n\n(3) The legislative achievements of the civil rights era did not emerge in isolation. The 1954 Supreme Court decision in Brown v. Board of Education had already ruled that racially segregated public schools were inherently unequal and unconstitutional, overturning the 'separate but equal' doctrine established in Plessy v. Ferguson (1896). The Montgomery Bus Boycott (1955-1956), the sit-ins at Greensboro (1960), and the Freedom Rides (1961) built public pressure that made federal action politically feasible.\n\n(4) The civil rights legislation of the 1960s transformed American law and society, though its implementation was uneven and contested. Enforcing the Voting Rights Act required sustained federal intervention in Southern states. The Fair Housing Act of 1968, passed days after King's assassination, extended civil rights protections to the housing market. Subsequent decades saw ongoing debates about affirmative action, voting rights protections, and the extent to which formal legal equality had translated into substantive social and economic equality.",
         questions: [
           {
-            q: "According to the passage, how does a 221(g) refusal differ from an outright visa denial?",
-            opts: { A: "A 221(g) refusal permanently bars the applicant from reapplying", B: "A 221(g) refusal is a suspension pending additional information or review, not a final denial", C: "A 221(g) refusal requires the applicant to appear before an immigration judge", D: "A 221(g) refusal applies only to immigrant visa applicants" },
+            q: "According to the passage, what was the philosophy of nonviolent resistance employed by Martin Luther King Jr. primarily drawn from?",
+            opts: { A: "The writings of Frederick Douglass and W.E.B. Du Bois", B: "The teachings of Mahatma Gandhi and the African American church tradition", C: "The legal strategy developed by the NAACP", D: "The labor organizing tactics of the early 20th century" },
             correct: "B",
-            exp: "Paragraph 1 explicitly states: 'A 221(g) refusal is not a final denial; it is a suspension of the application pending the receipt of additional information or the completion of a security clearance or other review process.' Option A directly contradicts this."
+            exp: "Paragraph 1 states King's 'philosophy of nonviolent resistance drew on the teachings of Mahatma Gandhi and the African American church tradition.' The other options are not mentioned in the passage as sources of King's philosophy."
           },
           {
-            q: "What happens to a 221(g) application if the applicant fails to submit requested materials within one year?",
-            opts: { A: "The application is automatically denied on the merits", B: "The consular officer extends the deadline by 90 days", C: "The application is considered abandoned and a new application and fee are required", D: "The applicant is barred from applying for three years" },
+            q: "Based on the passage, which institution was created by the Civil Rights Act of 1964?",
+            opts: { A: "The Department of Housing and Urban Development", B: "The Civil Rights Division of the Department of Justice", C: "The Equal Employment Opportunity Commission (EEOC)", D: "The Commission on Civil Rights" },
             correct: "C",
-            exp: "Paragraph 2 states: 'An applicant who fails to submit the requested materials within one year of the refusal date is considered to have abandoned the application, and a new application and fee will be required to resume the process.'"
+            exp: "Paragraph 2 states: 'It [the Civil Rights Act] created the Equal Employment Opportunity Commission (EEOC) to enforce its provisions.' The other agencies are not mentioned in the passage as being created by the Civil Rights Act of 1964."
           },
           {
-            q: "Which of the following best describes the consular officer's role when a 221(g) case involves security-related administrative processing (SAO)?",
-            opts: { A: "The officer independently resolves the security hold after 60 days", B: "The officer forwards the file to Washington and cannot independently resolve the hold or provide a timeline", C: "The officer contacts the applicant's home government to verify security information", D: "The officer suspends all other casework until the SAO is resolved" },
-            correct: "B",
-            exp: "Paragraph 3 states: 'The consular officer has no independent authority to resolve an SAO-related hold and cannot provide applicants with a timeline for resolution.' The file is forwarded to the Department of State in Washington."
-          },
-          {
-            q: "Based on the passage, critics of the 221(g) process argue that:",
-            opts: { A: "Consular officers lack sufficient training to conduct security reviews", B: "Extended administrative processing causes substantial hardship without adequate procedural protections", C: "The one-year abandonment rule is too lenient toward applicants", D: "Security Advisory Opinions should be conducted by immigration courts" },
-            correct: "B",
-            exp: "Paragraph 4 describes the criticism: 'extended administrative processing periods - sometimes lasting months or years - cause substantial hardship without adequate procedural protections.' Options A, C, and D introduce details not mentioned in the passage."
-          },
-          {
-            q: "Which of the following can be inferred from the passage about the distinction between a 221(g) and other types of visa refusals?",
-            opts: { A: "A 221(g) refusal creates a permanent bar to admissibility", B: "A 221(g) refusal has no effect on future applications", C: "The type of refusal matters because it affects the applicant's ability to reapply and any applicable bars to future admissibility", D: "A 221(g) refusal is treated identically to all other INA refusal sections" },
+            q: "According to the passage, the Supreme Court's decision in Brown v. Board of Education overturned which earlier doctrine?",
+            opts: { A: "The doctrine of executive privilege established in United States v. Nixon", B: "The commerce clause interpretation from Gibbons v. Ogden", C: "The 'separate but equal' doctrine established in Plessy v. Ferguson (1896)", D: "The due process standard established in Lochner v. New York" },
             correct: "C",
-            exp: "Paragraph 1 states the distinction 'affects the applicant's ability to reapply and any applicable bars to future admissibility.' Option A overstates the effect. Option B understates it. Option D directly contradicts the passage."
+            exp: "Paragraph 3 states Brown overturned 'the separate but equal doctrine established in Plessy v. Ferguson (1896).' The other cases are not mentioned in the passage."
+          },
+          {
+            q: "Based on the passage, which of the following best explains why the civil rights legislation of the 1960s became politically feasible?",
+            opts: { A: "The election of President Kennedy created immediate political will for reform", B: "Events such as the Montgomery Bus Boycott, the Greensboro sit-ins, and the Freedom Rides built public pressure", C: "The Supreme Court ordered Congress to pass civil rights legislation", D: "Cold War pressures required the U.S. to demonstrate racial equality to the world" },
+            correct: "B",
+            exp: "Paragraph 3 states that the Montgomery Bus Boycott, Greensboro sit-ins, and Freedom Rides 'built public pressure that made federal action politically feasible.' The passage does not mention Kennedy's election, Supreme Court orders to Congress, or Cold War pressures as the explanation for legislative feasibility."
+          },
+          {
+            q: "The passage implies that the civil rights legislation of the 1960s was:",
+            opts: { A: "Immediately and completely successful in achieving racial equality", B: "A significant but incomplete achievement whose implementation was uneven and debated", C: "Quickly reversed by subsequent conservative administrations", D: "Primarily symbolic with little practical effect on racial inequality" },
+            correct: "B",
+            exp: "Paragraph 4 states: 'The civil rights legislation of the 1960s transformed American law and society, though its implementation was uneven and contested' and notes ongoing debates about whether 'formal legal equality had translated into substantive social and economic equality.' This indicates significant but incomplete achievement."
           }
         ]
       }
@@ -1256,41 +1623,41 @@ var SECTIONS = {
         correct: "B",
         exp: "Option B is correct. The pronoun is the subject of the subordinate clause 'submitted the incomplete application,' requiring the subject form 'whoever' (not 'whomever,' which is the object form). The entire clause 'Whoever submitted the incomplete application' is the subject of 'will need to reapply.' Option C uses 'who' rather than 'whoever,' creating an awkward structure. Option D uses 'which' for a person, which is incorrect."
       }
-      ,{
+      ,      {
         type: 'group',
         gid: 'ee-g5',
         sub: "Reading Comprehension",
-        passage: "The Foreign Service Act of 1980 and the Structure of the American Foreign Service\n\n(1) The Foreign Service Act of 1980 is the foundational statute governing the personnel system of the United States Foreign Service. It established the current structure of the Foreign Service, which consists of five categories of personnel: Foreign Service Officers (FSOs), Foreign Service Specialists, members of the Senior Foreign Service, Foreign Service personnel of other agencies, and Foreign Service nationals (locally employed staff).\n\n(2) Foreign Service Officers are generalist diplomats who rotate through assignments in a variety of functional and geographic areas over the course of their careers. They are expected to serve both domestically and abroad, and assignments are typically two to three years in duration. FSOs compete for promotion on an 'up or out' basis: officers who are not promoted within a certain time frame may be separated from the Service.\n\n(3) Foreign Service Specialists occupy defined technical or administrative roles, such as information technology, security, medical services, and office management. Unlike generalist FSOs, specialists are recruited for and remain within their specific occupational specialty. They are subject to the same worldwide availability requirement as FSOs but advance along separate promotion tracks.\n\n(4) Locally employed staff - referred to in the Act as Foreign Service nationals - are citizens or permanent residents of the country in which they serve. They are not subject to rotation and bring invaluable local knowledge, language expertise, and institutional continuity to diplomatic missions. They are not eligible to serve as consular officers but may perform a wide range of consular support functions.",
+        passage: "The Industrial Revolution and Its Social Consequences\n\n(1) The Industrial Revolution, which began in Britain in the late eighteenth century and spread to Western Europe and North America during the nineteenth century, represented the most profound transformation of human economic life since the development of agriculture. The shift from hand production to machine manufacturing, powered first by water and then by steam, dramatically increased productive capacity and generated unprecedented economic growth. At the same time, it fundamentally disrupted existing social structures and created new forms of poverty and inequality alongside its material gains.\n\n(2) The factory system concentrated large numbers of workers under a single roof for the first time, replacing the cottage industry model in which manufacturing had taken place in workers' homes. Factory labor was characterized by long hours, dangerous conditions, low wages, and strict discipline enforced by factory owners and overseers. Women and children were employed extensively, often in the most hazardous conditions, because they could be paid less than adult men. Child labor in factories, mines, and mills drew increasing criticism from reformers who documented its physical and moral hazards.\n\n(3) Rapid urbanization accompanied industrialization as workers flocked to industrial cities in search of employment. Cities grew faster than their infrastructure could accommodate, resulting in severe overcrowding, inadequate sanitation, contaminated water supplies, and epidemic disease. London, Manchester, and other industrial cities experienced periodic outbreaks of cholera, typhoid, and tuberculosis. The urban poor lived in dense tenements with little light, ventilation, or access to clean water - conditions that alarmed public health reformers and eventually prompted significant municipal investment in sanitation and water infrastructure.\n\n(4) The social and political responses to industrialization were varied and far-reaching. Labor unions emerged to negotiate collectively for better wages and working conditions. Socialist and communist movements developed theoretical critiques of capitalism and attracted working-class followings across Europe. Parliamentary reformers in Britain secured legislation limiting child labor and regulating factory conditions. The experience of industrialization shaped the political landscape of the late nineteenth and early twentieth centuries, laying the groundwork for the welfare state reforms of the twentieth century.",
         questions: [
           {
-            q: "According to the passage, how many categories of personnel are established by the Foreign Service Act of 1980?",
-            opts: { A: "Three", B: "Four", C: "Five", D: "Six" },
-            correct: "C",
-            exp: "Paragraph 1 lists five categories: Foreign Service Officers, Foreign Service Specialists, members of the Senior Foreign Service, Foreign Service personnel of other agencies, and Foreign Service nationals (locally employed staff)."
-          },
-          {
-            q: "The 'up or out' promotion system described in the passage is designed primarily to:",
-            opts: { A: "Reduce the overall size of the Foreign Service over time", B: "Maintain a competitive, high-performing workforce by separating officers who do not advance", C: "Ensure that all FSOs serve in both domestic and overseas assignments", D: "Reserve senior positions for officers with the most years of service" },
+            q: "According to the passage, what distinguished the factory system from the cottage industry model?",
+            opts: { A: "The factory system produced higher-quality goods than cottage industry", B: "The factory system concentrated large numbers of workers under one roof, replacing home-based manufacturing", C: "The factory system relied exclusively on adult male labor", D: "The factory system was powered exclusively by steam engines" },
             correct: "B",
-            exp: "Paragraph 2 states officers not promoted 'may be separated from the Service.' The system creates promotion pressure intended to maintain a high-performing workforce, not simply reduce size or impose seniority rules."
+            exp: "Paragraph 2 states: 'The factory system concentrated large numbers of workers under a single roof for the first time, replacing the cottage industry model in which manufacturing had taken place in workers' homes.' Option C is contradicted by the passage's mention of women and children. Option D is too narrow - paragraph 1 mentions water and then steam."
           },
           {
-            q: "According to the passage, which of the following best distinguishes Foreign Service Specialists from Foreign Service Officers?",
-            opts: { A: "Specialists serve only in domestic assignments; FSOs serve only abroad", B: "Specialists are recruited for and remain in a specific occupational specialty; FSOs are generalist diplomats", C: "Specialists are not subject to the worldwide availability requirement", D: "Specialists do not receive promotions under the Foreign Service Act" },
+            q: "Based on the passage, why were women and children employed extensively in early factories?",
+            opts: { A: "They were more skilled at operating industrial machinery than adult men", B: "Factory owners were legally required to hire a certain proportion of women and children", C: "They could be paid less than adult men, making them cheaper to employ", D: "They volunteered for factory work to escape poverty in rural areas" },
+            correct: "C",
+            exp: "Paragraph 2 states: 'Women and children were employed extensively, often in the most hazardous conditions, because they could be paid less than adult men.' The passage presents this as an economic rationale, not skill, legal requirement, or voluntary choice."
+          },
+          {
+            q: "According to the passage, which of the following was a direct result of rapid urbanization during the Industrial Revolution?",
+            opts: { A: "A significant decline in agricultural productivity", B: "Overcrowding, inadequate sanitation, contaminated water, and epidemic disease in industrial cities", C: "The immediate development of labor unions to protect workers", D: "A decrease in the use of child labor as urban reformers gained influence" },
             correct: "B",
-            exp: "Paragraph 3 states: 'Unlike generalist FSOs, specialists are recruited for and remain within their specific occupational specialty.' Option C directly contradicts paragraph 3, which states they are 'subject to the same worldwide availability requirement as FSOs.'"
+            exp: "Paragraph 3 states that rapid urbanization resulted in 'severe overcrowding, inadequate sanitation, contaminated water supplies, and epidemic disease.' Labor unions are mentioned in paragraph 4 as a response to industrialization, not specifically urbanization. Child labor restrictions are also in paragraph 4."
           },
           {
-            q: "Based on the passage, which of the following statements about locally employed staff is accurate?",
-            opts: { A: "They are subject to the same rotation requirements as FSOs", B: "They are compensated according to U.S. government pay scales", C: "They bring local knowledge and institutional continuity but are not eligible to serve as consular officers", D: "They are appointed under the same authority as Foreign Service Officers" },
+            q: "Based on the passage, what eventually addressed the poor sanitation and water conditions in industrial cities?",
+            opts: { A: "Factory owners who invested in workers' housing and infrastructure", B: "National government mandates requiring cities to modernize", C: "Significant municipal investment in sanitation and water infrastructure prompted by public health reformers", D: "The natural improvement of conditions as cities became wealthier" },
             correct: "C",
-            exp: "Paragraph 4 states they 'bring invaluable local knowledge, language expertise, and institutional continuity' and 'are not eligible to serve as consular officers.' Option A is contradicted by 'not subject to rotation.'"
+            exp: "Paragraph 3 states that alarming conditions 'eventually prompted significant municipal investment in sanitation and water infrastructure.' Public health reformers are identified as the agents who raised alarm. The passage does not attribute the improvements to factory owners, national mandates, or natural economic improvement."
           },
           {
-            q: "Which of the following can be inferred from the passage about the role of locally employed staff in consular operations?",
-            opts: { A: "They perform the same functions as Foreign Service Officers in all areas", B: "They cannot contribute meaningfully to consular work because they lack U.S. citizenship", C: "They may perform consular support functions but cannot exercise the authority of a consular officer", D: "They are fully interchangeable with Foreign Service Specialists at consular posts" },
-            correct: "C",
-            exp: "Paragraph 4 states they 'may perform a wide range of consular support functions' but 'are not eligible to serve as consular officers.' This implies they contribute in a support capacity without exercising consular authority."
+            q: "The passage implies that the political responses to industrialization laid the groundwork for:",
+            opts: { A: "The collapse of parliamentary democracy across Europe", B: "The welfare state reforms of the twentieth century", C: "The rapid globalization of industrial production", D: "The decline of labor unions in the post-industrial era" },
+            correct: "B",
+            exp: "Paragraph 4 states: 'The experience of industrialization shaped the political landscape of the late nineteenth and early twentieth centuries, laying the groundwork for the welfare state reforms of the twentieth century.' This is explicitly stated. The other options are not supported by the passage."
           }
         ]
       }
@@ -1365,41 +1732,41 @@ var SECTIONS = {
         correct: "A",
         exp: "'Is comprised of' is formally incorrect. 'Comprise' means to contain or be made up of - the whole comprises the parts. The correct phrasing is either 'composed of senior officers' or 'comprising senior officers.' 'The committee comprised senior officers' (no 'of') is the formal correct form. 'Will meet' and 'to review' are both correct."
       }
-      ,{
+      ,      {
         type: 'group',
         gid: 'ee-g6',
         sub: "Reading Comprehension",
-        passage: "The Doctrine of Consular Non-Reviewability\n\n(1) One of the most distinctive features of U.S. immigration law is the doctrine of consular non-reviewability. Under this doctrine, a consular officer's decision to deny a visa is generally not subject to review by any other executive branch agency, by immigration courts, or by the federal judiciary. An applicant denied a visa has no right to a formal hearing, no right to a statement of reasons sufficient to challenge the denial, and no right to judicial review of the consular officer's decision.\n\n(2) The doctrine has deep roots in both statute and case law. The Supreme Court affirmed in Kleindienst v. Mandel (1972) that Congress has plenary power over the admission of aliens, and that consular officers exercise this power on behalf of the executive branch. Because the admission of foreign nationals is considered a foreign policy and national security matter, courts have historically been reluctant to second-guess consular judgments.\n\n(3) There are, however, limited exceptions to the doctrine. The most significant is the 'facially legitimate and bona fide reason' standard established in Mandel. Under this standard, a consular denial will be upheld if the officer can point to a facially legitimate and bona fide reason for it - the court will not look behind the reason to evaluate its merits. A second exception applies when a U.S. citizen petitioner's own constitutional rights are implicated by the denial.\n\n(4) Critics argue that the doctrine creates a system in which government officers exercise unchecked power over decisions that profoundly affect individuals' lives and family relationships. Proponents counter that visa decisions involve sensitive national security information that cannot be disclosed in adversarial proceedings.",
+        passage: "Globalization and Its Critics\n\n(1) Globalization, broadly defined as the increasing interconnection of national economies, cultures, and political systems, has been one of the defining features of the late twentieth and early twenty-first centuries. Driven by advances in transportation, communication technology, and the liberalization of trade and investment flows, globalization has accelerated the movement of goods, capital, people, and ideas across national borders. Its proponents argue that it has lifted hundreds of millions of people out of poverty, expanded consumer choice, and promoted peace through economic interdependence.\n\n(2) Critics of globalization challenge these conclusions on several grounds. From the left, scholars and activists argue that the benefits of globalization have been distributed unequally - flowing disproportionately to multinational corporations, financial institutions, and skilled workers in wealthy countries, while manufacturing workers in those same countries have faced job losses and wage stagnation as production moved to lower-cost locations. From the right, critics emphasize threats to national sovereignty, cultural identity, and security that arise when economic policy is increasingly shaped by international institutions and supply chains beyond any single government's control.\n\n(3) The empirical record is genuinely contested. Studies of global poverty rates show significant reductions over the past three decades, particularly in Asia, which critics and proponents attribute differently - to globalization itself, to domestic policy choices, or to some combination. The distributional effects within countries have been more clearly negative in some sectors: manufacturing communities in the American Midwest, the English Midlands, and other traditional industrial regions experienced significant economic disruption as production shifted to China and other lower-cost producers.\n\n(4) The political backlash against globalization became highly visible in the second decade of the twenty-first century, with the rise of nationalist and populist movements in Europe and North America that explicitly challenged the free trade consensus. The United Kingdom's vote to leave the European Union in 2016 and the election of nationalist governments in several countries reflected, in part, the accumulated grievances of communities that felt economically and culturally displaced by globalization. These developments prompted scholars and policymakers to reconsider whether the gains from globalization had been adequately shared and whether its pace had outrun the political and social institutions needed to manage its consequences.",
         questions: [
           {
-            q: "According to the passage, which of the following accurately describes the doctrine of consular non-reviewability?",
-            opts: { A: "Consular visa denials may be appealed to the Secretary of State", B: "Consular visa denials are generally not subject to review by other agencies, immigration courts, or the federal judiciary", C: "Consular officers must provide written reasons sufficient for an applicant to challenge a denial", D: "Visa denials based on national security grounds are exempt from the doctrine" },
+            q: "According to the passage, what has primarily driven globalization in the late twentieth and early twenty-first centuries?",
+            opts: { A: "Military alliances that opened markets to allied nations", B: "Advances in transportation, communication technology, and liberalization of trade and investment", C: "International agreements requiring all nations to adopt free market economies", D: "The decline of manufacturing in wealthy nations" },
             correct: "B",
-            exp: "Paragraph 1 defines the doctrine: 'a consular officer's decision to deny a visa is generally not subject to review by any other executive branch agency, by immigration courts, or by the federal judiciary.' Option C directly contradicts paragraph 1, which states there is 'no right to a statement of reasons sufficient to challenge the denial.'"
+            exp: "Paragraph 1 states globalization was 'driven by advances in transportation, communication technology, and the liberalization of trade and investment flows.' Military alliances, mandatory free market adoption, and manufacturing decline are not identified as primary drivers in the passage."
           },
           {
-            q: "What did the Supreme Court affirm in Kleindienst v. Mandel (1972)?",
-            opts: { A: "It created the doctrine of consular non-reviewability for the first time", B: "Congress has plenary power over alien admission and consular officers exercise this power for the executive branch", C: "All visa denials must include written reasons", D: "Immigration courts have the power to review consular decisions" },
-            correct: "B",
-            exp: "Paragraph 2 states: 'The Supreme Court affirmed in Kleindienst v. Mandel (1972) that Congress has plenary power over the admission of aliens, and that consular officers exercise this power on behalf of the executive branch.' The doctrine predates Mandel; the case affirmed it, not created it."
+            q: "Based on the passage, critics of globalization from the LEFT primarily argue that:",
+            opts: { A: "Globalization threatens national sovereignty and cultural identity", B: "International institutions undermine democratic decision-making", C: "The benefits of globalization have flowed disproportionately to corporations and skilled workers while manufacturing workers face job losses", D: "Globalization has accelerated climate change by increasing industrial production" },
+            correct: "C",
+            exp: "Paragraph 2 identifies the left critique: 'the benefits of globalization have been distributed unequally - flowing disproportionately to multinational corporations, financial institutions, and skilled workers in wealthy countries, while manufacturing workers...have faced job losses.' The sovereignty and cultural identity concerns are attributed to critics from the right."
           },
           {
-            q: "Under the 'facially legitimate and bona fide reason' standard described in the passage, what will a court do when evaluating a challenged consular denial?",
-            opts: { A: "Conduct a full independent review of the evidence underlying the denial", B: "Uphold the denial if the officer can point to a facially legitimate reason, without examining the merits behind it", C: "Require the consular officer to testify about the basis for the decision", D: "Refer the case to the Department of State for reconsideration" },
+            q: "According to the passage, how does the empirical record on globalization's effects compare to the ideological debate?",
+            opts: { A: "The empirical record clearly confirms that globalization has been beneficial for all countries", B: "The empirical record is genuinely contested, with poverty reductions globally but negative distributional effects within some countries", C: "The empirical record confirms that globalization has increased inequality in all countries studied", D: "Empirical research has been unable to identify any effects of globalization on poverty" },
             correct: "B",
-            exp: "Paragraph 3 states: 'the court will not look behind the reason to evaluate its merits.' If the officer provides a facially legitimate and bona fide reason, the denial is upheld without deeper scrutiny - a very deferential standard."
+            exp: "Paragraph 3 states: 'The empirical record is genuinely contested.' It notes poverty reductions globally (particularly in Asia) while acknowledging 'the distributional effects within countries have been more clearly negative in some sectors.' This nuanced picture is the passage's characterization of the evidence."
           },
           {
-            q: "According to the passage, when may a U.S. citizen's constitutional rights create an exception to consular non-reviewability?",
-            opts: { A: "Whenever the citizen is related to the visa applicant", B: "When the citizen's own constitutional rights are implicated by the denial", C: "When the denial affects the citizen's employment abroad", D: "When the citizen files suit within 60 days of the denial" },
-            correct: "B",
-            exp: "Paragraph 3 states the exception applies 'when a U.S. citizen petitioner's own constitutional rights are implicated by the denial.' The exception is based on the citizen's own constitutional rights, not merely their relationship or other circumstances."
+            q: "The passage identifies which of the following as an example of political backlash against globalization?",
+            opts: { A: "The formation of the World Trade Organization in 1995", B: "The expansion of NATO into Eastern Europe", C: "The United Kingdom's vote to leave the European Union in 2016", D: "China's accession to global supply chains" },
+            correct: "C",
+            exp: "Paragraph 4 explicitly identifies 'the United Kingdom's vote to leave the European Union in 2016' as an example of political backlash against globalization. The other options are not mentioned in this context in the passage."
           },
           {
-            q: "Based on the passage, which argument do proponents of consular non-reviewability make in its defense?",
-            opts: { A: "Consular officers have superior legal training compared to immigration judges", B: "Visa decisions involve sensitive national security information that cannot be disclosed in adversarial proceedings", C: "Most visa denials are overturned on administrative appeal anyway", D: "The doctrine applies only to nonimmigrant visa applicants" },
+            q: "Based on the passage, what concern did globalization's political backlash prompt scholars and policymakers to reconsider?",
+            opts: { A: "Whether globalization could be reversed by returning to national economic policies", B: "Whether the gains from globalization had been adequately shared and whether its pace had outrun political and social institutions", C: "Whether international trade agreements were legally binding under domestic law", D: "Whether advances in technology had been the primary cause of economic displacement" },
             correct: "B",
-            exp: "Paragraph 4 presents the proponents' argument: 'visa decisions involve sensitive national security information that cannot be disclosed in adversarial proceedings.' Options A, C, and D are not mentioned as arguments in the passage."
+            exp: "Paragraph 4 states the backlash 'prompted scholars and policymakers to reconsider whether the gains from globalization had been adequately shared and whether its pace had outrun the political and social institutions needed to manage its consequences.' This is directly stated. The other options are not mentioned as reconsiderations prompted by the backlash."
           }
         ]
       }
@@ -2284,13 +2651,8 @@ function skipQuestion() {
 // -- SHUFFLE -------------------------------------------------------------------
 function setNoRepeat(on) {
   state.noRepeat = on;
-  var btn = document.getElementById('no-repeat-btn');
-  if (btn) {
-    btn.textContent       = on ? 'No Repeats: ON' : 'No Repeats: OFF';
-    btn.style.background  = on ? '#fff2f0' : '';
-    btn.style.borderColor = on ? '#f5222d' : '';
-    btn.style.color       = on ? '#820014' : '';
-  }
+  var chk = document.getElementById('no-repeat-chk');
+  if (chk) chk.checked = on;
 }
 
 function toggleNoRepeat() {
