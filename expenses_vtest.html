@@ -1,0 +1,363 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Budget & Expense Estimator</title>
+    <!-- Chart.js for the visual comparison -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Notion-like Minimalist Aesthetic */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #37352f;
+            --border-color: #e9e9e6;
+            --input-bg: #f4f4f2;
+            --accent-color: #2383e2;
+            --callout-bg: #f1f1ef;
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: #787774;
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+
+        /* Callout Box Style */
+        .callout {
+            background-color: var(--callout-bg);
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            display: flex;
+            gap: 12px;
+        }
+
+        .callout-emoji {
+            font-size: 1.2rem;
+            user-select: none;
+        }
+
+        /* Form & Inputs */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #5a5a57;
+            margin-bottom: 6px;
+        }
+
+        input, select {
+            font-family: var(--font-stack);
+            font-size: 0.95rem;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            outline: none;
+            transition: background-color 0.1s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #afac9c;
+            background-color: #fcfcfb;
+        }
+
+        button {
+            font-family: var(--font-stack);
+            font-size: 0.95rem;
+            font-weight: 500;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: background-color 0.1s ease;
+        }
+
+        button:hover {
+            background-color: var(--input-bg);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+
+        th {
+            text-align: left;
+            font-weight: 600;
+            color: #5a5a57;
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 8px;
+            font-size: 0.85rem;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #f7f7f5;
+        }
+
+        .actual-input {
+            width: 100px;
+            padding: 4px 8px;
+        }
+
+        /* Chart Section */
+        .chart-container {
+            margin-top: 30px;
+            background: var(--bg-color);
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📊 Personal Financial Simulator</h1>
+    <p class="subtitle">An interactive tracker to build targets and analyze real spending allocations.</p>
+
+    <div class="callout">
+        <div class="callout-emoji">💡</div>
+        <div class="callout-text">
+            This simulator estimates a 25% combined tax hit baseline to calculate your estimated monthly net take-home, then maps out a standard 50/30/20 balanced budget plan.
+        </div>
+    </div>
+
+    <h2>1. Baseline Parameters</h2>
+    <div class="grid">
+        <div class="input-group">
+            <label for="income">Annual Gross Income ($)</label>
+            <input type="number" id="income" value="75000" step="1000">
+        </div>
+        <div class="input-group">
+            <label for="household">Household Size</label>
+            <input type="number" id="household" value="1" min="1">
+        </div>
+        <div class="input-group">
+            <label for="location">City / Zip Code</label>
+            <input type="text" id="location" value="Minneapolis, MN">
+        </div>
+        <div class="input-group" style="justify-content: flex-end;">
+            <button onclick="calculateBudget()">Generate Estimates</button>
+        </div>
+    </div>
+
+    <div id="budget-results" style="display: none;">
+        <h2>2. Target Allocations vs. Actual Spending</h2>
+        <p style="font-size: 0.9rem; color: #787774; margin-bottom: 15px;">
+            Review your recommended monthly baseline targets below. Input your actual spending to update the visual data dashboard dynamically.
+        </p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Recommended Target (Monthly)</th>
+                    <th>Your Actual Spending (Monthly)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Housing & Utilities</strong> (30%)</td>
+                    <td id="rec-housing">$0</td>
+                    <td><input type="number" class="actual-input" id="act-housing" value="1400" oninput="updateChart()"></td>
+                </tr>
+                <tr>
+                    <td><strong>Savings & Investments</strong> (20%)</td>
+                    <td id="rec-savings">$0</td>
+                    <td><input type="number" class="actual-input" id="act-savings" value="800" oninput="updateChart()"></td>
+                </tr>
+                <tr>
+                    <td><strong>Transportation / Car</strong> (10%)</td>
+                    <td id="rec-transport">$0</td>
+                    <td><input type="number" class="actual-input" id="act-transport" value="400" oninput="updateChart()"></td>
+                </tr>
+                <tr>
+                    <td><strong>Healthcare & Insurance</strong> (10%)</td>
+                    <td id="rec-healthcare">$0</td>
+                    <td><input type="number" class="actual-input" id="act-healthcare" value="300" oninput="updateChart()"></td>
+                </tr>
+                <tr>
+                    <td><strong>Groceries & Essentials</strong> (15%)</td>
+                    <td id="rec-groceries">$0</td>
+                    <td><input type="number" class="actual-input" id="act-groceries" value="450" oninput="updateChart()"></td>
+                </tr>
+                <tr>
+                    <td><strong>Discretionary / Entertainment</strong> (15%)</td>
+                    <td id="rec-discretionary">$0</td>
+                    <td><input type="number" class="actual-input" id="act-discretionary" value="500" oninput="updateChart()"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3. Visual Spending Analysis</h2>
+        <div class="chart-container">
+            <canvas id="budgetChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    let budgetChart = null;
+    let targets = { housing: 0, savings: 0, transport: 0, healthcare: 0, groceries: 0, discretionary: 0 };
+
+    function calculateBudget() {
+        const grossIncome = parseFloat(document.getElementById('income').value) || 0;
+        
+        // Simple mock calculation: Estimating 25% total effective tax rate to get monthly net take-home
+        const estimatedTaxRate = 0.25;
+        const netAnnual = grossIncome * (1 - estimatedTaxRate);
+        const monthlyNet = netAnnual / 12;
+
+        // Balanced Allocation Framework
+        targets.housing = Math.round(monthlyNet * 0.30);
+        targets.savings = Math.round(monthlyNet * 0.20);
+        targets.transport = Math.round(monthlyNet * 0.10);
+        targets.healthcare = Math.round(monthlyNet * 0.10);
+        targets.groceries = Math.round(monthlyNet * 0.15);
+        targets.discretionary = Math.round(monthlyNet * 0.15);
+
+        // Update DOM elements
+        document.getElementById('rec-housing').innerText = `$${targets.housing}`;
+        document.getElementById('rec-savings').innerText = `$${targets.savings}`;
+        document.getElementById('rec-transport').innerText = `$${targets.transport}`;
+        document.getElementById('rec-healthcare').innerText = `$${targets.healthcare}`;
+        document.getElementById('rec-groceries').innerText = `$${targets.groceries}`;
+        document.getElementById('rec-discretionary').innerText = `$${targets.discretionary}`;
+
+        // Reveal results section
+        document.getElementById('budget-results').style.display = 'block';
+
+        // Initialize or refresh chart data
+        updateChart();
+    }
+
+    function updateChart() {
+        const ctx = document.getElementById('budgetChart').getContext('2d');
+        
+        const actuals = [
+            parseFloat(document.getElementById('act-housing').value) || 0,
+            parseFloat(document.getElementById('act-savings').value) || 0,
+            parseFloat(document.getElementById('act-transport').value) || 0,
+            parseFloat(document.getElementById('act-healthcare').value) || 0,
+            parseFloat(document.getElementById('act-groceries').value) || 0,
+            parseFloat(document.getElementById('act-discretionary').value) || 0
+        ];
+
+        const targetData = [
+            targets.housing,
+            targets.savings,
+            targets.transport,
+            targets.healthcare,
+            targets.groceries,
+            targets.discretionary
+        ];
+
+        if (budgetChart) {
+            budgetChart.data.datasets[0].data = targetData;
+            budgetChart.data.datasets[1].data = actuals;
+            budgetChart.update();
+        } else {
+            budgetChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Housing', 'Savings', 'Transport', 'Healthcare', 'Groceries', 'Discretionary'],
+                    datasets: [
+                        {
+                            label: 'Recommended Target ($)',
+                            data: targetData,
+                            backgroundColor: 'rgba(55, 53, 47, 0.2)', // Notion-like muted dark gray
+                            borderColor: 'rgba(55, 53, 47, 0.7)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Your Actual Spend ($)',
+                            data: actuals,
+                            backgroundColor: 'rgba(35, 131, 226, 0.5)', // Notion-like soft blue accent
+                            borderColor: 'rgba(35, 131, 226, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#e9e9e6' },
+                            ticks: { font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI"' } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI"' } }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI"', weight: '500' } }
+                        }
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+</body>
+</html>
